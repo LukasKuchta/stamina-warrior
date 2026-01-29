@@ -9,7 +9,7 @@ Show the DDD driven modeling and what are the best practices and benefits of thi
 - Does the model have behavior?
 - Is primitive obsession always bad idea?
 - Where are boundaries ?
-  <img width="470" height="351" alt="image" src="https://github.com/user-attachments/assets/b9872644-f316-4d94-92e2-64ebc129e2bd" />
+- <img width="470" height="351" alt="image" src="https://github.com/user-attachments/assets/b9872644-f316-4d94-92e2-64ebc129e2bd" />
 
 - ...
 
