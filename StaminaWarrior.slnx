@@ -1,0 +1,22 @@
+<Solution>
+  <Folder Name="/00 project items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/contracts/" />
+  <Folder Name="/contracts/Domain/">
+    <File Path="contracts/domain/api.cs" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Domain/Domain.csproj" />
+    <Project Path="src/StaminaWarrior/StaminaWarrior.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/UnitTests.Domain/Domain.UnitTests.csproj" Id="3f7f6743-b44e-4d29-9535-42d183945cc3" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/PublicApiGen/PublicApiGen.csproj" Id="7d82238e-b1f0-4059-880a-19331c5acbbe" />
+  </Folder>
+</Solution>

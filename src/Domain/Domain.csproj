@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <GeneratePublicApiOnBuild>true</GeneratePublicApiOnBuild>
+
+    <RepoRoot>$(MSBuildProjectDirectory)\..\..</RepoRoot>
+    <PublicApiOutputDir>$(RepoRoot)\contracts\domain</PublicApiOutputDir>
+    <PublicApiOutputFile>$(PublicApiOutputDir)\api.cs</PublicApiOutputFile>
+    
+    <PublicApiToolProject>$(MSBuildProjectDirectory)\..\..\tools\PublicApiGen\PublicApiGen.csproj</PublicApiToolProject>    
+    <PublicApiToolDll>$(MSBuildProjectDirectory)\..\..\tools\PublicApiGen\bin\$(Configuration)\$(TargetFramework)\PublicApiGen.dll</PublicApiToolDll>
+  </PropertyGroup>
+
+  <Target Name="_BuildPublicApiTool"
+        BeforeTargets="GeneratePublicApiFile"
+        Condition="'$(GeneratePublicApiOnBuild)'=='true'
+                   and '$(DesignTimeBuild)'!='true'
+                   and !Exists('$(PublicApiToolDll)')">
+    <MSBuild Projects="$(PublicApiToolProject)"
+             Targets="Build"
+             Properties="Configuration=$(Configuration);TargetFramework=$(PublicApiToolTfm)" />
+  </Target>
+
+  <Target Name="GeneratePublicApiFile"
+          AfterTargets="Build"
+          Inputs="$(TargetPath)"
+          Outputs="$(PublicApiOutputFile)"
+          Condition="'$(GeneratePublicApiOnBuild)'=='true'
+                   and '$(IsCrossTargetingBuild)'!='true'
+                   and '$(DesignTimeBuild)'!='true'">
+
+    <MakeDir Directories="$(PublicApiOutputDir)" />
+
+    <Exec WorkingDirectory="$(MSBuildProjectDirectory)"
+          ConsoleToMSBuild="true"
+          StandardOutputImportance="high"
+          StandardErrorImportance="high"
+          Command='dotnet &quot;$(PublicApiToolDll)&quot; &quot;$(TargetPath)&quot; &quot;$(PublicApiOutputFile)&quot;' />
+  </Target>
+
+</Project>
