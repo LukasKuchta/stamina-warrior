@@ -10,13 +10,12 @@ Show the DDD driven modeling and what are the best practices and benefits of thi
 - Is primitive obsession always bad idea?
 - ...
 
-# Where are the boundaries ?
+## Where are the boundaries ?
 <img width="470" height="351" alt="image" src="https://github.com/user-attachments/assets/b9872644-f316-4d94-92e2-64ebc129e2bd" />
 
 --------------------
-# The duel (conceptual model)
+# The duel (conceptual domain model)
 <img width="407" height="254" alt="image" src="https://github.com/user-attachments/assets/7a896e98-23f7-4772-88e8-51c11b013ba1" />
-
 
 The game supports two-player duels. Players can fight across different spheras (each sphere defines the duel’s complexity and difficulty). Every player starts with Health and Damage Power.
 
@@ -31,7 +30,7 @@ To make fights more exciting, players can bring a deck of magical cards. Each pl
 
 The entire combat and turn system is driven by randomness and probability.
 
-# Possible battle outcomes:
+## Possible battle outcomes:
 - Double knock-out — both players die.
 - One player wins — the other is defeated.
 - Tie — the duel ends in a draw.
