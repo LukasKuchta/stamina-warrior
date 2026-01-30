@@ -1,4 +1,5 @@
 ﻿using Domain.Battles;
+using Domain.Battles.Spheres;
 using Domain.MagicCards;
 using Domain.MagicCards.Cards;
 using Domain.Warriors;
@@ -48,8 +49,8 @@ var battleStrategyFactory = app.Services.GetService<IBattleStrategyFactory>();
 var visitor = new Visitor();
 for (int i = 0; i < 1; i++)
 {
-    var conan = Warrior.Create("Conan", Sphere.BlueSky, Level.FromNumber(1), cards2);
-    var brutus = Warrior.Create("Brutus", Sphere.BlueSky, Level.FromNumber(1), brutusCards);
+    var conan = Warrior.Create("Conan", SphereBase.BlueSky, Level.FromNumber(1), cards2);
+    var brutus = Warrior.Create("Brutus", SphereBase.BlueSky, Level.FromNumber(1), brutusCards);
 
     var battleStrategy = battleStrategyFactory!.SelectBy(conan.CurrentSphere);
 

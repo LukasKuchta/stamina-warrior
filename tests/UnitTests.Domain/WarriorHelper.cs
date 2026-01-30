@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Domain.Battles.Spheres;
 using Domain.MagicCards;
 using Domain.Warriors;
 
@@ -16,7 +17,7 @@ internal sealed class WarriorHelper
         return Warrior.Create(
             warriorId,
             name,
-            Sphere.BlueSky,
+            SphereBase.BlueSky,
             Level.FromNumber(level),
             magicCards);
     }

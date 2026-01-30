@@ -1,5 +1,6 @@
 ﻿
 using System.ComponentModel;
+using Domain.Battles.Spheres;
 using Domain.MagicCards;
 using Domain.MagicCards.Cards;
 using Domain.Shared;
@@ -9,7 +10,7 @@ namespace Domain.Warriors;
 
 public sealed class Warrior : EntityBase, IAgregationRoot
 {
-    private Warrior(WarriorId id, string name, Sphere currentSphere, Level level, DeckOfCards deckOfCards)
+    private Warrior(WarriorId id, string name, SphereBase currentSphere, Level level, DeckOfCards deckOfCards)
     {
         Id = id;
         Name = name;
@@ -30,7 +31,7 @@ public sealed class Warrior : EntityBase, IAgregationRoot
 
     public string Name { get;  }
 
-    public Sphere CurrentSphere { get;  }
+    public SphereBase CurrentSphere { get;  }
 
     public Level Level { get;  }
 
@@ -49,7 +50,7 @@ public sealed class Warrior : EntityBase, IAgregationRoot
     public static Warrior Create(
         WarriorId id,
         string name,
-        Sphere currentSphere,
+        SphereBase currentSphere,
         Level level,
         IEnumerable<MagicCardBase> cards)
     {
@@ -58,7 +59,7 @@ public sealed class Warrior : EntityBase, IAgregationRoot
 
     public static Warrior Create(
      string name,
-     Sphere currentSphere,
+     SphereBase currentSphere,
      Level level,
      IEnumerable<MagicCardBase> cards)
     {

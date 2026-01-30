@@ -1,19 +1,19 @@
-﻿using Domain.Warriors;
+﻿using Domain.Battles.Spheres;
+using Domain.MagicCards;
 
 namespace Domain.Battles;
 
 internal sealed class BattleStrategyFactory : IBattleStrategyFactory
 {
-    private readonly Dictionary<Sphere, IBattleStrategy> _strategies;
+    private readonly Dictionary<Type, IBattleStrategy> _battleStrategies;
 
-    public BattleStrategyFactory(IEnumerable<IBattleStrategy> strategies)
-    {
-        _strategies = strategies.ToDictionary(s => s.Sphere, s => s);
-    }
+    public BattleStrategyFactory(IEnumerable<IBattleStrategy> strategies) => _battleStrategies = strategies.ToDictionary(s => s.SphereType);
 
-    public IBattleStrategy SelectBy(Sphere sphere)
+    public IBattleStrategy SelectBy(SphereBase sphere)
     {
-        if (!_strategies.TryGetValue(sphere, out var strategy))
+        ArgumentNullException.ThrowIfNull(sphere);
+
+        if (!_battleStrategies.TryGetValue(sphere.GetType(), out var strategy))
         {
             throw new ArgumentException($"No battle strategy found for sphere: {sphere}");
         }

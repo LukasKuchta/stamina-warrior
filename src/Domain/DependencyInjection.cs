@@ -1,5 +1,6 @@
 ﻿
 using Domain.Battles;
+using Domain.Battles.Spheres;
 using Domain.Battles.Strategies;
 using Domain.MagicCards;
 using Domain.MagicCards.Cards;
@@ -13,7 +14,8 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddDomainServices(this IServiceCollection services)
     {
-        services.AddSingleton<IBattleStrategy, BlueSkyBattleStrategy>();
+        services.AddSingleton<IBattleStrategy<BlueSkysphere>, BlueSkyBattleStrategy>();        
+        services.AddSingleton(sp => (IBattleStrategy)sp.GetRequiredService<IBattleStrategy<BlueSkysphere>>());
         services.AddSingleton<IBattleStrategyFactory, BattleStrategyFactory>();
 
         services.AddSingleton<IMagicCardStrategy<HealingCard>, HealingCardStrategy>();

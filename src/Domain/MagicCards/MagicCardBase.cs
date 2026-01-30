@@ -1,13 +1,12 @@
-﻿
-using Domain.MagicCards.Cards;
+﻿using Domain.MagicCards.Cards;
 using Domain.Shared;
 
 namespace Domain.MagicCards;
 
 public abstract record MagicCardBase : ValueObjectBase
 {
-    public string Name { get; init; }
-    public Chance ActivationChance { get; init; }    
+    public string Name { get; }
+    public Chance ActivationChance { get; }
 
     protected MagicCardBase(string name, Chance activationChance)
     {

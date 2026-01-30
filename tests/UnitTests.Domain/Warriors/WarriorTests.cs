@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Domain.Battles.Spheres;
 using Domain.MagicCards;
 using Domain.Warriors;
 using Shouldly;
@@ -14,7 +15,7 @@ public class WarriorTests
     {
         WarriorId warriorId = WarriorId.New();
         string name = "Barbar Conan";
-        Sphere sphere = Sphere.BlueSky;
+        SphereBase sphere = SphereBase.BlueSky;
         Level level = Level.FromNumber(1);
         IEnumerable<MagicCardBase> cards = Enumerable.Empty<MagicCardBase>();
 

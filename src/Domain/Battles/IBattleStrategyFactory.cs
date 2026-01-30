@@ -1,8 +1,8 @@
 ﻿
-using Domain.Warriors;
+using Domain.Battles.Spheres;
 
 namespace Domain.Battles;
 public interface IBattleStrategyFactory
 {
-    IBattleStrategy SelectBy(Sphere sphere);
+    IBattleStrategy SelectBy(SphereBase sphere);
 }

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
 using Domain.Battles.Events;
+using Domain.Battles.Spheres;
 using Domain.MagicCards;
 using Domain.Shared;
 using Domain.Warriors;
@@ -10,15 +11,13 @@ using Domain.Warriors;
 namespace Domain.Battles.Strategies;
 
 public sealed class BlueSkyBattleStrategy(
-    IMagicCardStrategyFactory magicCardStrategy,
-    IFightDecisionSource decisionSource) : IBattleStrategy
+IMagicCardStrategyFactory magicCardStrategy,
+IFightDecisionSource decisionSource) : BattleStrategyBase<BlueSkysphere>
 {
     private const int CardDrawAttemptRangeMax = 15;
     private readonly List<IBattleEvent> _battleEvents = [];
 
-    public Sphere Sphere => Sphere.BlueSky;
-
-    public BattleResult StartBattle(BattleContext battleContext)
+    public override BattleResult StartBattle(BattleContext battleContext)
     {
         ArgumentNullException.ThrowIfNull(battleContext);
 

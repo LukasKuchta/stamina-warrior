@@ -25,13 +25,15 @@ namespace Domain.Battles
     }
     public interface IBattleStrategy
     {
-        Domain.Warriors.Sphere Sphere { get; }
+        System.Type SphereType { get; }
         Domain.Battles.BattleResult StartBattle(Domain.Battles.BattleContext battleContext);
     }
     public interface IBattleStrategyFactory
     {
-        Domain.Battles.IBattleStrategy SelectBy(Domain.Warriors.Sphere sphere);
+        Domain.Battles.IBattleStrategy SelectBy(Domain.Battles.Spheres.SphereBase sphere);
     }
+    public interface IBattleStrategy<T>
+        where T : Domain.Battles.Spheres.SphereBase { }
     public interface IFightDecisionSource
     {
         int PickBaseDamage(int maxDamage);
@@ -101,13 +103,36 @@ namespace Domain.Battles.Events
         public override string ToString() { }
     }
 }
+namespace Domain.Battles.Spheres
+{
+    public sealed class BetweenworldSphere : Domain.Battles.Spheres.SphereBase, System.IEquatable<Domain.Battles.Spheres.BetweenworldSphere> { }
+    public sealed class BlueSkysphere : Domain.Battles.Spheres.SphereBase, System.IEquatable<Domain.Battles.Spheres.BlueSkysphere> { }
+    public sealed class DeepvaultSphere : Domain.Battles.Spheres.SphereBase, System.IEquatable<Domain.Battles.Spheres.DeepvaultSphere> { }
+    public abstract class SphereBase : Domain.Shared.ValueObjectBase, System.IEquatable<Domain.Battles.Spheres.SphereBase>
+    {
+        public static readonly Domain.Battles.Spheres.SphereBase Betweenworld;
+        public static readonly Domain.Battles.Spheres.SphereBase BlueSky;
+        public static readonly Domain.Battles.Spheres.SphereBase Deepvault;
+        protected SphereBase(string name, int difficulty, float hitRatio) { }
+        public int Difficulty { get; }
+        public float HitRatio { get; }
+        public string Name { get; }
+        public static System.Collections.Generic.IReadOnlyCollection<Domain.Battles.Spheres.SphereBase> All { get; }
+    }
+}
 namespace Domain.Battles.Strategies
 {
-    public sealed class BlueSkyBattleStrategy : Domain.Battles.IBattleStrategy
+    public abstract class BattleStrategyBase<TSphereType> : Domain.Battles.IBattleStrategy, Domain.Battles.IBattleStrategy<TSphereType>
+        where TSphereType : Domain.Battles.Spheres.SphereBase
+    {
+        protected BattleStrategyBase() { }
+        public System.Type SphereType { get; }
+        public abstract Domain.Battles.BattleResult StartBattle(Domain.Battles.BattleContext battleContext);
+    }
+    public sealed class BlueSkyBattleStrategy : Domain.Battles.Strategies.BattleStrategyBase<Domain.Battles.Spheres.BlueSkysphere>
     {
         public BlueSkyBattleStrategy(Domain.MagicCards.IMagicCardStrategyFactory magicCardStrategy, Domain.Battles.IFightDecisionSource decisionSource) { }
-        public Domain.Warriors.Sphere Sphere { get; }
-        public Domain.Battles.BattleResult StartBattle(Domain.Battles.BattleContext battleContext) { }
+        public override Domain.Battles.BattleResult StartBattle(Domain.Battles.BattleContext battleContext) { }
     }
 }
 namespace Domain
@@ -181,8 +206,8 @@ namespace Domain.MagicCards
     public abstract class MagicCardBase : Domain.Shared.ValueObjectBase, System.IEquatable<Domain.MagicCards.MagicCardBase>
     {
         protected MagicCardBase(string name, Domain.MagicCards.Chance activationChance) { }
-        public Domain.MagicCards.Chance ActivationChance { get; init; }
-        public string Name { get; init; }
+        public Domain.MagicCards.Chance ActivationChance { get; }
+        public string Name { get; }
     }
     public abstract class MagicCardStrategyBase<TCard> : Domain.MagicCards.IMagicCardStrategy, Domain.MagicCards.IMagicCardStrategy<TCard>
         where TCard : Domain.MagicCards.MagicCardBase
@@ -284,20 +309,9 @@ namespace Domain.Warriors
         public int Value { get; }
         public static Domain.Warriors.Level FromNumber(int value) { }
     }
-    public sealed class Sphere : Domain.Shared.ValueObjectBase, System.IEquatable<Domain.Warriors.Sphere>
-    {
-        public static readonly Domain.Warriors.Sphere Betweenworld;
-        public static readonly Domain.Warriors.Sphere BlueSky;
-        public static readonly Domain.Warriors.Sphere Deepvault;
-        public int Difficulty { get; init; }
-        public float HitRatio { get; init; }
-        public string Name { get; init; }
-        public static System.Collections.Generic.IReadOnlyCollection<Domain.Warriors.Sphere> All { get; }
-        public static Domain.Warriors.Sphere FromString(string value) { }
-    }
     public sealed class Warrior : Domain.Shared.EntityBase, Domain.Shared.IAgregationRoot
     {
-        public Domain.Warriors.Sphere CurrentSphere { get; }
+        public Domain.Battles.Spheres.SphereBase CurrentSphere { get; }
         public int Health { get; }
         public Domain.Warriors.WarriorId Id { get; }
         public bool IsDeckOfCardsEmpty { get; }
@@ -305,8 +319,8 @@ namespace Domain.Warriors
         public int MaxDamage { get; }
         public string Name { get; }
         public float Strength { get; }
-        public static Domain.Warriors.Warrior Create(string name, Domain.Warriors.Sphere currentSphere, Domain.Warriors.Level level, System.Collections.Generic.IEnumerable<Domain.MagicCards.MagicCardBase> cards) { }
-        public static Domain.Warriors.Warrior Create(Domain.Warriors.WarriorId id, string name, Domain.Warriors.Sphere currentSphere, Domain.Warriors.Level level, System.Collections.Generic.IEnumerable<Domain.MagicCards.MagicCardBase> cards) { }
+        public static Domain.Warriors.Warrior Create(string name, Domain.Battles.Spheres.SphereBase currentSphere, Domain.Warriors.Level level, System.Collections.Generic.IEnumerable<Domain.MagicCards.MagicCardBase> cards) { }
+        public static Domain.Warriors.Warrior Create(Domain.Warriors.WarriorId id, string name, Domain.Battles.Spheres.SphereBase currentSphere, Domain.Warriors.Level level, System.Collections.Generic.IEnumerable<Domain.MagicCards.MagicCardBase> cards) { }
     }
     public sealed class WarriorId : System.IEquatable<Domain.Warriors.WarriorId>
     {

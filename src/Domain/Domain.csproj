@@ -15,31 +15,15 @@
     <PublicApiToolDll>$(MSBuildProjectDirectory)\..\..\tools\PublicApiGen\bin\$(Configuration)\$(TargetFramework)\PublicApiGen.dll</PublicApiToolDll>
   </PropertyGroup>
 
-  <Target Name="_BuildPublicApiTool"
-        BeforeTargets="GeneratePublicApiFile"
-        Condition="'$(GeneratePublicApiOnBuild)'=='true'
-                   and '$(DesignTimeBuild)'!='true'
-                   and !Exists('$(PublicApiToolDll)')">
-    <MSBuild Projects="$(PublicApiToolProject)"
-             Targets="Build"
-             Properties="Configuration=$(Configuration);TargetFramework=$(PublicApiToolTfm)" />
+  <Target Name="_BuildPublicApiTool" BeforeTargets="GeneratePublicApiFile" Condition="'$(GeneratePublicApiOnBuild)'=='true'&#xD;&#xA;                   and '$(DesignTimeBuild)'!='true'&#xD;&#xA;                   and !Exists('$(PublicApiToolDll)')">
+    <MSBuild Projects="$(PublicApiToolProject)" Targets="Build" Properties="Configuration=$(Configuration);TargetFramework=$(PublicApiToolTfm)" />
   </Target>
 
-  <Target Name="GeneratePublicApiFile"
-          AfterTargets="Build"
-          Inputs="$(TargetPath)"
-          Outputs="$(PublicApiOutputFile)"
-          Condition="'$(GeneratePublicApiOnBuild)'=='true'
-                   and '$(IsCrossTargetingBuild)'!='true'
-                   and '$(DesignTimeBuild)'!='true'">
+  <Target Name="GeneratePublicApiFile" AfterTargets="Build" Inputs="$(TargetPath)" Outputs="$(PublicApiOutputFile)" Condition="'$(GeneratePublicApiOnBuild)'=='true'&#xD;&#xA;                   and '$(IsCrossTargetingBuild)'!='true'&#xD;&#xA;                   and '$(DesignTimeBuild)'!='true'">
 
     <MakeDir Directories="$(PublicApiOutputDir)" />
 
-    <Exec WorkingDirectory="$(MSBuildProjectDirectory)"
-          ConsoleToMSBuild="true"
-          StandardOutputImportance="high"
-          StandardErrorImportance="high"
-          Command='dotnet &quot;$(PublicApiToolDll)&quot; &quot;$(TargetPath)&quot; &quot;$(PublicApiOutputFile)&quot;' />
+    <Exec WorkingDirectory="$(MSBuildProjectDirectory)" ConsoleToMSBuild="true" StandardOutputImportance="high" StandardErrorImportance="high" Command="dotnet &quot;$(PublicApiToolDll)&quot; &quot;$(TargetPath)&quot; &quot;$(PublicApiOutputFile)&quot;" />
   </Target>
 
 </Project>
