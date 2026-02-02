@@ -69,6 +69,6 @@ internal sealed record DeckOfCards : ValueObjectBase
 
     public static DeckOfCards FromList(IList<MagicCardBase> cards)
     {
-        return new DeckOfCards(cards.ToList<MagicCardBase>());
+        return new DeckOfCards(cards.ToList());
     }
 }

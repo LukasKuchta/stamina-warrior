@@ -18,6 +18,9 @@ insert_final_newline = true
 dotnet_diagnostic.CA1859.severity = none
 #### .NET Coding Conventions ####
 
+[*.{cs,vb}]
+dotnet_diagnostic.IDE0032.severity = none
+
 # Organize usings
 dotnet_separate_import_directive_groups = false
 dotnet_sort_system_directives_first = true

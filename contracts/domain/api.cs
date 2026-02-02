@@ -8,9 +8,9 @@ namespace Domain.Battles
         public Domain.Warriors.Warrior Opponent { get; init; }
         public int RoundsCount { get; init; }
     }
-    public sealed class BattleResult : System.IEquatable<Domain.Battles.BattleResult>
+    public sealed class BattleResult
     {
-        public System.ReadOnlySpan<Domain.Battles.Events.IBattleEvent> BattleEvents { get; }
+        public System.Collections.Immutable.ImmutableArray<Domain.Battles.Events.IBattleEvent> BattleEvents { get; }
     }
     public interface IBattleEventVisitor
     {
@@ -278,8 +278,8 @@ namespace Domain.Shared
     public abstract class EntityBase
     {
         protected EntityBase() { }
-        public System.Collections.Generic.IReadOnlyList<Domain.Shared.DomainEventBase> DomainEvents { get; }
-        public void ClearDomainEvents() { }
+        protected void AddDomainEvent(Domain.Shared.DomainEventBase @event) { }
+        public System.Collections.Immutable.ImmutableArray<Domain.Shared.DomainEventBase> DequeueDomainEvents() { }
         protected static void CheckRule(Domain.Shared.IBusinessRule rule) { }
     }
     public interface IAgregationRoot { }

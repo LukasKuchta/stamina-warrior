@@ -27,9 +27,8 @@ public class BlueSkyStrategBattleResultsyTests
 
         var battleResult = battleResultBase.ShouldBeAssignableTo<BattleResult>();
 
-        var events = battleResult.BattleEvents.ToArray();
-        events.ShouldNotBeEmpty();
-        var lastEvent = events.LastOrDefault().ShouldBeOfType<BattleFinished>();
+        battleResult.BattleEvents.ShouldNotBeEmpty();
+        var lastEvent = battleResult.BattleEvents[battleResult.BattleEvents.Length - 1].ShouldBeOfType<BattleFinished>();
 
         lastEvent.Winner.Name.ShouldBe(conan.Name);
         lastEvent.Looser.Name.ShouldBe(brutus.Name);
@@ -45,9 +44,8 @@ public class BlueSkyStrategBattleResultsyTests
 
         var battleResult = blueSkyStrategy.StartBattle(new BattleContext(conan, brutus, 1));
 
-        var events = battleResult.BattleEvents.ToArray();
-        events.ShouldNotBeEmpty();
-        events.LastOrDefault().ShouldBeOfType<BattleFinishedTied>();        
+        battleResult.BattleEvents.ShouldNotBeEmpty();        
+        battleResult.BattleEvents[battleResult.BattleEvents.Length - 1].ShouldBeOfType<BattleFinishedTied>();
     }
 
     [Fact]
@@ -57,13 +55,12 @@ public class BlueSkyStrategBattleResultsyTests
         var brutus = WarriorHelper.CreateBlueSkyWarrior("Brutus", 1);
 
         var blueSkyStrategy = CreateBluSkyStrategy();
-        
-        
+
+
         var battleResult = blueSkyStrategy.StartBattle(new BattleContext(conan, brutus, 10));
 
-        var events = battleResult.BattleEvents.ToArray();
-        events.ShouldNotBeEmpty();
-        events.LastOrDefault().ShouldBeOfType<DoubleKnockoutOccurred>();
+        battleResult.BattleEvents.ShouldNotBeEmpty();        
+        battleResult.BattleEvents[battleResult.BattleEvents.Length - 1].ShouldBeOfType<DoubleKnockoutOccurred>();
     }
 
     private static BlueSkyBattleStrategy CreateBluSkyStrategy()

@@ -82,7 +82,7 @@ IFightDecisionSource decisionSource) : BattleStrategyBase<BlueSkysphere>
 
     private BattleResult Emit()
     {
-        var events = _battleEvents.ToArray();
+        var events = ImmutableArray.CreateRange(_battleEvents);        
         _battleEvents.Clear();
         return new BattleResult(events);
     }

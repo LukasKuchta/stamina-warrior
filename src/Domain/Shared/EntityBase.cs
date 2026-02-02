@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Immutable;
 
 namespace Domain.Shared;
 
@@ -8,18 +9,31 @@ public record DomainEventBase;
 public abstract class EntityBase
 {
     private readonly List<DomainEventBase> _domainEvents = new List<DomainEventBase>();
+    private readonly IReadOnlyList<DomainEventBase> _domainEventsView;
 
-    internal void AddDomainEvent(DomainEventBase @event) 
+    protected EntityBase()
+    {
+        _domainEventsView = _domainEvents.AsReadOnly();
+    }
+
+    protected void AddDomainEvent(DomainEventBase @event)
     {
         _domainEvents.Add(@event);
     }
 
-    public void ClearDomainEvents() 
-    {
+    public ImmutableArray<DomainEventBase> DequeueDomainEvents()
+    {        
+        if (_domainEvents.Count == 0)
+        {
+            return ImmutableArray<DomainEventBase>.Empty;
+        }
+
+        var snapshot = _domainEvents.ToImmutableArray();
         _domainEvents.Clear();
+        return snapshot;
     }
 
-    public IReadOnlyList<DomainEventBase> DomainEvents => _domainEvents.AsReadOnly();
+    internal IReadOnlyList<DomainEventBase> DomainEvents => _domainEventsView;
 
     protected static void CheckRule(IBusinessRule rule)
     {
