@@ -16,21 +16,6 @@ var app = builder.Build();
 
 
 var brutusCards = new List<MagicCardBase>
-{    
-    new HealingCard(Chance.Always, Power.FromValue(2f)),
-    new HealingCard(Chance.Always, Power.FromValue(2f)),
-    new HealingCard(Chance.Always, Power.FromValue(2f)),
-    new HealingCard(Chance.Always, Power.FromValue(2f)),
-    new HealingCard(Chance.Always, Power.FromValue(2f)),
-    new HealingCard(Chance.Always, Power.FromValue(2f)),
-    new HealingCard(Chance.Always, Power.FromValue(2f)),
-    new HealingCard(Chance.Always, Power.FromValue(2f)),
-    new HealingCard(Chance.Always, Power.FromValue(2f)),
-    new HealingCard(Chance.Always, Power.FromValue(2f)),
-
-}.AsReadOnly();
-
-var cards2 = new List<MagicCardBase>
 {
     new HealingCard(Chance.Always, Power.FromValue(2f)),
     new HealingCard(Chance.Always, Power.FromValue(2f)),
@@ -43,13 +28,28 @@ var cards2 = new List<MagicCardBase>
     new HealingCard(Chance.Always, Power.FromValue(2f)),
     new HealingCard(Chance.Always, Power.FromValue(2f)),
 
-}.AsReadOnly();
+};
+
+var conanCards = new List<MagicCardBase>
+{
+    new HealingCard(Chance.Always, Power.FromValue(2f)),
+    new HealingCard(Chance.Always, Power.FromValue(2f)),
+    new HealingCard(Chance.Always, Power.FromValue(2f)),
+    new HealingCard(Chance.Always, Power.FromValue(2f)),
+    new HealingCard(Chance.Always, Power.FromValue(2f)),
+    new HealingCard(Chance.Always, Power.FromValue(2f)),
+    new HealingCard(Chance.Always, Power.FromValue(2f)),
+    new HealingCard(Chance.Always, Power.FromValue(2f)),
+    new HealingCard(Chance.Always, Power.FromValue(2f)),
+    new HealingCard(Chance.Always, Power.FromValue(2f)),
+
+};
 
 var battleStrategyFactory = app.Services.GetService<IBattleStrategyFactory>();
 var visitor = new Visitor();
 for (int i = 0; i < 1; i++)
 {
-    var conan = Warrior.Create("Conan", SphereBase.BlueSky, Level.FromNumber(1), cards2);
+    var conan = Warrior.Create("Conan", SphereBase.BlueSky, Level.FromNumber(1), conanCards);
     var brutus = Warrior.Create("Brutus", SphereBase.BlueSky, Level.FromNumber(1), brutusCards);
 
     var battleStrategy = battleStrategyFactory!.SelectBy(conan.CurrentSphere);

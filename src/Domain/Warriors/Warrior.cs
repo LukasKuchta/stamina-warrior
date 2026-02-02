@@ -29,11 +29,11 @@ public sealed class Warrior : EntityBase, IAgregationRoot
 
     private DeckOfCards DeckOfCards { get; }
 
-    public string Name { get;  }
+    public string Name { get; }
 
-    public SphereBase CurrentSphere { get;  }
+    public SphereBase CurrentSphere { get; }
 
-    public Level Level { get;  }
+    public Level Level { get; }
 
     public int Health { get; private set; }
 
@@ -54,7 +54,7 @@ public sealed class Warrior : EntityBase, IAgregationRoot
         Level level,
         IEnumerable<MagicCardBase> cards)
     {
-        return new Warrior(id, name, currentSphere, level, DeckOfCards.FromList(cards.ToList()));
+        return new Warrior(id, name, currentSphere, level, DeckOfCards.FromList(cards));
     }
 
     public static Warrior Create(
@@ -63,7 +63,7 @@ public sealed class Warrior : EntityBase, IAgregationRoot
      Level level,
      IEnumerable<MagicCardBase> cards)
     {
-        return new Warrior(WarriorId.New(), name, currentSphere, level, DeckOfCards.FromList(cards.ToList()));
+        return Create(WarriorId.New(), name, currentSphere, level, cards);
     }
 
     internal void StealCard(int cardIndex, Warrior oponent)
@@ -120,10 +120,5 @@ public sealed class Warrior : EntityBase, IAgregationRoot
 
         // dont reset the curse after applying
         Health -= (int)(Health * Course.Value);
-    }
-
-    internal void AddCard(ThornDamageCard selfDamageCard)
-    {
-        DeckOfCards.Add(selfDamageCard);
-    }
+    }    
 }

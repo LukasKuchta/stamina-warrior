@@ -50,20 +50,9 @@ internal sealed record DeckOfCards : ValueObjectBase
         _cards.Add(card);
     }
 
-    public DrawResult TryToDrawPoisonedCard()
-    {
-        var poisonedCard = _cards.FirstOrDefault(card => card is PoisonCard);
-        if (poisonedCard is not null)
-        {
-            return DrawResult.Create(poisonedCard);
-        }
-
-        return DrawResult.None;
-    }
-
     public static DeckOfCards Creeate()
     {
-        return new DeckOfCards(new List<MagicCardBase>());
+        return FromList(new List<MagicCardBase>(0));
     }
 
     public static DeckOfCards FromList(IEnumerable<MagicCardBase> cards)
