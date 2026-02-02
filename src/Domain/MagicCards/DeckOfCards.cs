@@ -1,5 +1,4 @@
-﻿
-using Domain.MagicCards.Cards;
+﻿using Domain.MagicCards.Cards;
 using Domain.MagicCards.Rules;
 using Domain.Shared;
 using System.Collections.Generic;
@@ -67,7 +66,7 @@ internal sealed record DeckOfCards : ValueObjectBase
         return new DeckOfCards(new List<MagicCardBase>());
     }
 
-    public static DeckOfCards FromList(IList<MagicCardBase> cards)
+    public static DeckOfCards FromList(IEnumerable<MagicCardBase> cards)
     {
         return new DeckOfCards(cards.ToList());
     }

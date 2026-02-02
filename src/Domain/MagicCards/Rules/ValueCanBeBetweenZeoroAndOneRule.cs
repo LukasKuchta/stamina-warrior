@@ -2,11 +2,11 @@
 using Domain.Shared;
 
 namespace Domain.MagicCards.Rules;
-internal sealed class ChanceCanBeBetweenZeoroAndOneRule : IBusinessRule
+internal sealed class ValueCanBeBetweenZeoroAndOneRule : IBusinessRule
 {
     private readonly float _chance;
 
-    internal ChanceCanBeBetweenZeoroAndOneRule(float chance)
+    internal ValueCanBeBetweenZeoroAndOneRule(float chance)
     {
         _chance = chance;
     }

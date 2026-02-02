@@ -26,9 +26,9 @@ public sealed record Chance : ValueObjectBase
         return this == Always;
     }
 
-    public static Chance FromPercentage(float value)
+    public static Chance FromValue(float value)
     {
-        CheckRule(new ChanceCanBeBetweenZeoroAndOneRule(value));
+        CheckRule(new ValueCanBeBetweenZeoroAndOneRule(value));
 
         return new Chance(value);
     }  

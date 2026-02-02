@@ -1,4 +1,5 @@
-﻿using Domain.Shared;
+﻿using System.Collections.ObjectModel;
+using Domain.Shared;
 using Domain.Warriors;
 
 namespace Domain.Battles.Spheres;
@@ -20,6 +21,8 @@ public abstract record SphereBase : ValueObjectBase
     public int Difficulty { get; }
     public float HitRatio { get; }
 
-    public static IReadOnlyCollection<SphereBase> All { get; } = [BlueSky, Betweenworld, Deepvault];
+    private static readonly IReadOnlyCollection<SphereBase> _all = Array.AsReadOnly([BlueSky, Betweenworld, Deepvault]);
+
+    public static IReadOnlyCollection<SphereBase> All => _all;
 }
 

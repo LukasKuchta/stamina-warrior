@@ -181,7 +181,7 @@ namespace Domain.MagicCards
         public float Value { get; }
         public bool IsAlways() { }
         public bool IsNone() { }
-        public static Domain.MagicCards.Chance FromPercentage(float value) { }
+        public static Domain.MagicCards.Chance FromValue(float value) { }
     }
     public sealed class DrawResult : System.IEquatable<Domain.MagicCards.DrawResult>
     {
