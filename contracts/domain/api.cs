@@ -1,16 +1,33 @@
 [assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v10.0", FrameworkDisplayName=".NET 10.0")]
 namespace Domain.Battles
 {
+    public sealed class AttackerAndOpponentCannotBeTheSameRule : Domain.Shared.IBusinessRule
+    {
+        public string Message { get; }
+        public bool IsBroken() { }
+    }
     public sealed class BattleContext : Domain.Shared.ValueObjectBase, System.IEquatable<Domain.Battles.BattleContext>
     {
-        public BattleContext(Domain.Warriors.Warrior Attacker, Domain.Warriors.Warrior Opponent, int RoundsCount) { }
-        public Domain.Warriors.Warrior Attacker { get; init; }
-        public Domain.Warriors.Warrior Opponent { get; init; }
-        public int RoundsCount { get; init; }
+        public Domain.Warriors.Warrior Attacker { get; }
+        public Domain.Warriors.Warrior Opponent { get; }
+        public int RoundsCount { get; }
+        public static Domain.Battles.BattleContext Create(Domain.Warriors.Warrior attacker, Domain.Warriors.Warrior opponent, int roundsCount) { }
     }
     public sealed class BattleResult
     {
         public System.Collections.Immutable.ImmutableArray<Domain.Battles.Events.IBattleEvent> BattleEvents { get; }
+    }
+    public sealed class BattleStrategyFactory : Domain.Battles.IBattleStrategyFactory
+    {
+        public BattleStrategyFactory(System.Collections.Generic.IEnumerable<Domain.Battles.IBattleStrategy> strategies) { }
+        public Domain.Battles.IBattleStrategy SelectBy(Domain.Battles.Spheres.SphereBase sphere) { }
+    }
+    public sealed class FightDecisionSource : Domain.Battles.IFightDecisionSource
+    {
+        public FightDecisionSource(Domain.RandomSources.IRandomSource chanceService) { }
+        public int PickBaseDamage(int maxDamage) { }
+        public int PickCardIndex(int maxCardIndex) { }
+        public bool TryActivate(Domain.MagicCards.Chance activationChance) { }
     }
     public interface IBattleEventVisitor
     {
@@ -39,6 +56,11 @@ namespace Domain.Battles
         int PickBaseDamage(int maxDamage);
         int PickCardIndex(int maxCardIndex);
         bool TryActivate(Domain.MagicCards.Chance activationChance);
+    }
+    public sealed class RoundCannotBeLowerOrEqualZeroRule : Domain.Shared.IBusinessRule
+    {
+        public string Message { get; }
+        public bool IsBroken() { }
     }
 }
 namespace Domain.Battles.Events
@@ -91,7 +113,7 @@ namespace Domain.Battles.Events
     }
     public sealed class WarriorDied : Domain.Battles.Events.IBattleEvent, System.IEquatable<Domain.Battles.Events.WarriorDied>
     {
-        public Domain.Battles.Events.WarrirorStat Dead { get; }
+        public Domain.Battles.Events.WarrirorStat DeadMan { get; }
         public Domain.Battles.Events.WarrirorStat Survivor { get; }
         public void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
     }
@@ -101,6 +123,14 @@ namespace Domain.Battles.Events
         public int MaxDamage { get; }
         public string Name { get; }
         public override string ToString() { }
+    }
+}
+namespace Domain.Battles.Rules
+{
+    public sealed class AttackerAndOpponentSpehereCheckRule : Domain.Shared.IBusinessRule, System.IEquatable<Domain.Battles.Rules.AttackerAndOpponentSpehereCheckRule>
+    {
+        public string Message { get; }
+        public bool IsBroken() { }
     }
 }
 namespace Domain.Battles.Spheres
@@ -122,6 +152,11 @@ namespace Domain.Battles.Spheres
 }
 namespace Domain.Battles.Strategies
 {
+    public sealed class BattleEndEventBuilder : Domain.Battles.Strategies.IBattleEndEventBuilder
+    {
+        public BattleEndEventBuilder() { }
+        public Domain.Battles.Events.IBattleEvent? TryBuildEndEvent(Domain.Battles.BattleContext ctx, bool isLastRound) { }
+    }
     public abstract class BattleStrategyBase<TSphereType> : Domain.Battles.IBattleStrategy, Domain.Battles.IBattleStrategy<TSphereType>
         where TSphereType : Domain.Battles.Spheres.SphereBase
     {
@@ -131,8 +166,12 @@ namespace Domain.Battles.Strategies
     }
     public sealed class BlueSkyBattleStrategy : Domain.Battles.Strategies.BattleStrategyBase<Domain.Battles.Spheres.BlueSkysphere>
     {
-        public BlueSkyBattleStrategy(Domain.MagicCards.IMagicCardStrategyFactory magicCardStrategy, Domain.Battles.IFightDecisionSource decisionSource) { }
+        public BlueSkyBattleStrategy(Domain.MagicCards.IMagicCardStrategyFactory magicCardStrategy, Domain.Battles.IFightDecisionSource decisionSource, Domain.Battles.Strategies.IBattleEndEventBuilder battleEndEventBuilder) { }
         public override Domain.Battles.BattleResult StartBattle(Domain.Battles.BattleContext battleContext) { }
+    }
+    public interface IBattleEndEventBuilder
+    {
+        Domain.Battles.Events.IBattleEvent? TryBuildEndEvent(Domain.Battles.BattleContext ctx, bool isLastRound);
     }
 }
 namespace Domain
@@ -233,6 +272,11 @@ namespace Domain.MagicCards
 }
 namespace Domain.MagicCards.Strategies
 {
+    public sealed class CoursedCardStrategy : Domain.MagicCards.MagicCardStrategyBase<Domain.MagicCards.Cards.CoursedCard>
+    {
+        public CoursedCardStrategy() { }
+        public override void ApplyMagic(Domain.Warriors.Warrior cardHolder, Domain.Warriors.Warrior oponent, Domain.MagicCards.Cards.CoursedCard card) { }
+    }
     public sealed class FightingCardStrategy : Domain.MagicCards.MagicCardStrategyBase<Domain.MagicCards.Cards.FightingCard>
     {
         public FightingCardStrategy() { }
@@ -311,6 +355,7 @@ namespace Domain.Warriors
     }
     public sealed class Warrior : Domain.Shared.EntityBase, Domain.Shared.IAgregationRoot
     {
+        public Domain.MagicCards.Power Course { get; }
         public Domain.Battles.Spheres.SphereBase CurrentSphere { get; }
         public int Health { get; }
         public Domain.Warriors.WarriorId Id { get; }

@@ -12,19 +12,14 @@ namespace Domain.Battles.Strategies;
 
 public sealed class BlueSkyBattleStrategy(
 IMagicCardStrategyFactory magicCardStrategy,
-IFightDecisionSource decisionSource) : BattleStrategyBase<BlueSkysphere>
+IFightDecisionSource decisionSource,
+IBattleEndEventBuilder battleEndEventBuilder) : BattleStrategyBase<BlueSkysphere>
 {
     private const int CardDrawAttemptRangeMax = 15;
     private readonly List<IBattleEvent> _battleEvents = [];
 
     public override BattleResult StartBattle(BattleContext battleContext)
-    {
-        ArgumentNullException.ThrowIfNull(battleContext);
-
-        battleContext.CheckIfCompetitiorsAreWithinTheSameSphere();
-
-        _battleEvents.Clear();
-
+    {        
         RecordEvent(new BattleStarted(battleContext.Attacker, battleContext.Opponent));
         for (int round = 0; round < battleContext.RoundsCount; round++)
         {
@@ -35,7 +30,7 @@ IFightDecisionSource decisionSource) : BattleStrategyBase<BlueSkysphere>
 
             bool isLastRound = battleContext.RoundsCount == round + 1;
 
-            if (TryBuildEndEvent(battleContext, isLastRound) is { } evt)
+            if (battleEndEventBuilder.TryBuildEndEvent(battleContext, isLastRound) is { } evt)
             {
                 RecordEvent(evt);
                 return Emit();
@@ -45,36 +40,6 @@ IFightDecisionSource decisionSource) : BattleStrategyBase<BlueSkysphere>
         throw new InvalidOperationException("Battle did not produce an end event.");
     }
 
-    private IBattleEvent? TryBuildEndEvent(BattleContext ctx, bool isLastRound)
-    {
-        if (ctx.CheckDoubleKnockout())
-        {
-            return new DoubleKnockoutOccurred(ctx.Attacker, ctx.Opponent);
-        }
-
-        if (ctx.TryGetDeath(out var outcome))
-        {
-            return new WarriorDied(outcome.Dead, outcome.Survivor);
-        }
-
-        if (!isLastRound)
-        {
-            return null;
-        }
-
-        if (ctx.Attacker.Health > ctx.Opponent.Health)
-        {
-            return new BattleFinished(ctx.Attacker, ctx.Opponent);
-        }
-
-        if (ctx.Attacker.Health < ctx.Opponent.Health)
-        {
-            return new BattleFinished(ctx.Opponent, ctx.Attacker);
-        }
-
-        return new BattleFinishedTied(ctx.Attacker, ctx.Opponent);
-    }
-
     private void RecordEvent(IBattleEvent @event)
     {
         _battleEvents.Add(@event);
@@ -82,7 +47,7 @@ IFightDecisionSource decisionSource) : BattleStrategyBase<BlueSkysphere>
 
     private BattleResult Emit()
     {
-        var events = ImmutableArray.CreateRange(_battleEvents);        
+        var events = ImmutableArray.CreateRange(_battleEvents);
         _battleEvents.Clear();
         return new BattleResult(events);
     }
@@ -107,5 +72,43 @@ IFightDecisionSource decisionSource) : BattleStrategyBase<BlueSkysphere>
         attacker.CourseBites();
 
         _battleEvents.Add(new AttackLanded(attacker, oponent, damage));
+    }
+}
+
+public interface IBattleEndEventBuilder
+{
+    IBattleEvent? TryBuildEndEvent(BattleContext ctx, bool isLastRound);
+}
+
+public sealed class BattleEndEventBuilder : IBattleEndEventBuilder
+{
+    public IBattleEvent? TryBuildEndEvent(BattleContext ctx, bool isLastRound)
+    {
+        if (ctx.TryGetDeath(out var _) == DeathState.Double)
+        {
+            return new DoubleKnockoutOccurred(ctx.Attacker, ctx.Opponent);
+        }
+
+        if (ctx.TryGetDeath(out var outcome) == DeathState.Single)
+        {
+            return new WarriorDied(outcome.Dead, outcome.Survivor);
+        }
+
+        if (!isLastRound)
+        {
+            return null;
+        }
+
+        if (ctx.Attacker.Health > ctx.Opponent.Health)
+        {
+            return new BattleFinished(ctx.Attacker, ctx.Opponent);
+        }
+
+        if (ctx.Attacker.Health < ctx.Opponent.Health)
+        {
+            return new BattleFinished(ctx.Opponent, ctx.Attacker);
+        }
+
+        return new BattleFinishedTied(ctx.Attacker, ctx.Opponent);
     }
 }

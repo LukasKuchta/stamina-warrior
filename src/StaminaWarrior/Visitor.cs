@@ -20,7 +20,7 @@ internal sealed class Visitor : IBattleEventVisitor
 
     public void Visit(WarriorDied e)
     {
-        Console.WriteLine($"{e.Dead} has died! {e.Survivor} is the winner!");
+        Console.WriteLine($"{e.DeadMan} has died! {e.Survivor} is the winner!");
     }
 
     public void Visit(BattleFinished e)

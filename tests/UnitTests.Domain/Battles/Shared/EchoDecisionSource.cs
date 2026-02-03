@@ -4,7 +4,7 @@ using System.Text;
 using Domain.Battles;
 using Domain.MagicCards;
 
-namespace Domain.UnitTests.Battles;
+namespace Domain.UnitTests.Battles.Shared;
 
 internal sealed class EchoDecisionSource(int cardIndex) : IFightDecisionSource
 {

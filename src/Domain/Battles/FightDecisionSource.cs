@@ -3,7 +3,7 @@ using Domain.RandomSources;
 
 namespace Domain.Battles;
 
-internal sealed class FightDecisionSource(IRandomSource chanceService) : IFightDecisionSource
+public sealed class FightDecisionSource(IRandomSource chanceService) : IFightDecisionSource
 {    
     public int PickBaseDamage(int maxDamage)
     {

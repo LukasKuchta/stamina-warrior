@@ -54,7 +54,7 @@ for (int i = 0; i < 1; i++)
 
     var battleStrategy = battleStrategyFactory!.SelectBy(conan.CurrentSphere);
 
-    BattleResult battleResult = battleStrategy.StartBattle(new BattleContext(conan, brutus, 20));
+    BattleResult battleResult = battleStrategy.StartBattle(BattleContext.Create(conan, brutus, 20));
     
     foreach (var e in battleResult.BattleEvents)
     {

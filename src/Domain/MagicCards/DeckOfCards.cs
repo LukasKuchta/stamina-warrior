@@ -51,7 +51,7 @@ internal sealed record DeckOfCards : ValueObjectBase
     }
 
     public static DeckOfCards Creeate()
-    {
+    {        
         return FromList(new List<MagicCardBase>(0));
     }
 

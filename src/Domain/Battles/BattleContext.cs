@@ -5,20 +5,27 @@ using Domain.Warriors;
 
 namespace Domain.Battles;
 
-public sealed record BattleContext(
-    Warrior Attacker,
-    Warrior Opponent,
-    int RoundsCount) : ValueObjectBase
+internal enum DeathState
 {
-    internal void CheckIfCompetitiorsAreWithinTheSameSphere()
-    {
-        ArgumentNullException.ThrowIfNull(Attacker);
-        ArgumentNullException.ThrowIfNull(Opponent);
+    None,
+    Single,
+    Double
+}
 
-        CheckRule(new CheckIfCompetitiorsAreWithinTheSameSphereRule(this));
+public sealed record BattleContext : ValueObjectBase
+{
+    private BattleContext(Warrior attacker, Warrior opponent, int roundsCount)
+    {
+        Attacker = attacker;
+        Opponent = opponent;
+        RoundsCount = roundsCount;
     }
 
-    internal bool TryGetDeath(out (Warrior Dead, Warrior Survivor) outcome)
+    public Warrior Attacker { get; }
+    public Warrior Opponent { get; }
+    public int RoundsCount { get; }
+
+    internal DeathState TryGetDeath(out (Warrior Dead, Warrior Survivor) outcome)
     {
         outcome = default;
 
@@ -27,27 +34,63 @@ public sealed record BattleContext(
 
         if (!isAttackerDead && !isOponentDead)
         {
-            return false;
+            return DeathState.None;
         }
 
         if (isAttackerDead && isOponentDead)
         {
-            throw new InvalidOperationException("Both warriors are dead (tie?)");
+            return DeathState.Double;
         }
 
         outcome = isAttackerDead
             ? (Attacker, Opponent)
             : (Opponent, Attacker);
 
-        return true;
-    }
+        return DeathState.Single;
+    }  
 
-    internal bool CheckDoubleKnockout()
+    public static BattleContext Create(Warrior attacker, Warrior opponent, int roundsCount)
     {
-        return Attacker.Health <= 0 && Opponent.Health <= 0;
-    }
+        CheckRule(new RoundCannotBeLowerOrEqualZeroRule(roundsCount));
+        CheckRule(new AttackerAndOpponentCannotBeTheSameRule(attacker, opponent));
+        CheckRule(new AttackerAndOpponentSpehereCheckRule(attacker, opponent));
 
+        return new BattleContext(attacker, opponent, roundsCount);
+    }
 
 }
 
+public sealed class AttackerAndOpponentCannotBeTheSameRule : IBusinessRule
+{
+    private readonly Warrior _attacker;
+    private readonly Warrior _opponent;
 
+    internal AttackerAndOpponentCannotBeTheSameRule(Warrior attacker, Warrior opponent)
+    {
+        _attacker = attacker;
+        _opponent = opponent;
+    }
+
+    public string Message => "Attacker and oponnet cannot be the same!";
+
+    public bool IsBroken()
+    {
+        return _attacker.Equals(_opponent);
+    }
+}
+
+public sealed class RoundCannotBeLowerOrEqualZeroRule : IBusinessRule
+{
+    private readonly int _roundsCount;
+    internal RoundCannotBeLowerOrEqualZeroRule(int roundsCount)
+    {
+        _roundsCount = roundsCount;
+    }
+
+    public string Message => "Round count cannot be zeor or negative!";
+
+    public bool IsBroken()
+    {
+        return _roundsCount <= 0;
+    }
+}

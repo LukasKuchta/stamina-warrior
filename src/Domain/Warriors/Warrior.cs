@@ -37,7 +37,7 @@ public sealed class Warrior : EntityBase, IAgregationRoot
 
     public int Health { get; private set; }
 
-    private Power Course { get; set; }
+    public Power Course { get; private set; }
 
     public int MaxDamage => (int)(Strength * (BoostedDamage.NoPower ? 1 : BoostedDamage.Value));
 

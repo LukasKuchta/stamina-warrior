@@ -4,9 +4,9 @@ namespace Domain.Battles.Events;
 
 public sealed record BattleStarted : IBattleEvent
 {
-    internal BattleStarted(Warrior Attacker, Warrior Opponent)
+    internal BattleStarted(Warrior attacker, Warrior Opponent)
     {
-        this.Attacker = new WarrirorStat(Attacker.Name, Attacker.Health, Attacker.MaxDamage);
+        Attacker = new WarrirorStat(attacker.Name, attacker.Health, attacker.MaxDamage);
         Oponent = new WarrirorStat(Opponent.Name, Opponent.Health, Opponent.MaxDamage);
     }
 
