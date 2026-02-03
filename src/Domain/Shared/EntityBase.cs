@@ -8,12 +8,10 @@ public record DomainEventBase;
 
 public abstract class EntityBase
 {
-    private readonly List<DomainEventBase> _domainEvents = new List<DomainEventBase>();
-    private readonly IReadOnlyList<DomainEventBase> _domainEventsView;
+    private readonly List<DomainEventBase> _domainEvents = new List<DomainEventBase>();    
 
     protected EntityBase()
-    {
-        _domainEventsView = _domainEvents.AsReadOnly();
+    {        
     }
 
     protected void AddDomainEvent(DomainEventBase @event)
@@ -31,9 +29,7 @@ public abstract class EntityBase
         var snapshot = _domainEvents.ToImmutableArray();
         _domainEvents.Clear();
         return snapshot;
-    }
-
-    internal IReadOnlyList<DomainEventBase> DomainEvents => _domainEventsView;
+    }    
 
     protected static void CheckRule(IBusinessRule rule)
     {

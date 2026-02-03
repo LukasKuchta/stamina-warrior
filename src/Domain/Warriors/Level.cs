@@ -10,19 +10,7 @@ public sealed record Level : ValueObjectBase
     private Level(int value)
     {
         Value = value;
-    }    
-
-    internal Level Up(Level current)
-    {
-        // add invariants check
-        return FromNumber(current.Value + 1);
-    }
-
-    internal Level Down(Level current)
-    {
-        // add invariants check
-        return FromNumber(current.Value - 1);
-    }
+    }     
 
     public static Level FromNumber(int value)
     {

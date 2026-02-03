@@ -49,8 +49,8 @@ var battleStrategyFactory = app.Services.GetService<IBattleStrategyFactory>();
 var visitor = new Visitor();
 for (int i = 0; i < 1; i++)
 {
-    var conan = Warrior.Create("Conan", SphereBase.BlueSky, Level.FromNumber(1), conanCards);
-    var brutus = Warrior.Create("Brutus", SphereBase.BlueSky, Level.FromNumber(1), brutusCards);
+    var conan = Warrior.Create(WarriorId.New(),"Conan", SphereBase.BlueSky, Level.FromNumber(1), conanCards);
+    var brutus = Warrior.Create(WarriorId.New(),"Brutus", SphereBase.BlueSky, Level.FromNumber(1), brutusCards);
 
     var battleStrategy = battleStrategyFactory!.SelectBy(conan.CurrentSphere);
 

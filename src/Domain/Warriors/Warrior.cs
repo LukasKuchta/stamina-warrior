@@ -18,7 +18,7 @@ public sealed class Warrior : EntityBase, IAgregationRoot
         Level = level;
         Health = 100 * Level.Value;
         DeckOfCards = deckOfCards;
-        BoostedDamage = Power.Zero;
+        //BoostedDamage = ;
         Course = Power.Zero;
         Strength = Health * CurrentSphere.HitRatio;
     }
@@ -39,9 +39,9 @@ public sealed class Warrior : EntityBase, IAgregationRoot
 
     public Power Course { get; private set; }
 
-    public int MaxDamage => (int)(Strength * (BoostedDamage.NoPower ? 1 : BoostedDamage.Value));
+    public int MaxDamage => (int)(Strength * (BoostedDamage == null ? 1 : BoostedDamage.Value));
 
-    private Power BoostedDamage { get; set; }
+    private Power? BoostedDamage { get; set; }
 
     public bool IsDeckOfCardsEmpty => DeckOfCards.NotEmpty;
 
@@ -57,19 +57,8 @@ public sealed class Warrior : EntityBase, IAgregationRoot
         return new Warrior(id, name, currentSphere, level, DeckOfCards.FromList(cards));
     }
 
-    public static Warrior Create(
-     string name,
-     SphereBase currentSphere,
-     Level level,
-     IEnumerable<MagicCardBase> cards)
-    {
-        return Create(WarriorId.New(), name, currentSphere, level, cards);
-    }
-
     internal void StealCard(int cardIndex, Warrior oponent)
     {
-        ArgumentNullException.ThrowIfNull(oponent);
-
         DrawResult drawResult = oponent.TryToDrawCard(cardIndex);
 
         if (drawResult.Card is { } card)
@@ -97,18 +86,29 @@ public sealed class Warrior : EntityBase, IAgregationRoot
             Health = 0;
         }
 
+        int health = Health;
         Health = (int)(Health * healPower.Value);
+
+        AddDomainEvent(new WarriorHealed(health, Health));
     }
 
     internal void BoostDamage(Power power)
     {
+        AddDomainEvent(new DamageBoosted(MaxDamage, power.Value));
+
         BoostedDamage = power;
     }
 
     internal void Hit(int damage, Warrior oponent)
     {
         oponent.Health -= damage;
-        BoostedDamage = Power.Zero;
+        BoostedDamage = null;
+    }
+
+    internal void SelfHit(int damage)
+    {
+        Health -= damage;
+        BoostedDamage = null;
     }
 
     internal void CourseBites()
@@ -120,5 +120,5 @@ public sealed class Warrior : EntityBase, IAgregationRoot
 
         // dont reset the curse after applying
         Health -= (int)(Health * Course.Value);
-    }    
+    }
 }

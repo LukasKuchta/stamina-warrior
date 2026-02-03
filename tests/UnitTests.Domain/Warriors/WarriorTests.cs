@@ -11,7 +11,7 @@ namespace Domain.UnitTests.Warriors;
 public class WarriorTests
 {
     [Fact]
-    public void CreateWarrior_IsSuccessful()
+    public void CreateWarrior_ShouldCreate_Conan()
     {
         WarriorId warriorId = WarriorId.New();
         string name = "Barbar Conan";
@@ -23,7 +23,21 @@ public class WarriorTests
 
         barbarConan.Id.ShouldBe(warriorId);
         barbarConan.CurrentSphere.ShouldBe(sphere);
-        barbarConan.Level.ShouldBe(level);        
-        barbarConan.Name.ShouldBe(name);        
+        barbarConan.Level.ShouldBe(level);
+        barbarConan.Name.ShouldBe(name);
+    }
+
+    [Fact]
+    public void CreateWarrior_ShouldHaveHealth_200()
+    {
+        var conan = WarriorHelper.CreateBlueSky("Conan", 2);
+        conan.Health.ShouldBe(200);
+    }
+
+    [Fact]
+    public void CreateWarrior_ShouldHaveMaxDamage_50()
+    {        
+        var conan = WarriorHelper.CreateBlueSky("Conan", 2);        
+        conan.MaxDamage.ShouldBe(50);
     }
 }

@@ -2,7 +2,7 @@
 
 public sealed record StealingCard : MagicCardBase
 {
-    internal StealingCard(Chance activationChance) : base("Stealing card", activationChance)
+    public StealingCard(Chance activationChance) : base("Stealing card", activationChance)
     {
     } 
 }

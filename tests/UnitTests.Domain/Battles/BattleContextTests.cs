@@ -15,7 +15,7 @@ using Shouldly;
 
 namespace Domain.UnitTests.Battles;
 
-public class BattleCVontextTests
+public class BattleContextTests
 {
     [Fact]
     public void CreateBattleContext_WithZeroRounds_ShouldViolateRoundCannotBeLowerOrEqualZeroRule()

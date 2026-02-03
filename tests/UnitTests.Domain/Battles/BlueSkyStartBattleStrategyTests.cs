@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Reflection.Emit;
 using System.Text;
 using System.Xml.Linq;
@@ -13,6 +14,7 @@ using Domain.MagicCards.Strategies;
 using Domain.Shared;
 using Domain.UnitTests.Battles.Shared;
 using Domain.Warriors;
+using Domain.Warriors.Events;
 using NSubstitute;
 using Shouldly;
 
@@ -192,6 +194,41 @@ public class BlueSkyStrategBattleResultsyTests
     }
 
     [Fact]
+    public void StartBattle_ConanShouldDrawn_StealingCard()
+    {
+        var stealingCard = new StealingCard(Chance.Always);
+        var fightingCard = new FightingCard(Chance.Always, Power.FromValue(2));
+
+        var conan = WarriorHelper.CreateBlueSky("Connan", 1, [stealingCard]);
+        var brutus = WarriorHelper.CreateBlueSky("Brutus", 3, [fightingCard]);
+
+        var blueSkyStrategy = new BlueSkyBattleStrategy(
+            new MagicCardStrategyFactory(
+                [
+                    new StealingCardStrategy(new FakeIRandomSource()),
+                    new FightingCardStrategy()
+                ]),
+            new EchoDecisionSource(0),
+            new BattleEndEventBuilder());
+
+        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 2));
+
+        battleResult.BattleEvents.ShouldNotBeEmpty();
+        var drawn1 = battleResult.BattleEvents[2].ShouldBeOfType<CardDrawn>();
+        drawn1.CardName.ShouldBe(stealingCard.Name);
+        drawn1.CardHolder.ShouldBe(conan.Name);
+
+        var drawn2 = battleResult.BattleEvents[6].ShouldBeOfType<CardDrawn>();
+        drawn2.CardName.ShouldBe(fightingCard.Name);
+        drawn2.CardHolder.ShouldBe(conan.Name);
+
+        ImmutableArray<DomainEventBase> events = conan.DequeueDomainEvents();
+        events.Length.ShouldBe(2);
+        var card = events[0].ShouldBeOfType<CardStolen>();
+        card.CardName.ShouldBe(fightingCard.Name);
+    }
+
+    [Fact]
     public void StartBattle_BrutusShouldBeKilledByCourse()
     {
         var coursedCard = new CoursedCard(Chance.Always, Power.FromValue(2));
@@ -298,6 +335,62 @@ public class BlueSkyStrategBattleResultsyTests
         fightingCardDrawn.CardName.ShouldBe(fightingCard.Name);
         fightingCardDrawn.CardHolder.ShouldBe(brutus.Name);
     }
+
+    [Fact]
+    public void StartBattle_BrutusDamage_Boosted()
+    {
+        var fightingCard = new FightingCard(Chance.Always, Power.FromValue(2));
+        var conan = WarriorHelper.CreateBlueSky("Connan", 3);
+        var brutus = WarriorHelper.CreateBlueSky("Brutus", 3, [fightingCard]);
+
+        var blueSkyStrategy = new BlueSkyBattleStrategy(
+            new MagicCardStrategyFactory(
+                [
+                    new FightingCardStrategy()
+                ]),
+            new EchoDecisionSource(0),
+            new BattleEndEventBuilder());
+
+        var maxDamage = brutus.MaxDamage;
+        _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+
+        ImmutableArray<DomainEventBase> events = brutus.DequeueDomainEvents();
+        events.Length.ShouldBe(1);
+
+        var damageBoosted = events[0].ShouldBeOfType<DamageBoosted>();
+        damageBoosted.DamageBeforeBoost.ShouldBe(maxDamage);
+        damageBoosted.BoostPower.ShouldBe(fightingCard.Power.Value);
+    }
+
+    [Fact]
+    public void StartBattle_BrutusHealed()
+    {
+        var fhealingCard = new HealingCard(Chance.Always, Power.FromValue(2));
+        var fightingCard = new FightingCard(Chance.Always, Power.FromValue(0));
+
+        var conan = WarriorHelper.CreateBlueSky("Connan", 3, [fightingCard]);
+        var brutus = WarriorHelper.CreateBlueSky("Brutus", 3, [fhealingCard]);
+
+        var blueSkyStrategy = new BlueSkyBattleStrategy(
+            new MagicCardStrategyFactory(
+                [
+                    new HealingCardStrategy(),
+                    new FightingCardStrategy()
+                ]),
+            new EchoDecisionSource(0),
+            new BattleEndEventBuilder());
+
+        var currentHealth = brutus.Health;
+        _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+
+        ImmutableArray<DomainEventBase> events = brutus.DequeueDomainEvents();
+        events.Length.ShouldBe(1);
+
+        var evnt = events[0].ShouldBeOfType<WarriorHealed>();
+        evnt.OldValue.ShouldBe(currentHealth);
+        evnt.NewValue.ShouldBe((int)(currentHealth * fhealingCard.Power.Value));
+    }
+
 
     [Fact]
     public void StartBattle_FirstEventShouldBe_BattleStarted()

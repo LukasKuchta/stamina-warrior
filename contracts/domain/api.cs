@@ -203,7 +203,10 @@ namespace Domain.MagicCards.Cards
         public PoisonCard(Domain.MagicCards.Chance activationChance) { }
         public Domain.MagicCards.Power Power { get; }
     }
-    public sealed class StealingCard : Domain.MagicCards.MagicCardBase, System.IEquatable<Domain.MagicCards.Cards.StealingCard> { }
+    public sealed class StealingCard : Domain.MagicCards.MagicCardBase, System.IEquatable<Domain.MagicCards.Cards.StealingCard>
+    {
+        public StealingCard(Domain.MagicCards.Chance activationChance) { }
+    }
     public sealed class ThornDamageCard : Domain.MagicCards.MagicCardBase, System.IEquatable<Domain.MagicCards.Cards.ThornDamageCard>
     {
         public ThornDamageCard(Domain.MagicCards.Chance activationChance, Domain.MagicCards.Power power) { }
@@ -345,6 +348,23 @@ namespace Domain.Warriors.Events
         public CardStolen(string CardName) { }
         public string CardName { get; init; }
     }
+    public sealed class DamageBoosted : Domain.Shared.DomainEventBase, System.IEquatable<Domain.Warriors.Events.DamageBoosted>
+    {
+        public DamageBoosted(int DamageBeforeBoost, float BoostPower) { }
+        public float BoostPower { get; init; }
+        public int DamageBeforeBoost { get; init; }
+    }
+    public sealed class TargetCouirsed : Domain.Shared.DomainEventBase, System.IEquatable<Domain.Warriors.Events.TargetCouirsed>
+    {
+        public TargetCouirsed(int CoursePower) { }
+        public int CoursePower { get; init; }
+    }
+    public sealed class WarriorHealed : Domain.Shared.DomainEventBase, System.IEquatable<Domain.Warriors.Events.WarriorHealed>
+    {
+        public WarriorHealed(int OldValue, int NewValue) { }
+        public int NewValue { get; init; }
+        public int OldValue { get; init; }
+    }
 }
 namespace Domain.Warriors
 {
@@ -364,12 +384,20 @@ namespace Domain.Warriors
         public int MaxDamage { get; }
         public string Name { get; }
         public float Strength { get; }
-        public static Domain.Warriors.Warrior Create(string name, Domain.Battles.Spheres.SphereBase currentSphere, Domain.Warriors.Level level, System.Collections.Generic.IEnumerable<Domain.MagicCards.MagicCardBase> cards) { }
         public static Domain.Warriors.Warrior Create(Domain.Warriors.WarriorId id, string name, Domain.Battles.Spheres.SphereBase currentSphere, Domain.Warriors.Level level, System.Collections.Generic.IEnumerable<Domain.MagicCards.MagicCardBase> cards) { }
     }
     public sealed class WarriorId : System.IEquatable<Domain.Warriors.WarriorId>
     {
         public System.Guid Value { get; }
         public static Domain.Warriors.WarriorId New() { }
+    }
+}
+namespace Domain.Warriors.Rules
+{
+    public sealed class LevelCannotBeNegativeRule : Domain.Shared.IBusinessRule
+    {
+        public LevelCannotBeNegativeRule(int level) { }
+        public string Message { get; }
+        public bool IsBroken() { }
     }
 }
