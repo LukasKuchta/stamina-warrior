@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Domain.Battles.Rules;
 using Domain.MagicCards;
 using Domain.MagicCards.Cards;
 using Domain.MagicCards.Rules;
@@ -21,6 +22,16 @@ public sealed class MagicCardBaseTests
         card.ActivationChance.ShouldBe(Chance.CoinFlip);
         card.Power.Value.ShouldBe(5);
     }
+
+    [Fact]
+    public void HealingCard_ShouldViolate_ZeroPowerWillKillYouRule()
+    {
+        Action act= () => HealingCard.Create(Chance.CoinFlip, Power.Zero);
+        var ex = act.ShouldThrow<BusinessRuleValidationException>();
+        var rule = ex.BrokenRule.ShouldBeOfType<ZeroPowerWiollKillYouRule>();
+        rule.Message.ShouldNotBeNullOrEmpty();
+    }
+
 
     [Fact]
     public void FightingCard_ShouldHave_ValidValues()

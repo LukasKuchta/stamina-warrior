@@ -139,6 +139,12 @@ namespace Domain.Battles.Rules
         public string Message { get; }
         public bool IsBroken() { }
     }
+    public sealed class ZeroPowerWiollKillYouRule : Domain.Shared.IBusinessRule
+    {
+        public ZeroPowerWiollKillYouRule(Domain.MagicCards.Power power) { }
+        public string Message { get; }
+        public bool IsBroken() { }
+    }
 }
 namespace Domain.Battles.Spheres
 {
@@ -204,6 +210,7 @@ namespace Domain.MagicCards.Cards
     {
         public HealingCard(Domain.MagicCards.Chance activationChance, Domain.MagicCards.Power power) { }
         public Domain.MagicCards.Power Power { get; }
+        public static Domain.MagicCards.Cards.HealingCard Create(Domain.MagicCards.Chance activationChance, Domain.MagicCards.Power power) { }
     }
     public sealed class StealingCard : Domain.MagicCards.MagicCardBase, System.IEquatable<Domain.MagicCards.Cards.StealingCard>
     {

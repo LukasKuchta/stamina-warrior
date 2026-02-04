@@ -1,4 +1,6 @@
-﻿namespace Domain.MagicCards.Cards;
+﻿using Domain.Battles.Rules;
+
+namespace Domain.MagicCards.Cards;
 
 public sealed record HealingCard : MagicCardBase
 {
@@ -8,4 +10,11 @@ public sealed record HealingCard : MagicCardBase
     }
 
     public Power Power { get; }
+
+    public static HealingCard Create(Chance activationChance, Power power)
+    {
+        CheckRule(new ZeroPowerWiollKillYouRule(power));
+
+        return new HealingCard(activationChance, power);
+    }
 }
