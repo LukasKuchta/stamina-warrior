@@ -24,6 +24,28 @@ namespace Domain.UnitTests.Battles;
 public class BlueSkyStrategBattleResultsyTests
 {
     [Fact]
+    public void StartBattle_RoundStatsCapture_ShouldHaveValues()
+    {
+        var conan = WarriorHelper.CreateBlueSky("Connan", 1);
+        var brutus = WarriorHelper.CreateBlueSky("Brutus", 1);
+
+        var blueSkyStrategy = CreateBluSkyStrategy();
+
+        var battleResultBase = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+
+        var battleResult = battleResultBase.ShouldBeAssignableTo<BattleResult>();
+
+        battleResult.BattleEvents.ShouldNotBeEmpty();
+        var evt = battleResult.BattleEvents[4].ShouldBeOfType<RoundStatsCaptured>();
+
+        evt.Attacker.Name.ShouldBe(conan.Name);
+        evt.Opponent.Name.ShouldBe(brutus.Name);
+
+        evt.Attacker.Health.ShouldBe(75);
+        evt.Opponent.Health.ShouldBe(75);
+    }
+
+    [Fact]
     public void StartBattle_BattleShouldWin_Connan()
     {
         var conan = WarriorHelper.CreateBlueSky("Connan", 3);
@@ -331,7 +353,7 @@ public class BlueSkyStrategBattleResultsyTests
         drawn1.CardName.ShouldBe(stealingCard.Name);
         drawn1.CardHolder.ShouldBe(conan.Name);
 
-        var drawn2 = battleResult.BattleEvents[6].ShouldBeOfType<CardDrawn>();
+        var drawn2 = battleResult.BattleEvents[7].ShouldBeOfType<CardDrawn>();
         drawn2.CardName.ShouldBe(fightingCard.Name);
         drawn2.CardHolder.ShouldBe(conan.Name);
 
@@ -618,7 +640,7 @@ public class BlueSkyStrategBattleResultsyTests
         var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
 
         battleResult.BattleEvents.ShouldNotBeEmpty();
-        battleResult.BattleEvents.Length.ShouldBe(5);
+        battleResult.BattleEvents.Length.ShouldBe(6);
         var connanAttack = battleResult.BattleEvents[2].ShouldBeOfType<AttackLanded>();
         var brutusAttack = battleResult.BattleEvents[3].ShouldBeOfType<AttackLanded>();
 
@@ -643,8 +665,8 @@ public class BlueSkyStrategBattleResultsyTests
         var battleResult1 = blueSkyStrategy.StartBattle(ctx);
         var battleResult2 = blueSkyStrategy.StartBattle(ctx);
 
-        battleResult1.BattleEvents.Length.ShouldBe(5);
-        battleResult2.BattleEvents.Length.ShouldBe(5);
+        battleResult1.BattleEvents.Length.ShouldBe(6);
+        battleResult2.BattleEvents.Length.ShouldBe(6);
     }
 
     [Fact]
@@ -658,7 +680,7 @@ public class BlueSkyStrategBattleResultsyTests
         var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
 
         battleResult.BattleEvents.ShouldNotBeEmpty();
-        battleResult.BattleEvents.Length.ShouldBe(5);
+        battleResult.BattleEvents.Length.ShouldBe(6);
         var roundStartedEvent = battleResult.BattleEvents[1].ShouldBeOfType<RoundStarted>();
 
         roundStartedEvent.Round.ShouldBe(1);

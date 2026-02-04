@@ -38,6 +38,7 @@ namespace Domain.Battles
         void Visit(Domain.Battles.Events.CardDrawn e);
         void Visit(Domain.Battles.Events.DoubleKnockoutOccurred e);
         void Visit(Domain.Battles.Events.RoundStarted e);
+        void Visit(Domain.Battles.Events.RoundStatsCaptured e);
         void Visit(Domain.Battles.Events.WarriorDied e);
     }
     public interface IBattleStrategy
@@ -109,6 +110,12 @@ namespace Domain.Battles.Events
     public sealed class RoundStarted : Domain.Battles.Events.IBattleEvent, System.IEquatable<Domain.Battles.Events.RoundStarted>
     {
         public int Round { get; }
+        public void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
+    }
+    public sealed class RoundStatsCaptured : Domain.Battles.Events.IBattleEvent, System.IEquatable<Domain.Battles.Events.RoundStatsCaptured>
+    {
+        public Domain.Battles.Events.WarrirorStat Attacker { get; }
+        public Domain.Battles.Events.WarrirorStat Opponent { get; }
         public void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
     }
     public sealed class WarriorDied : Domain.Battles.Events.IBattleEvent, System.IEquatable<Domain.Battles.Events.WarriorDied>

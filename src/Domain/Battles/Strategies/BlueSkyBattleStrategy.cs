@@ -19,7 +19,7 @@ IBattleEndEventBuilder battleEndEventBuilder) : BattleStrategyBase<BlueSkysphere
     private readonly List<IBattleEvent> _battleEvents = [];
 
     public override BattleResult StartBattle(BattleContext battleContext)
-    {        
+    {
         RecordEvent(new BattleStarted(battleContext.Attacker, battleContext.Opponent));
         for (int round = 0; round < battleContext.RoundsCount; round++)
         {
@@ -27,6 +27,8 @@ IBattleEndEventBuilder battleEndEventBuilder) : BattleStrategyBase<BlueSkysphere
 
             Fight(battleContext.Attacker, battleContext.Opponent);
             Fight(battleContext.Opponent, battleContext.Attacker);
+
+            RecordEvent(new RoundStatsCaptured(battleContext.Attacker, battleContext.Opponent));
 
             bool isLastRound = battleContext.RoundsCount == round + 1;
 

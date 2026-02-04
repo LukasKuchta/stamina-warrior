@@ -12,4 +12,5 @@ public interface IBattleEventVisitor
     void Visit(AttackLanded e);
     void Visit(CardDrawn e);    
     void Visit(BattleStarted e);
+    void Visit(RoundStatsCaptured e);    
 }

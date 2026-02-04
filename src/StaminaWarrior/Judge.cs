@@ -1,13 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Text;
 using Domain.Battles;
 using Domain.Battles.Events;
 
 namespace StaminaWarrior;
 
-internal sealed class Visitor : IBattleEventVisitor
+internal sealed class Judge : IBattleEventVisitor
 {
+    public void MakeReport(ImmutableArray<IBattleEvent> battleEvents)
+    {
+        foreach (var e in battleEvents)
+        {
+            e.Accept(this);
+        }
+    }
+
     public void Visit(RoundStarted e)
     {
         Console.WriteLine($"--- Round {e.Round} started ---");
@@ -46,5 +55,10 @@ internal sealed class Visitor : IBattleEventVisitor
     public void Visit(BattleStarted e)
     {
         Console.WriteLine($"Battle started between {e.Attacker} vs {e.Oponent}!");
+    }
+
+    public void Visit(RoundStatsCaptured e)
+    {
+        Console.WriteLine($"{e.Attacker.Name}:[{e.Attacker.Health}] vs {e.Opponent.Name}:[{e.Opponent.Health}]");
     }
 }
