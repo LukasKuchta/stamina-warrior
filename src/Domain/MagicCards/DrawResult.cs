@@ -4,11 +4,10 @@ public sealed record DrawResult
 {
     public static DrawResult None => new DrawResult();
 
-    public MagicCardBase? Card { get; init; }   
+    public MagicCardBase? Card { get; init; }
 
     private DrawResult()
     {
-        Card = null;
     }
 
     private DrawResult(MagicCardBase card)
@@ -17,9 +16,7 @@ public sealed record DrawResult
     }
 
     public static DrawResult Create(MagicCardBase card)
-    {
-        ArgumentNullException.ThrowIfNull(card);
-
+    {        
         return new DrawResult(card);
     }
 }

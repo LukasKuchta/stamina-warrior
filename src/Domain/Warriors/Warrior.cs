@@ -1,10 +1,12 @@
 ﻿
+
 using System.ComponentModel;
 using Domain.Battles.Spheres;
 using Domain.MagicCards;
 using Domain.MagicCards.Cards;
 using Domain.Shared;
 using Domain.Warriors.Events;
+using Domain.Warriors.Rules;
 
 namespace Domain.Warriors;
 
@@ -18,7 +20,6 @@ public sealed class Warrior : EntityBase, IAgregationRoot
         Level = level;
         Health = 100 * Level.Value;
         DeckOfCards = deckOfCards;
-        //BoostedDamage = ;
         Course = Power.Zero;
         Strength = Health * CurrentSphere.HitRatio;
     }
@@ -54,6 +55,8 @@ public sealed class Warrior : EntityBase, IAgregationRoot
         Level level,
         IEnumerable<MagicCardBase> cards)
     {
+        CheckRule(new WarrirNameLengthRule(name));
+
         return new Warrior(id, name, currentSphere, level, DeckOfCards.FromList(cards));
     }
 
@@ -81,14 +84,15 @@ public sealed class Warrior : EntityBase, IAgregationRoot
 
     internal void Heal(Power healPower)
     {
-        if (Health < 0)
+        if (Health <= 0)
         {
+            int ressurectedFrom = Health;
             Health = 0;
+            AddDomainEvent(new Resurrected(ressurectedFrom, Health));
         }
 
         int health = Health;
-        Health = (int)(Health * healPower.Value);
-
+        Health = (int)((Health == 0 ? 1 : Health) * healPower.Value);
         AddDomainEvent(new WarriorHealed(health, Health));
     }
 
@@ -113,11 +117,6 @@ public sealed class Warrior : EntityBase, IAgregationRoot
 
     internal void CourseBites()
     {
-        if (Course.NoPower)
-        {
-            return;
-        }
-
         // dont reset the curse after applying
         Health -= (int)(Health * Course.Value);
     }

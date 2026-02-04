@@ -18,9 +18,10 @@ public abstract class EntityBase
     {
         _domainEvents.Add(@event);
     }
-
+    
     public ImmutableArray<DomainEventBase> DequeueDomainEvents()
-    {        
+    {
+        // Stryker disable once Block: equivalent mutant (Empty vs ToImmutableArray on empty)
         if (_domainEvents.Count == 0)
         {
             return ImmutableArray<DomainEventBase>.Empty;
@@ -32,9 +33,7 @@ public abstract class EntityBase
     }    
 
     protected static void CheckRule(IBusinessRule rule)
-    {
-        ArgumentNullException.ThrowIfNull(rule);
-
+    {        
         if (rule.IsBroken())
         {
             throw new BusinessRuleValidationException(rule);

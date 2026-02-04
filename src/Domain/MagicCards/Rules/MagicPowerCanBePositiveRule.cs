@@ -2,7 +2,7 @@
 using Domain.Shared;
 
 namespace Domain.MagicCards.Rules;
-internal sealed class MagicPowerCanBePositiveRule : IBusinessRule
+public sealed class MagicPowerCanBePositiveRule : IBusinessRule
 {
     private readonly float _magicPower;
 

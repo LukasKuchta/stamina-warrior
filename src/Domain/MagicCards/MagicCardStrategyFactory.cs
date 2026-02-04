@@ -8,8 +8,6 @@ public sealed class MagicCardStrategyFactory : IMagicCardStrategyFactory
 
     public IMagicCardStrategy SelectBy(MagicCardBase card)
     {
-        ArgumentNullException.ThrowIfNull(card);
-
         return _map[card.GetType()];
     }
 }

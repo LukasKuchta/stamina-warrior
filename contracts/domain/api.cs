@@ -198,11 +198,6 @@ namespace Domain.MagicCards.Cards
         public HealingCard(Domain.MagicCards.Chance activationChance, Domain.MagicCards.Power power) { }
         public Domain.MagicCards.Power Power { get; }
     }
-    public sealed class PoisonCard : Domain.MagicCards.MagicCardBase, System.IEquatable<Domain.MagicCards.Cards.PoisonCard>
-    {
-        public PoisonCard(Domain.MagicCards.Chance activationChance) { }
-        public Domain.MagicCards.Power Power { get; }
-    }
     public sealed class StealingCard : Domain.MagicCards.MagicCardBase, System.IEquatable<Domain.MagicCards.Cards.StealingCard>
     {
         public StealingCard(Domain.MagicCards.Chance activationChance) { }
@@ -222,7 +217,7 @@ namespace Domain.MagicCards
         public static readonly Domain.MagicCards.Chance Never;
         public float Value { get; }
         public bool IsAlways() { }
-        public bool IsNone() { }
+        public bool IsNever() { }
         public static Domain.MagicCards.Chance FromValue(float value) { }
     }
     public sealed class DrawResult : System.IEquatable<Domain.MagicCards.DrawResult>
@@ -273,6 +268,25 @@ namespace Domain.MagicCards
         public static Domain.MagicCards.Power FromValue(float value) { }
     }
 }
+namespace Domain.MagicCards.Rules
+{
+    public sealed class CardIndexCannotBeNegativeRule : Domain.Shared.IBusinessRule
+    {
+        public CardIndexCannotBeNegativeRule(int cardIndex) { }
+        public string Message { get; }
+        public bool IsBroken() { }
+    }
+    public sealed class MagicPowerCanBePositiveRule : Domain.Shared.IBusinessRule
+    {
+        public string Message { get; }
+        public bool IsBroken() { }
+    }
+    public sealed class ValueCanBeBetweenZeoroAndOneRule : Domain.Shared.IBusinessRule
+    {
+        public string Message { get; }
+        public bool IsBroken() { }
+    }
+}
 namespace Domain.MagicCards.Strategies
 {
     public sealed class CoursedCardStrategy : Domain.MagicCards.MagicCardStrategyBase<Domain.MagicCards.Cards.CoursedCard>
@@ -307,6 +321,13 @@ namespace Domain.RandomSources
     {
         int NextIntInclusive(int maxInclusive);
         bool Succeeds(Domain.MagicCards.Chance chance);
+    }
+    public sealed class RandomSource : Domain.RandomSources.IRandomSource
+    {
+        public RandomSource() { }
+        public RandomSource(System.Func<double> nextDouble) { }
+        public int NextIntInclusive(int maxInclusive) { }
+        public bool Succeeds(Domain.MagicCards.Chance chance) { }
     }
 }
 namespace Domain.Shared
@@ -354,6 +375,12 @@ namespace Domain.Warriors.Events
         public float BoostPower { get; init; }
         public int DamageBeforeBoost { get; init; }
     }
+    public sealed class Resurrected : Domain.Shared.DomainEventBase, System.IEquatable<Domain.Warriors.Events.Resurrected>
+    {
+        public Resurrected(int FromHealth, int ToHealth) { }
+        public int FromHealth { get; init; }
+        public int ToHealth { get; init; }
+    }
     public sealed class TargetCouirsed : Domain.Shared.DomainEventBase, System.IEquatable<Domain.Warriors.Events.TargetCouirsed>
     {
         public TargetCouirsed(int CoursePower) { }
@@ -397,6 +424,12 @@ namespace Domain.Warriors.Rules
     public sealed class LevelCannotBeNegativeRule : Domain.Shared.IBusinessRule
     {
         public LevelCannotBeNegativeRule(int level) { }
+        public string Message { get; }
+        public bool IsBroken() { }
+    }
+    public sealed class WarrirNameLengthRule : Domain.Shared.IBusinessRule
+    {
+        public WarrirNameLengthRule(string name) { }
         public string Message { get; }
         public bool IsBroken() { }
     }

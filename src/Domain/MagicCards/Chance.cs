@@ -16,7 +16,7 @@ public sealed record Chance : ValueObjectBase
         Value = value;
     }
 
-    public bool IsNone()
+    public bool IsNever()
     {
         return this == Never;
     }

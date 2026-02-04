@@ -4,6 +4,7 @@ using Domain.Shared;
 using System.Collections.Generic;
 
 namespace Domain.MagicCards;
+
 internal sealed record DeckOfCards : ValueObjectBase
 {
     private DeckOfCards(List<MagicCardBase> cards)
@@ -14,7 +15,7 @@ internal sealed record DeckOfCards : ValueObjectBase
     private readonly List<MagicCardBase> _cards;
 
     public int MaxIndexOfCard => _cards.Count - 1;
-    
+
     public int NumberOfCards => _cards.Count;
 
     public bool Empty => _cards.Count == 0;
@@ -27,11 +28,6 @@ internal sealed record DeckOfCards : ValueObjectBase
     {
         CheckRule(new CardIndexCannotBeNegativeRule(luckyNumber));
 
-        if (Empty)
-        {
-            return DrawResult.None;
-        }
-
         if (luckyNumber <= MaxIndexOfCard)
         {
             var luckyCard = _cards[luckyNumber];
@@ -39,20 +35,13 @@ internal sealed record DeckOfCards : ValueObjectBase
 
             return DrawResult.Create(luckyCard);
         }
-
+        
         return DrawResult.None;
     }
 
     public void Add(MagicCardBase card)
     {
-        ArgumentNullException.ThrowIfNull(card);
-
         _cards.Add(card);
-    }
-
-    public static DeckOfCards Creeate()
-    {        
-        return FromList(new List<MagicCardBase>(0));
     }
 
     public static DeckOfCards FromList(IEnumerable<MagicCardBase> cards)
