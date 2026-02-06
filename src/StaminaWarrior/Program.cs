@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Security.Cryptography;
+using System.Text;
 using Domain.Battles;
 using Domain.Battles.Spheres;
 using Domain.MagicCards;
@@ -19,7 +20,7 @@ var app = builder.Build();
 var brutusCards = new List<MagicCardBase>
 {
     new FightingCard(Chance.CoinFlip, Power.FromValue(2f)),
-    
+
     new HealingCard(Chance.CoinFlip, Power.FromValue(1f)),
     new HealingCard(Chance.CoinFlip, Power.FromValue(2f)),
     new FightingCard(Chance.CoinFlip, Power.FromValue(2f)),
@@ -73,5 +74,8 @@ for (int i = 0; i < 1; i++)
 }
 
 Console.WriteLine("Game over");
+
+Func<int, Func<int, int>> f = x => y => x + y;
+Console.WriteLine(f(5)(10));
 
 

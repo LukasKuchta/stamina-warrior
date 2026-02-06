@@ -94,7 +94,7 @@ public sealed class RandomSourceTests
         for (var i = 0; i < 200; i++)
         {
             set.Add(sut.NextIntInclusive(10));
-        }            
+        }
 
         set.Count.ShouldBeGreaterThan(1);
     }

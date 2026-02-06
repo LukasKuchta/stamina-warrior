@@ -8,17 +8,17 @@ public record DomainEventBase;
 
 public abstract class EntityBase
 {
-    private readonly List<DomainEventBase> _domainEvents = new List<DomainEventBase>();    
+    private readonly List<DomainEventBase> _domainEvents = new List<DomainEventBase>();
 
     protected EntityBase()
-    {        
+    {
     }
 
     protected void AddDomainEvent(DomainEventBase @event)
     {
         _domainEvents.Add(@event);
     }
-    
+
     public ImmutableArray<DomainEventBase> DequeueDomainEvents()
     {
         // Stryker disable once Block: equivalent mutant (Empty vs ToImmutableArray on empty)
@@ -30,10 +30,10 @@ public abstract class EntityBase
         var snapshot = _domainEvents.ToImmutableArray();
         _domainEvents.Clear();
         return snapshot;
-    }    
+    }
 
     protected static void CheckRule(IBusinessRule rule)
-    {        
+    {
         if (rule.IsBroken())
         {
             throw new BusinessRuleValidationException(rule);

@@ -4,7 +4,7 @@ using Domain.RandomSources;
 namespace Domain.Battles;
 
 public sealed class FightDecisionSource(IRandomSource chanceService) : IFightDecisionSource
-{    
+{
     public int PickBaseDamage(int maxDamage)
     {
         return chanceService.NextIntInclusive(maxDamage);

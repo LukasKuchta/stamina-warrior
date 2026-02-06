@@ -4,11 +4,11 @@ namespace Domain.Battles.Events;
 
 public sealed record AttackLanded : IBattleEvent
 {
-    internal AttackLanded(Warrior atttacker, Warrior oponent, int damage) 
+    internal AttackLanded(Warrior atttacker, Warrior oponent, int damage)
     {
         AttackerName = atttacker.Name;
         OponentName = oponent.Name;
-        Damage = damage;        
+        Damage = damage;
     }
 
     public string AttackerName { get; }

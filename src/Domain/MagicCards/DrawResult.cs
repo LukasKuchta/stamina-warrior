@@ -16,7 +16,7 @@ public sealed record DrawResult
     }
 
     public static DrawResult Create(MagicCardBase card)
-    {        
+    {
         return new DrawResult(card);
     }
 }

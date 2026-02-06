@@ -47,7 +47,7 @@ public sealed record BattleContext : ValueObjectBase
             : (Opponent, Attacker);
 
         return DeathState.Single;
-    }  
+    }
 
     public static BattleContext Create(Warrior attacker, Warrior opponent, int roundsCount)
     {

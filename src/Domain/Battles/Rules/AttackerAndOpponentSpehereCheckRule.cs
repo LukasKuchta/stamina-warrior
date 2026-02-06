@@ -3,6 +3,7 @@ using Domain.Shared;
 using Domain.Warriors;
 
 namespace Domain.Battles.Rules;
+
 public sealed record AttackerAndOpponentSpehereCheckRule : IBusinessRule
 {
     private readonly Warrior _attacker;

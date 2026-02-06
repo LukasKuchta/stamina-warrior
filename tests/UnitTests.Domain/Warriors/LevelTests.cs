@@ -18,7 +18,7 @@ public class LevelTests
 
         var ex = act.ShouldThrow<BusinessRuleValidationException>();
         ex.Message.ShouldNotBeNullOrEmpty();
-        ex.BrokenRule.ShouldBeOfType<LevelCannotBeNegativeRule>();        
+        ex.BrokenRule.ShouldBeOfType<LevelCannotBeNegativeRule>();
     }
 
     [Fact]

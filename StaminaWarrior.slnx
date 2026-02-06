@@ -5,8 +5,11 @@
     <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
   </Folder>
-  <Folder Name="/contracts/" />
-  <Folder Name="/contracts/Domain/">
+  <Folder Name="/01 build/">
+    <Project Path="build/_build.csproj" />
+  </Folder>
+  <Folder Name="/02 contracts/" />
+  <Folder Name="/02 contracts/Domain/">
     <File Path="contracts/domain/api.cs" />
   </Folder>
   <Folder Name="/src/">

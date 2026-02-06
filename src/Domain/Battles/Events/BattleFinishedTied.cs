@@ -4,7 +4,7 @@ namespace Domain.Battles.Events;
 
 public sealed record BattleFinishedTied : IBattleEvent
 {
-    internal BattleFinishedTied(Warrior warrior1, Warrior warrior2) 
+    internal BattleFinishedTied(Warrior warrior1, Warrior warrior2)
     {
         Warrior1Name = warrior1.Name;
         Warrior2Name = warrior2.Name;

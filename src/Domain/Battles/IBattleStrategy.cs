@@ -10,5 +10,5 @@ public interface IBattleStrategy
 }
 
 public interface IBattleStrategy<T> where T : SphereBase
-{     
+{
 }

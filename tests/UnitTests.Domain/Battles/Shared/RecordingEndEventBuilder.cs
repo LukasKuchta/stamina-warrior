@@ -9,7 +9,7 @@ namespace Domain.UnitTests.Battles.Shared;
 
 internal sealed class RecordingEndEventBuilder : IBattleEndEventBuilder
 {
-    public List<bool> Flags { get; } = new();    
+    public List<bool> Flags { get; } = new();
 
     public IBattleEvent? TryBuildEndEvent(BattleContext ctx, bool isLastRound)
     {

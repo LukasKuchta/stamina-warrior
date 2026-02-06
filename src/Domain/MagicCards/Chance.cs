@@ -3,6 +3,7 @@ using Domain.MagicCards.Rules;
 using Domain.Shared;
 
 namespace Domain.MagicCards;
+
 public sealed record Chance : ValueObjectBase
 {
     public static readonly Chance Never = new(0f);
@@ -31,5 +32,5 @@ public sealed record Chance : ValueObjectBase
         CheckRule(new ValueCanBeBetweenZeoroAndOneRule(value));
 
         return new Chance(value);
-    }  
+    }
 }

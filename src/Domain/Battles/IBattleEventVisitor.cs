@@ -10,7 +10,7 @@ public interface IBattleEventVisitor
     void Visit(BattleFinished e);
     void Visit(BattleFinishedTied e);
     void Visit(AttackLanded e);
-    void Visit(CardDrawn e);    
+    void Visit(CardDrawn e);
     void Visit(BattleStarted e);
-    void Visit(RoundStatsCaptured e);    
+    void Visit(RoundStatsCaptured e);
 }

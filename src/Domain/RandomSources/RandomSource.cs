@@ -1,6 +1,6 @@
-﻿using Domain.MagicCards;
-using System;
+﻿using System;
 using System.Security.Cryptography;
+using Domain.MagicCards;
 
 namespace Domain.RandomSources;
 
@@ -46,7 +46,7 @@ public sealed class RandomSource : IRandomSource
         int value = BitConverter.ToInt32(bytes, 0) & int.MaxValue;
         return value % maxInclusive;
     }
-    
+
     private static double NextDoubleCrypto()
     {
         Span<byte> bytes = stackalloc byte[8];

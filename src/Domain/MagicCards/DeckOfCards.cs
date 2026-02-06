@@ -1,7 +1,7 @@
-﻿using Domain.MagicCards.Cards;
+﻿using System.Collections.Generic;
+using Domain.MagicCards.Cards;
 using Domain.MagicCards.Rules;
 using Domain.Shared;
-using System.Collections.Generic;
 
 namespace Domain.MagicCards;
 
@@ -35,7 +35,7 @@ internal sealed record DeckOfCards : ValueObjectBase
 
             return DrawResult.Create(luckyCard);
         }
-        
+
         return DrawResult.None;
     }
 

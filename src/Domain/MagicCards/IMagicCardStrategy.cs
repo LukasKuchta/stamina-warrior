@@ -2,6 +2,7 @@
 using Domain.Warriors;
 
 namespace Domain.MagicCards;
+
 public interface IMagicCardStrategy
 {
     Type CardType { get; }
@@ -11,5 +12,5 @@ public interface IMagicCardStrategy
 
 public interface IMagicCardStrategy<in TCard> where TCard : MagicCardBase
 {
-     void ApplyMagic(Warrior cardHolder, Warrior oponent, TCard card);
+    void ApplyMagic(Warrior cardHolder, Warrior oponent, TCard card);
 }

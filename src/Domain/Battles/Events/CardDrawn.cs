@@ -5,8 +5,8 @@ namespace Domain.Battles.Events;
 
 public sealed record CardDrawn : IBattleEvent
 {
-    internal CardDrawn(Warrior cardHolder, string cardName) 
-    { 
+    internal CardDrawn(Warrior cardHolder, string cardName)
+    {
         CardHolder = cardHolder.Name;
         CardName = cardName;
     }

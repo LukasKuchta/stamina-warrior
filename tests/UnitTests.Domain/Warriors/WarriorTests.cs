@@ -38,14 +38,14 @@ public class WarriorTests
 
     [Fact]
     public void CreateWarrior_ShouldHaveMaxDamage_50()
-    {        
-        var conan = WarriorHelper.CreateBlueSky("Conan", 2);        
+    {
+        var conan = WarriorHelper.CreateBlueSky("Conan", 2);
         conan.MaxDamage.ShouldBe(50);
     }
 
     [Fact]
     public void CreateWarrior_WhenNameLengthIs1_ShouldViolatesWarrirNameLengthRule()
-    {        
+    {
         Action act = () => WarriorHelper.CreateBlueSky("C");
         var ex = act.ShouldThrow<BusinessRuleValidationException>();
         ex.ToString().ShouldNotBeNullOrEmpty();

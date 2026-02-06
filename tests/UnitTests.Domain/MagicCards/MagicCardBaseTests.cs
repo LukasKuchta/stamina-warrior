@@ -26,7 +26,7 @@ public sealed class MagicCardBaseTests
     [Fact]
     public void HealingCard_ShouldViolate_ZeroPowerWillKillYouRule()
     {
-        Action act= () => HealingCard.Create(Chance.CoinFlip, Power.Zero);
+        Action act = () => HealingCard.Create(Chance.CoinFlip, Power.Zero);
         var ex = act.ShouldThrow<BusinessRuleValidationException>();
         var rule = ex.BrokenRule.ShouldBeOfType<ZeroPowerWiollKillYouRule>();
         rule.Message.ShouldNotBeNullOrEmpty();
@@ -51,7 +51,7 @@ public sealed class MagicCardBaseTests
         card.Name.ShouldNotBeNullOrEmpty();
         card.Name.ShouldBe("Stealing card");
         card.ActivationChance.Value.ShouldBe(Chance.Always.Value);
-        card.ActivationChance.ShouldBe(Chance.Always);        
+        card.ActivationChance.ShouldBe(Chance.Always);
     }
 
     [Fact]
@@ -71,7 +71,7 @@ public sealed class MagicCardBaseTests
         var card = new CoursedCard(Chance.FromValue(0.3f), Power.FromValue(2000));
         card.Name.ShouldNotBeNullOrEmpty();
         card.Name.ShouldBe("Coursed card");
-        card.ActivationChance.Value.ShouldBe(0.3f);        
+        card.ActivationChance.Value.ShouldBe(0.3f);
         card.Power.Value.ShouldBe(2000);
     }
 }

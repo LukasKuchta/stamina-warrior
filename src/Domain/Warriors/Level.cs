@@ -10,7 +10,7 @@ public sealed record Level : ValueObjectBase
     private Level(int value)
     {
         Value = value;
-    }     
+    }
 
     public static Level FromNumber(int value)
     {

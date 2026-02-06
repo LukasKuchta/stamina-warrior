@@ -32,7 +32,7 @@ public class BattleContextTests
 
     [Fact]
     public void CreateBattleContext_WithNegativeRounds_ShouldViolateRoundCannotBeLowerOrEqualZeroRule()
-    {        
+    {
         var conan = WarriorHelper.CreateBlueSky("Conan");
         var brutus = WarriorHelper.CreateBlueSky("Brutus");
 
