@@ -14,7 +14,7 @@ public sealed class ListBattlesModule : ICarterModule
     }
 
     private static Results<Ok<ListBattlesResponse>, BadRequest> Handle()
-    {
+    {        
         var response = new ListBattlesResponse();
         return TypedResults.Ok(response);
     }

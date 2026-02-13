@@ -11,14 +11,14 @@ public sealed class BattleDetailsModule : ICarterModule
         var battles = app.MapBattlesV1();
 
         battles.MapGet("/{id:guid}", Handle)
-               .Produces<BattleDetailDto>(StatusCodes.Status200OK)
+               .Produces<BattleDetailsDto>(StatusCodes.Status200OK)
                .Produces(StatusCodes.Status404NotFound);
     }
 
-    private static async Task<Results<Ok<BattleDetailDto>, NotFound>> Handle(Guid id)
+    private static async Task<Results<Ok<BattleDetailsDto>, NotFound>> Handle(Guid id)
     {
         _ = id;
-        var response = new BattleDetailDto();
+        var response = new BattleDetailsDto();
         return TypedResults.Ok(response);
     }
 }
