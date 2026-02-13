@@ -19,7 +19,7 @@
   <Folder Name="/src/Api/">
     <Project Path="src/Api/ConsoleApp/ConsoleApp.csproj" />
     <Project Path="src/Api/WebApp/WebApp.csproj" Id="1d83e12f-32cd-424a-84cc-aa44054c7086" />
-    <Project Path="WebApp.Contract/WebApp.Contract.csproj" Id="c977d014-c551-4bed-b808-f00d769bf776" />
+    <Project Path="src/Api/WebApp.Contract/WebApp.Contract.csproj" Id="c977d014-c551-4bed-b808-f00d769bf776" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/UnitTests.Domain/Domain.UnitTests.csproj" Id="3f7f6743-b44e-4d29-9535-42d183945cc3" />
