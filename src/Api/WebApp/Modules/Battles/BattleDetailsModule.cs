@@ -1,24 +1,24 @@
 ﻿using Carter;
 using Microsoft.AspNetCore.Http.HttpResults;
-using WebApp.Contract.V1.Battles.BattleDetail;
+using WebApp.Contract.V1.Battles.GetBattle;
 
 namespace WebApp.Modules.Battles;
 
-public sealed class GetBattleModule : ICarterModule
+public sealed class BattleDetailsModule : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         var battles = app.MapBattlesV1();
 
         battles.MapGet("/{id:guid}", Handle)
-               .Produces<GetBattleResponse>(StatusCodes.Status200OK)
+               .Produces<BattleDetailDto>(StatusCodes.Status200OK)
                .Produces(StatusCodes.Status404NotFound);
     }
 
-    private static async Task<Results<Ok<GetBattleResponse>, NotFound>> Handle(Guid id)
+    private static async Task<Results<Ok<BattleDetailDto>, NotFound>> Handle(Guid id)
     {
         _ = id;
-        var response = new GetBattleResponse();
+        var response = new BattleDetailDto();
         return TypedResults.Ok(response);
     }
 }

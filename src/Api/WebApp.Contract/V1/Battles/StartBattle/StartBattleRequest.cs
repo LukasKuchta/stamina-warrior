@@ -2,6 +2,6 @@
 
 public sealed record StartBattleRequest
 {
-    public WarriorDto Attacker { get; set; }
-    public WarriorDto Oponent { get; set; }
+    public StartBattleWarriorDto Attacker { get; set; }
+    public StartBattleWarriorDto Oponent { get; set; }
 }

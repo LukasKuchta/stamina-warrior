@@ -2,5 +2,5 @@
 
 public sealed record ListBattlesResponse
 {
-    public BattleResultDto[] Battles { get; set; } = [];
+    public BattleSummaryDto[] Battles { get; set; } = [];
 }
