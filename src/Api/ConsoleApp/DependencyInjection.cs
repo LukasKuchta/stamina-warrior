@@ -1,6 +1,4 @@
-﻿
-using Domain.Battles;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace StaminaWarrior;
 

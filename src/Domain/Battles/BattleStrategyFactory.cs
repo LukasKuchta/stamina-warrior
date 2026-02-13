@@ -1,5 +1,4 @@
 ﻿using Domain.Battles.Spheres;
-using Domain.MagicCards;
 
 namespace Domain.Battles;
 

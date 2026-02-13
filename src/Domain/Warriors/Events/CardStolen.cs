@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Domain.Shared;
+﻿using Domain.Shared;
 
 namespace Domain.Warriors.Events;
 

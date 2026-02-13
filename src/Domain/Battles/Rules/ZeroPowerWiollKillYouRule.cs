@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Domain.MagicCards;
+﻿using Domain.MagicCards;
 using Domain.Shared;
 
 namespace Domain.Battles.Rules;

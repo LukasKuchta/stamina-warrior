@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Domain.Battles;
-using Domain.Battles.Events;
-using Domain.Battles.Spheres;
+﻿using Domain.Battles.Spheres;
 using Shouldly;
 
 namespace Domain.UnitTests.Battles;

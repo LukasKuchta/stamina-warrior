@@ -1,5 +1,4 @@
-﻿using Domain.MagicCards.Cards;
-using Domain.Shared;
+﻿using Domain.Shared;
 
 namespace Domain.MagicCards;
 

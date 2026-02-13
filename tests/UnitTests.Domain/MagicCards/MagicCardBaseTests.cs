@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Domain.Battles.Rules;
+﻿using Domain.Battles.Rules;
 using Domain.MagicCards;
 using Domain.MagicCards.Cards;
-using Domain.MagicCards.Rules;
 using Domain.Shared;
 using Shouldly;
 

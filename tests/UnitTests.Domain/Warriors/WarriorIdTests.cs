@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Domain.Shared;
-using Domain.Warriors;
-using Domain.Warriors.Rules;
+﻿using Domain.Warriors;
 using Shouldly;
 
 namespace Domain.UnitTests.Warriors;

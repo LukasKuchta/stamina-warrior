@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Text;
+﻿using System.Collections.Immutable;
 using Domain.Shared;
-using Domain.Warriors;
 using Shouldly;
 
 namespace Domain.UnitTests.Shared;

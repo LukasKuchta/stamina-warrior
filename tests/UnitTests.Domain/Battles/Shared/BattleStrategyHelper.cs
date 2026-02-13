@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Domain.Battles;
-using Domain.Battles.Spheres;
+﻿using Domain.Battles;
 using Domain.Battles.Strategies;
 using Domain.MagicCards;
-using Newtonsoft.Json.Serialization;
 
 namespace Domain.UnitTests.Battles.Shared;
 

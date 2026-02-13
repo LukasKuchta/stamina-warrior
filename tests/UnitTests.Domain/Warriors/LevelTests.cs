@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Domain.Battles;
-using Domain.Shared;
+﻿using Domain.Shared;
 using Domain.Warriors;
 using Domain.Warriors.Rules;
 using Shouldly;

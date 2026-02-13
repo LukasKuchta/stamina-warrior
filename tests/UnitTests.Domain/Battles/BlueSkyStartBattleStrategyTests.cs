@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Reflection.Emit;
-using System.Text;
-using System.Xml.Linq;
+﻿using System.Collections.Immutable;
 using Domain.Battles;
 using Domain.Battles.Events;
-using Domain.Battles.Spheres;
 using Domain.Battles.Strategies;
 using Domain.MagicCards;
 using Domain.MagicCards.Cards;
@@ -14,9 +8,7 @@ using Domain.MagicCards.Rules;
 using Domain.MagicCards.Strategies;
 using Domain.Shared;
 using Domain.UnitTests.Battles.Shared;
-using Domain.Warriors;
 using Domain.Warriors.Events;
-using NSubstitute;
 using Shouldly;
 
 namespace Domain.UnitTests.Battles;

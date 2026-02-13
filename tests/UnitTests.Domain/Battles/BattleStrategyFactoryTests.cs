@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Domain.Battles;
-using Domain.Battles.Events;
+﻿using Domain.Battles;
 using Domain.Battles.Spheres;
-using Domain.Battles.Strategies;
-using Domain.MagicCards;
 using Domain.UnitTests.Battles.Shared;
 using Shouldly;
 

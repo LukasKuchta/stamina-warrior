@@ -2,6 +2,7 @@
   <Folder Name="/00 project items/">
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
+    <File Path="build/buildenv.Dockerfile.txt" />
     <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
   </Folder>
@@ -14,7 +15,11 @@
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Domain/Domain.csproj" />
-    <Project Path="src/StaminaWarrior/StaminaWarrior.csproj" />
+  </Folder>
+  <Folder Name="/src/Api/">
+    <Project Path="src/Api/ConsoleApp/ConsoleApp.csproj" />
+    <Project Path="src/Api/WebApp/WebApp.csproj" Id="1d83e12f-32cd-424a-84cc-aa44054c7086" />
+    <Project Path="WebApp.Contract/WebApp.Contract.csproj" Id="c977d014-c551-4bed-b808-f00d769bf776" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/UnitTests.Domain/Domain.UnitTests.csproj" Id="3f7f6743-b44e-4d29-9535-42d183945cc3" />

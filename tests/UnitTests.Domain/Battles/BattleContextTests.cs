@@ -1,16 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Domain.Battles;
-using Domain.Battles.Events;
+﻿using Domain.Battles;
 using Domain.Battles.Rules;
-using Domain.Battles.Spheres;
-using Domain.Battles.Strategies;
-using Domain.MagicCards;
-using Domain.MagicCards.Cards;
-using Domain.MagicCards.Strategies;
 using Domain.Shared;
-using Domain.Warriors;
 using Shouldly;
 
 namespace Domain.UnitTests.Battles;

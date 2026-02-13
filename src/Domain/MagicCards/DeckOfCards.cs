@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using Domain.MagicCards.Cards;
-using Domain.MagicCards.Rules;
+﻿using Domain.MagicCards.Rules;
 using Domain.Shared;
 
 namespace Domain.MagicCards;

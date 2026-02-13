@@ -1,6 +1,5 @@
 ﻿using System.Collections.Immutable;
 using Domain.Battles.Events;
-using Domain.Warriors;
 
 namespace Domain.Battles;
 

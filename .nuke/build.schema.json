@@ -25,8 +25,9 @@
       "type": "string",
       "enum": [
         "All",
-        "Clean",
         "Compile",
+        "ContainerBuild",
+        "Format",
         "Restore",
         "StrykerDomain",
         "Test"
@@ -110,6 +111,15 @@
             "Debug",
             "Release"
           ]
+        },
+        "ContainerCli": {
+          "type": "string"
+        },
+        "ImageName": {
+          "type": "string"
+        },
+        "ImageTag": {
+          "type": "string"
         }
       }
     },

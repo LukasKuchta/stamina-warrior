@@ -1,9 +1,5 @@
-﻿
-
-using System.ComponentModel;
-using Domain.Battles.Spheres;
+﻿using Domain.Battles.Spheres;
 using Domain.MagicCards;
-using Domain.MagicCards.Cards;
 using Domain.Shared;
 using Domain.Warriors.Events;
 using Domain.Warriors.Rules;

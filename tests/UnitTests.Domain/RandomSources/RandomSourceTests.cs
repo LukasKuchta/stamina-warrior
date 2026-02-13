@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Text;
-using Domain.MagicCards;
+﻿using Domain.MagicCards;
 using Domain.RandomSources;
-using Domain.Shared;
 using Shouldly;
 
 namespace Domain.UnitTests.RandomSources;

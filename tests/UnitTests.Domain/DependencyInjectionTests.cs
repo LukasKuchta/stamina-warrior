@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Domain.Battles;
+﻿using Domain.Battles;
 using Domain.Battles.Spheres;
 using Domain.Battles.Strategies;
 using Domain.MagicCards;

@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using Domain.Battles.Rules;
+﻿using Domain.Battles.Rules;
 using Domain.Shared;
 using Domain.Warriors;
 

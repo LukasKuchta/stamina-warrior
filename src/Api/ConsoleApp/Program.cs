@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-using Domain.Battles;
+﻿using Domain.Battles;
 using Domain.Battles.Spheres;
 using Domain.MagicCards;
 using Domain.MagicCards.Cards;
@@ -68,7 +66,7 @@ for (int i = 0; i < 1; i++)
 
     var battleStrategy = battleStrategyFactory!.SelectBy(conan.CurrentSphere);
 
-    BattleResult battleResult = battleStrategy.StartBattle(BattleContext.Create(conan, brutus, 20));
+    BattleResult battleResult = battleStrategy.StartBattle(BattleContext.Create(conan, brutus, 100));
 
     judge.MakeReport(battleResult.BattleEvents);
 }

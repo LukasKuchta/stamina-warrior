@@ -1,6 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using Domain.Shared;
-using Domain.Warriors;
+﻿using Domain.Shared;
 
 namespace Domain.Battles.Spheres;
 

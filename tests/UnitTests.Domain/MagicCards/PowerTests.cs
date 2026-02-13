@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Text;
-using Domain.MagicCards;
+﻿using Domain.MagicCards;
 using Domain.MagicCards.Rules;
 using Domain.Shared;
 using Shouldly;
