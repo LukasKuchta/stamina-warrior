@@ -66,7 +66,7 @@ for (int i = 0; i < 1; i++)
 
     var battleStrategy = battleStrategyFactory!.SelectBy(conan.CurrentSphere);
 
-    BattleResult battleResult = battleStrategy.StartBattle(BattleContext.Create(conan, brutus, 100));
+    BattleResult battleResult = battleStrategy.StartBattle(BattleContext.Create(conan, brutus, 100), DateTimeOffset.Now);
 
     judge.MakeReport(battleResult.BattleEvents);
 }

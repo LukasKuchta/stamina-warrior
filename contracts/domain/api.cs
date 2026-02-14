@@ -51,7 +51,7 @@ namespace Domain.Battles
     public interface IBattleStrategy
     {
         System.Type SphereType { get; }
-        Domain.Battles.BattleResult StartBattle(Domain.Battles.BattleContext battleContext);
+        Domain.Battles.BattleResult StartBattle(Domain.Battles.BattleContext battleContext, System.DateTimeOffset startedAt);
     }
     public interface IBattleStrategyFactory
     {
@@ -103,6 +103,7 @@ namespace Domain.Battles.Events
     {
         public Domain.Battles.Events.WarrirorStat Attacker { get; }
         public Domain.Battles.Events.WarrirorStat Oponent { get; }
+        public System.DateTimeOffset StartedAt { get; }
         public override void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
     }
     public sealed class CardDrawn : Domain.Battles.Events.BattleEventBase, System.IEquatable<Domain.Battles.Events.CardDrawn>
@@ -196,12 +197,12 @@ namespace Domain.Battles.Strategies
     {
         protected BattleStrategyBase() { }
         public System.Type SphereType { get; }
-        public abstract Domain.Battles.BattleResult StartBattle(Domain.Battles.BattleContext battleContext);
+        public abstract Domain.Battles.BattleResult StartBattle(Domain.Battles.BattleContext battleContext, System.DateTimeOffset startedAt);
     }
     public sealed class BlueSkyBattleStrategy : Domain.Battles.Strategies.BattleStrategyBase<Domain.Battles.Spheres.BlueSkysphere>
     {
         public BlueSkyBattleStrategy(Domain.MagicCards.IMagicCardStrategyFactory magicCardStrategy, Domain.Battles.IFightDecisionSource decisionSource, Domain.Battles.Strategies.IBattleEndEventBuilder battleEndEventBuilder) { }
-        public override Domain.Battles.BattleResult StartBattle(Domain.Battles.BattleContext battleContext) { }
+        public override Domain.Battles.BattleResult StartBattle(Domain.Battles.BattleContext battleContext, System.DateTimeOffset startedAt) { }
     }
     public interface IBattleEndEventBuilder
     {

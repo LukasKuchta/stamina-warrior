@@ -23,7 +23,7 @@ public class BlueSkyStrategBattleResultsyTests
 
         var blueSkyStrategy = CreateBluSkyStrategy();
 
-        var battleResultBase = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+        var battleResultBase = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
 
         var battleResult = battleResultBase.ShouldBeAssignableTo<BattleResult>();
 
@@ -45,7 +45,7 @@ public class BlueSkyStrategBattleResultsyTests
 
         var blueSkyStrategy = CreateBluSkyStrategy();
 
-        var battleResultBase = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+        var battleResultBase = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
 
         var battleResult = battleResultBase.ShouldBeAssignableTo<BattleResult>();
 
@@ -64,7 +64,7 @@ public class BlueSkyStrategBattleResultsyTests
 
         var blueSkyStrategy = CreateBluSkyStrategy();
 
-        var battleResultBase = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+        var battleResultBase = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
 
         var battleResult = battleResultBase.ShouldBeAssignableTo<BattleResult>();
      
@@ -86,7 +86,7 @@ public class BlueSkyStrategBattleResultsyTests
             new EchoDecisionSource(0),
             recorder);
 
-        Action act = () => blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 3));
+        Action act = () => blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 3), Time.StartBattleAt);
 
         var ex = act.ShouldThrow<InvalidOperationException>();
         ex.Message.ShouldNotBeNullOrEmpty();
@@ -102,7 +102,7 @@ public class BlueSkyStrategBattleResultsyTests
 
         var blueSkyStrategy = CreateBluSkyStrategy();
 
-        var battleResultBase = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+        var battleResultBase = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
 
         var battleResult = battleResultBase.ShouldBeAssignableTo<BattleResult>();
 
@@ -121,7 +121,7 @@ public class BlueSkyStrategBattleResultsyTests
 
         var blueSkyStrategy = CreateBluSkyStrategy();
 
-        var battleResultBase = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+        var battleResultBase = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
 
         var battleResult = battleResultBase.ShouldBeAssignableTo<BattleResult>();
 
@@ -142,7 +142,7 @@ public class BlueSkyStrategBattleResultsyTests
 
         var blueSkyStrategy = CreateBluSkyStrategy();
 
-        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
 
         battleResult.BattleEvents.ShouldNotBeEmpty();
         var result = battleResult.BattleEvents[battleResult.BattleEvents.Length - 1].ShouldBeOfType<BattleFinishedTied>();
@@ -161,7 +161,7 @@ public class BlueSkyStrategBattleResultsyTests
 
         var blueSkyStrategy = CreateBluSkyStrategy();
 
-        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 10));
+        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 10), Time.StartBattleAt);
 
         battleResult.BattleEvents.ShouldNotBeEmpty();
         var result = battleResult.BattleEvents[battleResult.BattleEvents.Length - 1].ShouldBeOfType<DoubleKnockoutOccurred>();
@@ -192,7 +192,7 @@ public class BlueSkyStrategBattleResultsyTests
             new EchoDecisionSource(-1),
             new BattleEndEventBuilder());
 
-        Action act = () => blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+        Action act = () => blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
         var ex = act.ShouldThrow<BusinessRuleValidationException>();
         var rule = ex.BrokenRule.ShouldBeOfType<CardIndexCannotBeNegativeRule>();
         rule.Message.ShouldNotBeNullOrEmpty();
@@ -214,7 +214,7 @@ public class BlueSkyStrategBattleResultsyTests
             new EchoDecisionSource(0),
             new BattleEndEventBuilder());
 
-        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
 
         battleResult.BattleEvents.ShouldNotBeEmpty();
         var healingCardDrawn = battleResult.BattleEvents[2].ShouldBeOfType<CardDrawn>();
@@ -238,7 +238,7 @@ public class BlueSkyStrategBattleResultsyTests
             new EchoDecisionSource(0),
             new BattleEndEventBuilder());
 
-        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
         battleResult.BattleEvents.ShouldNotBeEmpty();
 
         var @event = battleResult.BattleEvents[2].ShouldBeOfType<CardDrawn>();
@@ -264,7 +264,7 @@ public class BlueSkyStrategBattleResultsyTests
             new EchoDecisionSource(0),
             new BattleEndEventBuilder());
 
-        _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+        _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
 
         conan.Health.ShouldBe(50);
     }
@@ -285,7 +285,7 @@ public class BlueSkyStrategBattleResultsyTests
             new EchoDecisionSource(0),
             new BattleEndEventBuilder());
 
-        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 2));
+        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 2), Time.StartBattleAt);
 
         battleResult.BattleEvents.ShouldNotBeEmpty();
         var drawn = battleResult.BattleEvents[2].ShouldBeOfType<CardDrawn>();
@@ -312,7 +312,7 @@ public class BlueSkyStrategBattleResultsyTests
             new EchoDecisionSource(0),
             new BattleEndEventBuilder());
 
-        _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+        _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1)  , Time.StartBattleAt);
 
         brutus.Health.ShouldBe(0);
     }
@@ -333,7 +333,7 @@ public class BlueSkyStrategBattleResultsyTests
             new EchoDecisionSource(0),
             new BattleEndEventBuilder());
 
-        _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+        _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
 
         brutus.Health.ShouldBe(75);
     }
@@ -356,7 +356,7 @@ public class BlueSkyStrategBattleResultsyTests
             new EchoDecisionSource(0),
             new BattleEndEventBuilder());
 
-        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 2));
+        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 2), Time.StartBattleAt);
 
         battleResult.BattleEvents.ShouldNotBeEmpty();
         var drawn1 = battleResult.BattleEvents[2].ShouldBeOfType<CardDrawn>();
@@ -389,7 +389,7 @@ public class BlueSkyStrategBattleResultsyTests
             new EchoDecisionSource(0),
             new BattleEndEventBuilder());
 
-        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 2));
+        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 2), Time.StartBattleAt);
 
         battleResult.BattleEvents.ShouldNotBeEmpty();
 
@@ -409,7 +409,7 @@ public class BlueSkyStrategBattleResultsyTests
             new EchoDecisionSource(0),
             new BattleEndEventBuilder());
 
-        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 3));
+        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 3), Time.StartBattleAt);
 
         battleResult.BattleEvents.ShouldNotBeEmpty();
 
@@ -429,7 +429,7 @@ public class BlueSkyStrategBattleResultsyTests
 
         var blueSkyStrategy = CreateBluSkyStrategy();
 
-        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 3));
+        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 3), Time.StartBattleAt);
 
         battleResult.BattleEvents.ShouldNotBeEmpty();
 
@@ -452,7 +452,7 @@ public class BlueSkyStrategBattleResultsyTests
             new EchoDecisionSource(0),
             new FakeBattleEndEventBuilder());
 
-        Action act = () => blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+        Action act = () => blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
 
         var ex = act.ShouldThrow<InvalidOperationException>();
         ex.Message.ShouldNotBeNullOrEmpty();
@@ -473,7 +473,7 @@ public class BlueSkyStrategBattleResultsyTests
             new EchoDecisionSource(0),
             new BattleEndEventBuilder());
 
-        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
 
         battleResult.BattleEvents.ShouldNotBeEmpty();
         var fightingCardDrawn = battleResult.BattleEvents[3].ShouldBeOfType<CardDrawn>();
@@ -497,7 +497,7 @@ public class BlueSkyStrategBattleResultsyTests
             new BattleEndEventBuilder());
 
         var maxDamage = brutus.MaxDamage;
-        _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+        _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
 
         ImmutableArray<DomainEventBase> events = brutus.DequeueDomainEvents();
         events.Length.ShouldBe(1);
@@ -526,7 +526,7 @@ public class BlueSkyStrategBattleResultsyTests
             new BattleEndEventBuilder());
 
         var currentHealth = brutus.Health;
-        _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+        _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
 
         ImmutableArray<DomainEventBase> events = brutus.DequeueDomainEvents();
         events.Length.ShouldBe(1);
@@ -553,7 +553,7 @@ public class BlueSkyStrategBattleResultsyTests
             new EchoDecisionSource(0),
             new BattleEndEventBuilder());
 
-        _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+        _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
 
         ImmutableArray<DomainEventBase> events = brutus.DequeueDomainEvents();
         events.Length.ShouldBe(2);
@@ -581,7 +581,7 @@ public class BlueSkyStrategBattleResultsyTests
             new EchoDecisionSource(0),
             new BattleEndEventBuilder());
 
-        _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+        _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
 
         ImmutableArray<DomainEventBase> events = brutus.DequeueDomainEvents();
         events.Length.ShouldBe(2);
@@ -609,7 +609,7 @@ public class BlueSkyStrategBattleResultsyTests
             new EchoDecisionSource(0),
             new BattleEndEventBuilder());
 
-        _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+        _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
 
         ImmutableArray<DomainEventBase> firstCall = brutus.DequeueDomainEvents();
         firstCall.Length.ShouldBe(2);
@@ -627,10 +627,12 @@ public class BlueSkyStrategBattleResultsyTests
 
         var blueSkyStrategy = CreateBluSkyStrategy();
 
-        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, roundCount));
+        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, roundCount), Time.StartBattleAt);
 
         battleResult.BattleEvents.ShouldNotBeEmpty();
         var result = battleResult.BattleEvents[0].ShouldBeOfType<BattleStarted>();
+
+        result.StartedAt.ShouldBe(Time.StartBattleAt);
 
         result.Attacker.ShouldNotBeNull();
         result.Oponent.ShouldNotBeNull();
@@ -647,7 +649,7 @@ public class BlueSkyStrategBattleResultsyTests
 
         var blueSkyStrategy = CreateBluSkyStrategy();
 
-        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
 
         battleResult.BattleEvents.ShouldNotBeEmpty();
         battleResult.BattleEvents.Length.ShouldBe(6);
@@ -672,8 +674,8 @@ public class BlueSkyStrategBattleResultsyTests
         var blueSkyStrategy = CreateBluSkyStrategy();
 
         var ctx = BattleContext.Create(conan, brutus, 1);
-        var battleResult1 = blueSkyStrategy.StartBattle(ctx);
-        var battleResult2 = blueSkyStrategy.StartBattle(ctx);
+        var battleResult1 = blueSkyStrategy.StartBattle(ctx, Time.StartBattleAt);
+        var battleResult2 = blueSkyStrategy.StartBattle(ctx, Time.StartBattleAt);
 
         battleResult1.BattleEvents.Length.ShouldBe(6);
         battleResult2.BattleEvents.Length.ShouldBe(6);
@@ -687,7 +689,7 @@ public class BlueSkyStrategBattleResultsyTests
 
         var blueSkyStrategy = CreateBluSkyStrategy();
 
-        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
 
         battleResult.BattleEvents.ShouldNotBeEmpty();
         battleResult.BattleEvents.Length.ShouldBe(6);

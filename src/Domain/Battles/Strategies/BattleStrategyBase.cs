@@ -7,5 +7,5 @@ public abstract class BattleStrategyBase<TSphereType> : IBattleStrategy<TSphereT
 {
     public Type SphereType => typeof(TSphereType);
 
-    public abstract BattleResult StartBattle(BattleContext battleContext);
+    public abstract BattleResult StartBattle(BattleContext battleContext, DateTimeOffset startedAt);
 }

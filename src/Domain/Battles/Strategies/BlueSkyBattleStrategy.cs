@@ -14,9 +14,9 @@ IBattleEndEventBuilder battleEndEventBuilder) : BattleStrategyBase<BlueSkysphere
     private const int CardDrawAttemptRangeMax = 15;
     private readonly List<IBattleEvent> _battleEvents = [];
 
-    public override BattleResult StartBattle(BattleContext battleContext)
+    public override BattleResult StartBattle(BattleContext battleContext, DateTimeOffset startedAt)
     {
-        RecordEvent(new BattleStarted(battleContext.Attacker, battleContext.Opponent));
+        RecordEvent(new BattleStarted(battleContext.Attacker, battleContext.Opponent, startedAt));
         for (int round = 0; round < battleContext.RoundsCount; round++)
         {
             RecordEvent(new RoundStarted(round + 1));
