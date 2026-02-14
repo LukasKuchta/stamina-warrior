@@ -1,8 +1,7 @@
-﻿
-using Domain.MagicCards.Rules;
+﻿using Domain.MagicCards.Rules;
 using Domain.Shared;
 
-namespace Domain.MagicCards;
+namespace Domain.ActivationRules;
 
 public sealed record Chance : ValueObjectBase
 {

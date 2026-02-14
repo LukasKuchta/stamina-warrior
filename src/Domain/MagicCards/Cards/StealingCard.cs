@@ -1,8 +1,10 @@
-﻿namespace Domain.MagicCards.Cards;
+﻿using Domain.ActivationRules;
+
+namespace Domain.MagicCards.Cards;
 
 public sealed record StealingCard : MagicCardBase
 {
-    public StealingCard(Chance activationChance) : base("Stealing card", activationChance)
+    public StealingCard() : base("Stealing card")
     {
     }
 }

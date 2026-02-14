@@ -1,4 +1,4 @@
-﻿using Domain.MagicCards;
+﻿using Domain.ActivationRules;
 
 namespace Domain.Battles;
 

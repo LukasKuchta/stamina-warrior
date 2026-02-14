@@ -1,6 +1,6 @@
 ﻿using Carter;
 using Microsoft.AspNetCore.Http.HttpResults;
-using WebApp.Contract.V1.Battles.GetBattle;
+using WebApp.Contract.V1.Battles.BattleDetails;
 
 namespace WebApp.Modules.Battles;
 

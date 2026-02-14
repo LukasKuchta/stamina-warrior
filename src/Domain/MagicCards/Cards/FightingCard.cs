@@ -1,8 +1,10 @@
-﻿namespace Domain.MagicCards.Cards;
+﻿using Domain.ActivationRules;
+
+namespace Domain.MagicCards.Cards;
 
 public sealed record FightingCard : MagicCardBase
 {
-    public FightingCard(Chance chance, Power power) : base("Fighting card", chance)
+    public FightingCard(Power power) : base("Fighting card")
     {
         Power = power;
     }

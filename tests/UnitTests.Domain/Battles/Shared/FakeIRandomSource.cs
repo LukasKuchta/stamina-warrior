@@ -1,4 +1,4 @@
-﻿using Domain.MagicCards;
+﻿using Domain.ActivationRules;
 using Domain.RandomSources;
 
 namespace Domain.UnitTests.Battles.Shared;

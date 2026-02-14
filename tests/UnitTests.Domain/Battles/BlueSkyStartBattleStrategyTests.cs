@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using Domain.ActivationRules;
 using Domain.Battles;
 using Domain.Battles.Events;
 using Domain.Battles.Strategies;
@@ -67,8 +68,8 @@ public class BlueSkyStrategBattleResultsyTests
         var battleResultBase = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
 
         var battleResult = battleResultBase.ShouldBeAssignableTo<BattleResult>();
-     
-        for(int i = 0; i < battleResult.BattleEvents.Length - 1; i++)
+
+        for (int i = 0; i < battleResult.BattleEvents.Length - 1; i++)
         {
             battleResult.BattleEvents[i].Order.ShouldBe(i);
         }
@@ -84,6 +85,7 @@ public class BlueSkyStrategBattleResultsyTests
         var blueSkyStrategy = new BlueSkyBattleStrategy(
             new MagicCardStrategyFactory([]),
             new EchoDecisionSource(0),
+            new ActivationRuleEvaluatorSelector([]),
             recorder);
 
         Action act = () => blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 3), Time.StartBattleAt);
@@ -179,9 +181,9 @@ public class BlueSkyStrategBattleResultsyTests
     [Fact]
     public void StartBattle_DrawnCardShouldViolate_CardIndexCannotBeNegativeRule()
     {
-        var healingCard = new HealingCard(Chance.Always, Power.FromValue(1));
+        var cardSlot = SlotHelper.Create(new HealingCard(Power.FromValue(1)));
 
-        var conan = WarriorHelper.CreateBlueSky("Connan", 1, [healingCard]);
+        var conan = WarriorHelper.CreateBlueSky("Connan", 1, [cardSlot]);
         var brutus = WarriorHelper.CreateBlueSky("Brutus", 3);
 
         var blueSkyStrategy = new BlueSkyBattleStrategy(
@@ -190,20 +192,21 @@ public class BlueSkyStrategBattleResultsyTests
                     new HealingCardStrategy(),
                 ]),
             new EchoDecisionSource(-1),
+            new ActivationRuleEvaluatorSelector([new ChanceActivationRuleEvaluator(new FakeIRandomSource())]),
             new BattleEndEventBuilder());
 
         Action act = () => blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
         var ex = act.ShouldThrow<BusinessRuleValidationException>();
-        var rule = ex.BrokenRule.ShouldBeOfType<CardIndexCannotBeNegativeRule>();
+        var rule = ex.BrokenRule.ShouldBeOfType<SlotIndexCannotBeNegativeRule>();
         rule.Message.ShouldNotBeNullOrEmpty();
     }
 
     [Fact]
     public void StartBattle_ConanShouldDrawn_HealthCard()
     {
-        var healingCard = new HealingCard(Chance.Always, Power.FromValue(1));
+        var slot = SlotHelper.Create(new HealingCard(Power.FromValue(1)));
 
-        var conan = WarriorHelper.CreateBlueSky("Connan", 1, [healingCard]);
+        var conan = WarriorHelper.CreateBlueSky("Connan", 1, [slot]);
         var brutus = WarriorHelper.CreateBlueSky("Brutus", 3);
 
         var blueSkyStrategy = new BlueSkyBattleStrategy(
@@ -212,22 +215,23 @@ public class BlueSkyStrategBattleResultsyTests
                     new HealingCardStrategy(),
                 ]),
             new EchoDecisionSource(0),
+            new ActivationRuleEvaluatorSelector([new ChanceActivationRuleEvaluator(new FakeIRandomSource())]),
             new BattleEndEventBuilder());
 
         var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
 
         battleResult.BattleEvents.ShouldNotBeEmpty();
         var healingCardDrawn = battleResult.BattleEvents[2].ShouldBeOfType<CardDrawn>();
-        healingCardDrawn.CardName.ShouldBe(healingCard.Name);
+        healingCardDrawn.CardName.ShouldBe(slot.Card.Name);
         healingCardDrawn.CardHolder.ShouldBe(conan.Name);
     }
 
     [Fact]
     public void StartBattle_ConanShouldDrawn_ThornCard()
     {
-        var thornCard = new ThornDamageCard(Chance.Always, Power.FromValue(1));
+        var slot = SlotHelper.Create(new ThornDamageCard(Power.FromValue(1)));
 
-        var conan = WarriorHelper.CreateBlueSky("Connan", 1, [thornCard]);
+        var conan = WarriorHelper.CreateBlueSky("Connan", 1, [slot]);
         var brutus = WarriorHelper.CreateBlueSky("Brutus", 3);
 
         var blueSkyStrategy = new BlueSkyBattleStrategy(
@@ -236,21 +240,22 @@ public class BlueSkyStrategBattleResultsyTests
                     new ThornDamageStrategy(),
                 ]),
             new EchoDecisionSource(0),
+            new ActivationRuleEvaluatorSelector([new ChanceActivationRuleEvaluator(new FakeIRandomSource())]),
             new BattleEndEventBuilder());
 
         var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
         battleResult.BattleEvents.ShouldNotBeEmpty();
 
         var @event = battleResult.BattleEvents[2].ShouldBeOfType<CardDrawn>();
-        @event.CardName.ShouldBe(thornCard.Name);
+        @event.CardName.ShouldBe(slot.Card.Name);
         @event.CardHolder.ShouldBe(conan.Name);
     }
 
     [Fact]
     public void StartBattle_ConanShouldBeSelfHitted()
     {
-        var thornCard = new ThornDamageCard(Chance.Always, Power.FromValue(2));
-        var fightingCard = new FightingCard(Chance.Always, Power.Zero);
+        var thornCard = SlotHelper.Create(new ThornDamageCard(Power.FromValue(2)));
+        var fightingCard = SlotHelper.Create(new FightingCard(Power.Zero));
 
         var conan = WarriorHelper.CreateBlueSky("Connan", 1, [thornCard]);
         var brutus = WarriorHelper.CreateBlueSky("Brutus", 1, [fightingCard]);
@@ -262,6 +267,7 @@ public class BlueSkyStrategBattleResultsyTests
                     new FightingCardStrategy()
                 ]),
             new EchoDecisionSource(0),
+            new ActivationRuleEvaluatorSelector([new ChanceActivationRuleEvaluator(new FakeIRandomSource())]),
             new BattleEndEventBuilder());
 
         _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
@@ -272,9 +278,9 @@ public class BlueSkyStrategBattleResultsyTests
     [Fact]
     public void StartBattle_ConanShouldDrawn_CoursedCard()
     {
-        var coursedCard = new CoursedCard(Chance.Always, Power.FromValue(2));
+        var slot = SlotHelper.Create(new CoursedCard(Power.FromValue(2)));
 
-        var conan = WarriorHelper.CreateBlueSky("Connan", 1, [coursedCard]);
+        var conan = WarriorHelper.CreateBlueSky("Connan", 1, [slot]);
         var brutus = WarriorHelper.CreateBlueSky("Brutus", 3);
 
         var blueSkyStrategy = new BlueSkyBattleStrategy(
@@ -283,13 +289,14 @@ public class BlueSkyStrategBattleResultsyTests
                     new CoursedCardStrategy(),
                 ]),
             new EchoDecisionSource(0),
+            new ActivationRuleEvaluatorSelector([new ChanceActivationRuleEvaluator(new FakeIRandomSource())]),
             new BattleEndEventBuilder());
 
         var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 2), Time.StartBattleAt);
 
         battleResult.BattleEvents.ShouldNotBeEmpty();
         var drawn = battleResult.BattleEvents[2].ShouldBeOfType<CardDrawn>();
-        drawn.CardName.ShouldBe(coursedCard.Name);
+        drawn.CardName.ShouldBe(slot.Card.Name);
         drawn.CardHolder.ShouldBe(conan.Name);
 
         brutus.Course.HasPower.ShouldBeTrue();
@@ -298,7 +305,7 @@ public class BlueSkyStrategBattleResultsyTests
     [Fact]
     public void StartBattle_CourseBites()
     {
-        var coursedCard = new CoursedCard(Chance.Always, Power.FromValue(1));
+        var coursedCard = SlotHelper.Create(new CoursedCard(Power.FromValue(1)));
 
         var conan = WarriorHelper.CreateBlueSky("Connan", 1, [coursedCard]);
         var brutus = WarriorHelper.CreateBlueSky("Brutus");
@@ -310,9 +317,10 @@ public class BlueSkyStrategBattleResultsyTests
                     new FightingCardStrategy()
                 ]),
             new EchoDecisionSource(0),
+            new ActivationRuleEvaluatorSelector([new ChanceActivationRuleEvaluator(new FakeIRandomSource())]),
             new BattleEndEventBuilder());
 
-        _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1)  , Time.StartBattleAt);
+        _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
 
         brutus.Health.ShouldBe(0);
     }
@@ -320,7 +328,7 @@ public class BlueSkyStrategBattleResultsyTests
     [Fact]
     public void StartBattle_CourseDoeasntBite()
     {
-        var coursedCard = new CoursedCard(Chance.Always, Power.Zero);
+        var coursedCard = SlotHelper.Create(new CoursedCard(Power.Zero));
 
         var conan = WarriorHelper.CreateBlueSky("Connan", 1, [coursedCard]);
         var brutus = WarriorHelper.CreateBlueSky("Brutus");
@@ -331,6 +339,7 @@ public class BlueSkyStrategBattleResultsyTests
                     new CoursedCardStrategy(),
                 ]),
             new EchoDecisionSource(0),
+            new ActivationRuleEvaluatorSelector([new ChanceActivationRuleEvaluator(new FakeIRandomSource())]),
             new BattleEndEventBuilder());
 
         _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
@@ -341,11 +350,11 @@ public class BlueSkyStrategBattleResultsyTests
     [Fact]
     public void StartBattle_ConanShouldDrawn_StealingCard()
     {
-        var stealingCard = new StealingCard(Chance.Always);
-        var fightingCard = new FightingCard(Chance.Always, Power.FromValue(2));
+        var slot1 = SlotHelper.Create(new StealingCard());
+        var slot2 = SlotHelper.Create(new FightingCard(Power.FromValue(2)));
 
-        var conan = WarriorHelper.CreateBlueSky("Connan", 1, [stealingCard]);
-        var brutus = WarriorHelper.CreateBlueSky("Brutus", 3, [fightingCard]);
+        var conan = WarriorHelper.CreateBlueSky("Connan", 1, [slot1]);
+        var brutus = WarriorHelper.CreateBlueSky("Brutus", 3, [slot2]);
 
         var blueSkyStrategy = new BlueSkyBattleStrategy(
             new MagicCardStrategyFactory(
@@ -354,29 +363,30 @@ public class BlueSkyStrategBattleResultsyTests
                     new FightingCardStrategy()
                 ]),
             new EchoDecisionSource(0),
+            new ActivationRuleEvaluatorSelector([new ChanceActivationRuleEvaluator(new FakeIRandomSource())]),
             new BattleEndEventBuilder());
 
         var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 2), Time.StartBattleAt);
 
         battleResult.BattleEvents.ShouldNotBeEmpty();
         var drawn1 = battleResult.BattleEvents[2].ShouldBeOfType<CardDrawn>();
-        drawn1.CardName.ShouldBe(stealingCard.Name);
+        drawn1.CardName.ShouldBe(slot1.Card.Name);
         drawn1.CardHolder.ShouldBe(conan.Name);
 
         var drawn2 = battleResult.BattleEvents[7].ShouldBeOfType<CardDrawn>();
-        drawn2.CardName.ShouldBe(fightingCard.Name);
+        drawn2.CardName.ShouldBe(slot2.Card.Name);
         drawn2.CardHolder.ShouldBe(conan.Name);
 
         ImmutableArray<DomainEventBase> events = conan.DequeueDomainEvents();
         events.Length.ShouldBe(2);
         var card = events[0].ShouldBeOfType<CardStolen>();
-        card.CardName.ShouldBe(fightingCard.Name);
+        card.CardName.ShouldBe(slot2.Card.Name);
     }
 
     [Fact]
     public void StartBattle_BrutusShouldBeKilledByCourse()
     {
-        var coursedCard = new CoursedCard(Chance.Always, Power.FromValue(2));
+        var coursedCard = SlotHelper.Create(new CoursedCard(Power.FromValue(2)));
 
         var conan = WarriorHelper.CreateBlueSky("Connan", 1, [coursedCard]);
         var brutus = WarriorHelper.CreateBlueSky("Brutus", 3);
@@ -387,6 +397,7 @@ public class BlueSkyStrategBattleResultsyTests
                     new CoursedCardStrategy(),
                 ]),
             new EchoDecisionSource(0),
+            new ActivationRuleEvaluatorSelector([new ChanceActivationRuleEvaluator(new FakeIRandomSource())]),
             new BattleEndEventBuilder());
 
         var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 2), Time.StartBattleAt);
@@ -407,6 +418,7 @@ public class BlueSkyStrategBattleResultsyTests
         var blueSkyStrategy = new BlueSkyBattleStrategy(
             new MagicCardStrategyFactory([]),
             new EchoDecisionSource(0),
+            new ActivationRuleEvaluatorSelector([new ChanceActivationRuleEvaluator(new FakeIRandomSource())]),
             new BattleEndEventBuilder());
 
         var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 3), Time.StartBattleAt);
@@ -450,6 +462,7 @@ public class BlueSkyStrategBattleResultsyTests
         var blueSkyStrategy = new BlueSkyBattleStrategy(
             new MagicCardStrategyFactory([]),
             new EchoDecisionSource(0),
+            new ActivationRuleEvaluatorSelector([new ChanceActivationRuleEvaluator(new FakeIRandomSource())]),
             new FakeBattleEndEventBuilder());
 
         Action act = () => blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
@@ -461,9 +474,9 @@ public class BlueSkyStrategBattleResultsyTests
     [Fact]
     public void StartBattle_BrutusShouldDrawn_FightingCard()
     {
-        var fightingCard = new FightingCard(Chance.Always, Power.FromValue(1));
+        var slot = SlotHelper.Create(new FightingCard(Power.FromValue(1)));
         var conan = WarriorHelper.CreateBlueSky("Connan", 3);
-        var brutus = WarriorHelper.CreateBlueSky("Brutus", 3, [fightingCard]);
+        var brutus = WarriorHelper.CreateBlueSky("Brutus", 3, [slot]);
 
         var blueSkyStrategy = new BlueSkyBattleStrategy(
             new MagicCardStrategyFactory(
@@ -471,22 +484,23 @@ public class BlueSkyStrategBattleResultsyTests
                     new FightingCardStrategy()
                 ]),
             new EchoDecisionSource(0),
+            new ActivationRuleEvaluatorSelector([new ChanceActivationRuleEvaluator(new FakeIRandomSource())]),
             new BattleEndEventBuilder());
 
         var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
 
         battleResult.BattleEvents.ShouldNotBeEmpty();
         var fightingCardDrawn = battleResult.BattleEvents[3].ShouldBeOfType<CardDrawn>();
-        fightingCardDrawn.CardName.ShouldBe(fightingCard.Name);
+        fightingCardDrawn.CardName.ShouldBe(slot.Card.Name);
         fightingCardDrawn.CardHolder.ShouldBe(brutus.Name);
     }
 
     [Fact]
     public void StartBattle_BrutusDamage_Boosted()
     {
-        var fightingCard = new FightingCard(Chance.Always, Power.FromValue(2));
+        var slot = SlotHelper.Create(new FightingCard(Power.FromValue(2)));
         var conan = WarriorHelper.CreateBlueSky("Connan", 3);
-        var brutus = WarriorHelper.CreateBlueSky("Brutus", 3, [fightingCard]);
+        var brutus = WarriorHelper.CreateBlueSky("Brutus", 3, [slot]);
 
         var blueSkyStrategy = new BlueSkyBattleStrategy(
             new MagicCardStrategyFactory(
@@ -494,6 +508,7 @@ public class BlueSkyStrategBattleResultsyTests
                     new FightingCardStrategy()
                 ]),
             new EchoDecisionSource(0),
+            new ActivationRuleEvaluatorSelector([new ChanceActivationRuleEvaluator(new FakeIRandomSource())]),
             new BattleEndEventBuilder());
 
         var maxDamage = brutus.MaxDamage;
@@ -504,17 +519,17 @@ public class BlueSkyStrategBattleResultsyTests
 
         var damageBoosted = events[0].ShouldBeOfType<DamageBoosted>();
         damageBoosted.DamageBeforeBoost.ShouldBe(maxDamage);
-        damageBoosted.BoostPower.ShouldBe(fightingCard.Power.Value);
+        damageBoosted.BoostPower.ShouldBe(((FightingCard)slot.Card).Power.Value);
     }
 
     [Fact]
     public void StartBattle_BrutusHealed()
     {
-        var fhealingCard = new HealingCard(Chance.Always, Power.FromValue(2));
-        var fightingCard = new FightingCard(Chance.Always, Power.FromValue(0));
+        var slot = SlotHelper.Create(new HealingCard(Power.FromValue(2)));
+        var fightingCard = SlotHelper.Create(new FightingCard(Power.FromValue(0)));
 
         var conan = WarriorHelper.CreateBlueSky("Connan", 3, [fightingCard]);
-        var brutus = WarriorHelper.CreateBlueSky("Brutus", 3, [fhealingCard]);
+        var brutus = WarriorHelper.CreateBlueSky("Brutus", 3, [slot]);
 
         var blueSkyStrategy = new BlueSkyBattleStrategy(
             new MagicCardStrategyFactory(
@@ -523,6 +538,7 @@ public class BlueSkyStrategBattleResultsyTests
                     new FightingCardStrategy()
                 ]),
             new EchoDecisionSource(0),
+            new ActivationRuleEvaluatorSelector([new ChanceActivationRuleEvaluator(new FakeIRandomSource())]),
             new BattleEndEventBuilder());
 
         var currentHealth = brutus.Health;
@@ -533,14 +549,14 @@ public class BlueSkyStrategBattleResultsyTests
 
         var evnt = events[0].ShouldBeOfType<WarriorHealed>();
         evnt.OldValue.ShouldBe(currentHealth);
-        evnt.NewValue.ShouldBe((int)(currentHealth * fhealingCard.Power.Value));
+        evnt.NewValue.ShouldBe((int)(currentHealth * ((HealingCard)slot.Card).Power.Value));
     }
 
 
     [Fact]
     public void StartBattle_BrutusResurrected()
     {
-        var healingCard = new HealingCard(Chance.Always, Power.FromValue(500));
+        var healingCard = SlotHelper.Create(new HealingCard(Power.FromValue(500)));
 
         var conan = WarriorHelper.CreateBlueSky("Connan", 30);
         var brutus = WarriorHelper.CreateBlueSky("Brutus", 1, [healingCard]);
@@ -551,6 +567,7 @@ public class BlueSkyStrategBattleResultsyTests
                     new HealingCardStrategy(),
                 ]),
             new EchoDecisionSource(0),
+            new ActivationRuleEvaluatorSelector([new ChanceActivationRuleEvaluator(new FakeIRandomSource())]),
             new BattleEndEventBuilder());
 
         _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
@@ -568,7 +585,7 @@ public class BlueSkyStrategBattleResultsyTests
     [Fact]
     public void StartBattle_BrutusResurrectedFromZero()
     {
-        var healingCard = new HealingCard(Chance.Always, Power.FromValue(200));
+        var healingCard = SlotHelper.Create(new HealingCard(Power.FromValue(200)));
 
         var conan = WarriorHelper.CreateBlueSky("Connan", 4);
         var brutus = WarriorHelper.CreateBlueSky("Brutus", 1, [healingCard]);
@@ -579,6 +596,7 @@ public class BlueSkyStrategBattleResultsyTests
                     new HealingCardStrategy(),
                 ]),
             new EchoDecisionSource(0),
+            new ActivationRuleEvaluatorSelector([new ChanceActivationRuleEvaluator(new FakeIRandomSource())]),
             new BattleEndEventBuilder());
 
         _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
@@ -596,7 +614,7 @@ public class BlueSkyStrategBattleResultsyTests
     [Fact]
     public void StartBattle_DequeueDomainEvents_ShouldBeEmpty()
     {
-        var healingCard = new HealingCard(Chance.Always, Power.FromValue(2000));
+        var healingCard = SlotHelper.Create(new HealingCard(Power.FromValue(2000)));
 
         var conan = WarriorHelper.CreateBlueSky("Connan", 10);
         var brutus = WarriorHelper.CreateBlueSky("Brutus", 1, [healingCard]);
@@ -607,6 +625,7 @@ public class BlueSkyStrategBattleResultsyTests
                     new HealingCardStrategy(),
                 ]),
             new EchoDecisionSource(0),
+            new ActivationRuleEvaluatorSelector([new ChanceActivationRuleEvaluator(new FakeIRandomSource())]),
             new BattleEndEventBuilder());
 
         _ = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1), Time.StartBattleAt);
@@ -703,6 +722,7 @@ public class BlueSkyStrategBattleResultsyTests
         return new BlueSkyBattleStrategy(
             new MagicCardStrategyFactory(Enumerable.Empty<IMagicCardStrategy>()),
             new EchoDecisionSource(0),
+            new ActivationRuleEvaluatorSelector([new ChanceActivationRuleEvaluator(new FakeIRandomSource())]),
             new BattleEndEventBuilder());
     }
 }

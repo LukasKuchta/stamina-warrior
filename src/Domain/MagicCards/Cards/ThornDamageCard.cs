@@ -1,8 +1,10 @@
-﻿namespace Domain.MagicCards.Cards;
+﻿using Domain.ActivationRules;
+
+namespace Domain.MagicCards.Cards;
 
 public sealed record ThornDamageCard : MagicCardBase
 {
-    public ThornDamageCard(Chance activationChance, Power power) : base("Card of thorn's damage", activationChance)
+    public ThornDamageCard(Power power) : base("Card of thorn's damage")
     {
         Power = power;
     }

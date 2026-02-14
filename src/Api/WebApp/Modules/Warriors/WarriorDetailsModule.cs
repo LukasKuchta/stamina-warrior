@@ -1,6 +1,5 @@
 ﻿using Carter;
 using Microsoft.AspNetCore.Http.HttpResults;
-using WebApp.Contract.V1.Battles.GetBattle;
 using WebApp.Contract.V1.Warriors.WarriorDetails;
 
 namespace WebApp.Modules.Warriors;

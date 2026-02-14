@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using Domain.ActivationRules;
 using Domain.Battles.Events;
 using Domain.Battles.Spheres;
 using Domain.MagicCards;
@@ -9,6 +10,7 @@ namespace Domain.Battles.Strategies;
 public sealed class BlueSkyBattleStrategy(
 IMagicCardStrategyFactory magicCardStrategy,
 IFightDecisionSource decisionSource,
+IActivationRuleEvaluatorSelector cardActivator,
 IBattleEndEventBuilder battleEndEventBuilder) : BattleStrategyBase<BlueSkysphere>
 {
     private const int CardDrawAttemptRangeMax = 15;
@@ -21,8 +23,8 @@ IBattleEndEventBuilder battleEndEventBuilder) : BattleStrategyBase<BlueSkysphere
         {
             RecordEvent(new RoundStarted(round + 1));
 
-            Fight(battleContext.Attacker, battleContext.Opponent);
-            Fight(battleContext.Opponent, battleContext.Attacker);
+            Attack(battleContext.Attacker, battleContext.Opponent);
+            Attack(battleContext.Opponent, battleContext.Attacker);
 
             RecordEvent(new RoundStatsCaptured(battleContext.Attacker, battleContext.Opponent));
 
@@ -51,19 +53,19 @@ IBattleEndEventBuilder battleEndEventBuilder) : BattleStrategyBase<BlueSkysphere
         return BattleResult.Create(events);
     }
 
-    private void Fight(Warrior attacker, Warrior oponent)
+    private void Attack(Warrior attacker, Warrior oponent)
     {
         int cardIndex = decisionSource.PickCardIndex(CardDrawAttemptRangeMax);
 
-        DrawResult drawResult = attacker.TryToDrawCard(cardIndex);
+        SlotResult touchResult = attacker.TryToTouchSlot(cardIndex);
 
-        if (drawResult.Card is { } card && decisionSource.TryActivate(card.ActivationChance))
+        if (touchResult.Slot is { } slot && cardActivator.SelectBy(slot.Rule).Matches(slot.Rule, new AttackContext(attacker, oponent)))
         {
-            RecordEvent(new CardDrawn(attacker, card.Name));
+            RecordEvent(new CardDrawn(attacker, slot.Card.Name));
 
             magicCardStrategy
-                .SelectBy(card)
-                .ApplyMagic(attacker, oponent, card);
+                .SelectBy(slot.Card)
+                .ApplyMagic(attacker, oponent, slot.Card);
         }
 
         int damage = decisionSource.PickBaseDamage(attacker.MaxDamage);

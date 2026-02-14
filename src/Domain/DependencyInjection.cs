@@ -1,4 +1,5 @@
 ﻿
+using Domain.ActivationRules;
 using Domain.Battles;
 using Domain.Battles.Spheres;
 using Domain.Battles.Strategies;
@@ -30,6 +31,14 @@ public static class DependencyInjection
         services.AddSingleton(sp => (IMagicCardStrategy)sp.GetRequiredService<IMagicCardStrategy<StealingCard>>());
         services.AddSingleton(sp => (IMagicCardStrategy)sp.GetRequiredService<IMagicCardStrategy<CoursedCard>>());
         services.AddSingleton(sp => (IMagicCardStrategy)sp.GetRequiredService<IMagicCardStrategy<ThornDamageCard>>());
+
+        services.AddSingleton<IActivationRuleEvaluator<ChanceActivationRule>, ChanceActivationRuleEvaluator>();
+        services.AddSingleton<IActivationRuleEvaluator<ConditionActivationRule>, ConditionActivationRuleEvaluator>();
+
+        services.AddSingleton(sp => (IActivationRuleEvaluator)sp.GetRequiredService<IActivationRuleEvaluator<ChanceActivationRule>>());
+        services.AddSingleton(sp => (IActivationRuleEvaluator)sp.GetRequiredService<IActivationRuleEvaluator<ConditionActivationRule>>());
+
+        services.AddSingleton<IActivationRuleEvaluatorSelector,ActivationRuleEvaluatorSelector>();
 
         services.AddSingleton<IRandomSource, RandomSource>();
         services.AddSingleton<IFightDecisionSource, FightDecisionSource>();

@@ -1,4 +1,5 @@
-﻿using Domain.Battles.Spheres;
+﻿using Domain.BattlePlans;
+using Domain.Battles.Spheres;
 using Domain.MagicCards;
 using Domain.Shared;
 using Domain.Warriors.Events;
@@ -8,14 +9,14 @@ namespace Domain.Warriors;
 
 public sealed class Warrior : EntityBase, IAgregationRoot
 {
-    private Warrior(WarriorId id, string name, SphereBase currentSphere, Level level, DeckOfCards deckOfCards)
+    private Warrior(WarriorId id, string name, SphereBase currentSphere, Level level, BattlePlan battlePlan)
     {
         Id = id;
         Name = name;
         CurrentSphere = currentSphere;
         Level = level;
         Health = 100 * Level.Value;
-        DeckOfCards = deckOfCards;
+        BattlePlan = battlePlan;
         Course = Power.Zero;
         Strength = Health * CurrentSphere.HitRatio;
     }
@@ -24,7 +25,7 @@ public sealed class Warrior : EntityBase, IAgregationRoot
 
     public float Strength { get; }
 
-    private DeckOfCards DeckOfCards { get; }
+    private BattlePlan BattlePlan { get; }
 
     public string Name { get; }
 
@@ -40,37 +41,37 @@ public sealed class Warrior : EntityBase, IAgregationRoot
 
     private Power? BoostedDamage { get; set; }
 
-    public bool IsDeckOfCardsEmpty => DeckOfCards.NotEmpty;
+    public bool IsDeckOfCardsEmpty => BattlePlan.NotEmpty;
 
-    internal int DeckMaxIndexInclusive => DeckOfCards.MaxIndexOfCard;
+    internal int DeckMaxIndexInclusive => BattlePlan.MaxIndexOfSlot;
 
     public static Warrior Create(
         WarriorId id,
         string name,
         SphereBase currentSphere,
         Level level,
-        IEnumerable<MagicCardBase> cards)
+        IEnumerable<Slot> slots)
     {
         CheckRule(new WarrirNameLengthRule(name));
 
-        return new Warrior(id, name, currentSphere, level, DeckOfCards.FromList(cards));
+        return new Warrior(id, name, currentSphere, level, BattlePlan.FromList(slots));
     }
 
     internal void StealCard(int cardIndex, Warrior oponent)
     {
-        DrawResult drawResult = oponent.TryToDrawCard(cardIndex);
+        SlotResult drawResult = oponent.TryToTouchSlot(cardIndex);
 
-        if (drawResult.Card is { } card)
+        if (drawResult.Slot is { } slot)
         {
-            DeckOfCards.Add(card);
+            BattlePlan.Add(slot);
 
-            AddDomainEvent(new CardStolen(card.Name));
+            AddDomainEvent(new CardStolen(slot.Card.Name));
         }
     }
 
-    internal DrawResult TryToDrawCard(int cardIndex)
+    internal SlotResult TryToTouchSlot(int cardIndex)
     {
-        return DeckOfCards.DrawACard(cardIndex);
+        return BattlePlan.TouchTheSlot(cardIndex);
     }
 
     internal void CourseTarget(Power power, Warrior target)

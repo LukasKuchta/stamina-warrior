@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace StaminaWarrior;
+namespace ConsoleApp;
 
 internal static class DependencyInjection
 {

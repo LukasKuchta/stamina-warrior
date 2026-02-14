@@ -15,10 +15,9 @@ public class WarriorTests
         WarriorId warriorId = WarriorId.New();
         string name = "Barbar Conan";
         SphereBase sphere = SphereBase.BlueSky;
-        Level level = Level.FromNumber(1);
-        IEnumerable<MagicCardBase> cards = Enumerable.Empty<MagicCardBase>();
+        Level level = Level.FromNumber(1);        
 
-        Warrior barbarConan = Warrior.Create(warriorId, name, sphere, level, cards);
+        Warrior barbarConan = Warrior.Create(warriorId, name, sphere, level, []);
 
         barbarConan.Id.ShouldBe(warriorId);
         barbarConan.CurrentSphere.ShouldBe(sphere);

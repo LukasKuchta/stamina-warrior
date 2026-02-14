@@ -1,4 +1,84 @@
 [assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v10.0", FrameworkDisplayName=".NET 10.0")]
+namespace Domain.ActivationRules
+{
+    public abstract class ActivationRuleBase : System.IEquatable<Domain.ActivationRules.ActivationRuleBase>
+    {
+        protected ActivationRuleBase() { }
+    }
+    public sealed class ActivationRuleEvaluatorSelector : Domain.ActivationRules.IActivationRuleEvaluatorSelector
+    {
+        public ActivationRuleEvaluatorSelector(System.Collections.Generic.IEnumerable<Domain.ActivationRules.IActivationRuleEvaluator> evaluators) { }
+        public Domain.ActivationRules.IActivationRuleEvaluator SelectBy(Domain.ActivationRules.ActivationRuleBase rule) { }
+    }
+    public abstract class ActivationRuleEvaluator<TRule> : Domain.ActivationRules.IActivationRuleEvaluator, Domain.ActivationRules.IActivationRuleEvaluator<TRule>
+        where TRule : Domain.ActivationRules.ActivationRuleBase
+    {
+        protected ActivationRuleEvaluator() { }
+        public System.Type RuleType { get; }
+        public bool Matches(Domain.ActivationRules.ActivationRuleBase rule, Domain.ActivationRules.AttackContext ctx) { }
+        public abstract bool Matches(TRule rule, Domain.ActivationRules.AttackContext ctx);
+    }
+    public class AttackContext : System.IEquatable<Domain.ActivationRules.AttackContext>
+    {
+        public AttackContext(Domain.Warriors.Warrior Attacker, Domain.Warriors.Warrior Oponent) { }
+        public Domain.Warriors.Warrior Attacker { get; init; }
+        public Domain.Warriors.Warrior Oponent { get; init; }
+    }
+    public sealed class Chance : Domain.Shared.ValueObjectBase, System.IEquatable<Domain.ActivationRules.Chance>
+    {
+        public static readonly Domain.ActivationRules.Chance Always;
+        public static readonly Domain.ActivationRules.Chance CoinFlip;
+        public static readonly Domain.ActivationRules.Chance Never;
+        public float Value { get; }
+        public bool IsAlways() { }
+        public bool IsNever() { }
+        public static Domain.ActivationRules.Chance FromValue(float value) { }
+    }
+    public sealed class ChanceActivationRule : Domain.ActivationRules.ActivationRuleBase, System.IEquatable<Domain.ActivationRules.ChanceActivationRule>
+    {
+        public ChanceActivationRule(Domain.ActivationRules.Chance chance) { }
+        public Domain.ActivationRules.Chance chance { get; init; }
+    }
+    public sealed class ChanceActivationRuleEvaluator : Domain.ActivationRules.ActivationRuleEvaluator<Domain.ActivationRules.ChanceActivationRule>
+    {
+        public ChanceActivationRuleEvaluator(Domain.RandomSources.IRandomSource randomSource) { }
+        public override bool Matches(Domain.ActivationRules.ChanceActivationRule rule, Domain.ActivationRules.AttackContext ctx) { }
+    }
+    public sealed class ConditionActivationRule : Domain.ActivationRules.ActivationRuleBase, System.IEquatable<Domain.ActivationRules.ConditionActivationRule>
+    {
+        public ConditionActivationRule(System.Func<Domain.ActivationRules.AttackContext, bool> Condition) { }
+        public System.Func<Domain.ActivationRules.AttackContext, bool> Condition { get; init; }
+    }
+    public sealed class ConditionActivationRuleEvaluator : Domain.ActivationRules.ActivationRuleEvaluator<Domain.ActivationRules.ConditionActivationRule>
+    {
+        public ConditionActivationRuleEvaluator() { }
+        public override bool Matches(Domain.ActivationRules.ConditionActivationRule rule, Domain.ActivationRules.AttackContext ctx) { }
+    }
+    public interface IActivationRuleEvaluator
+    {
+        System.Type RuleType { get; }
+        bool Matches(Domain.ActivationRules.ActivationRuleBase rule, Domain.ActivationRules.AttackContext ctx);
+    }
+    public interface IActivationRuleEvaluatorSelector
+    {
+        Domain.ActivationRules.IActivationRuleEvaluator SelectBy(Domain.ActivationRules.ActivationRuleBase rule);
+    }
+    public interface IActivationRuleEvaluator<in TRule>
+        where in TRule : Domain.ActivationRules.ActivationRuleBase
+    {
+        bool Matches(TRule rule, Domain.ActivationRules.AttackContext ctx);
+    }
+}
+namespace Domain.BattlePlans
+{
+    public sealed class Slot : System.IEquatable<Domain.BattlePlans.Slot>
+    {
+        public Slot(Domain.MagicCards.MagicCardBase Card, Domain.ActivationRules.ActivationRuleBase Rule, int Priority) { }
+        public Domain.MagicCards.MagicCardBase Card { get; init; }
+        public int Priority { get; init; }
+        public Domain.ActivationRules.ActivationRuleBase Rule { get; init; }
+    }
+}
 namespace Domain.Battles
 {
     public sealed class AttackerAndOpponentCannotBeTheSameRule : Domain.Shared.IBusinessRule
@@ -34,7 +114,7 @@ namespace Domain.Battles
         public FightDecisionSource(Domain.RandomSources.IRandomSource chanceService) { }
         public int PickBaseDamage(int maxDamage) { }
         public int PickCardIndex(int maxCardIndex) { }
-        public bool TryActivate(Domain.MagicCards.Chance activationChance) { }
+        public bool TryActivate(Domain.ActivationRules.Chance activationChance) { }
     }
     public interface IBattleEventVisitor
     {
@@ -63,7 +143,7 @@ namespace Domain.Battles
     {
         int PickBaseDamage(int maxDamage);
         int PickCardIndex(int maxCardIndex);
-        bool TryActivate(Domain.MagicCards.Chance activationChance);
+        bool TryActivate(Domain.ActivationRules.Chance activationChance);
     }
     public sealed class RoundCannotBeLowerOrEqualZeroRule : Domain.Shared.IBusinessRule
     {
@@ -201,7 +281,7 @@ namespace Domain.Battles.Strategies
     }
     public sealed class BlueSkyBattleStrategy : Domain.Battles.Strategies.BattleStrategyBase<Domain.Battles.Spheres.BlueSkysphere>
     {
-        public BlueSkyBattleStrategy(Domain.MagicCards.IMagicCardStrategyFactory magicCardStrategy, Domain.Battles.IFightDecisionSource decisionSource, Domain.Battles.Strategies.IBattleEndEventBuilder battleEndEventBuilder) { }
+        public BlueSkyBattleStrategy(Domain.MagicCards.IMagicCardStrategyFactory magicCardStrategy, Domain.Battles.IFightDecisionSource decisionSource, Domain.ActivationRules.IActivationRuleEvaluatorSelector cardActivator, Domain.Battles.Strategies.IBattleEndEventBuilder battleEndEventBuilder) { }
         public override Domain.Battles.BattleResult StartBattle(Domain.Battles.BattleContext battleContext, System.DateTimeOffset startedAt) { }
     }
     public interface IBattleEndEventBuilder
@@ -220,48 +300,32 @@ namespace Domain.MagicCards.Cards
 {
     public sealed class CoursedCard : Domain.MagicCards.MagicCardBase, System.IEquatable<Domain.MagicCards.Cards.CoursedCard>
     {
-        public CoursedCard(Domain.MagicCards.Chance chance, Domain.MagicCards.Power power) { }
+        public CoursedCard(Domain.MagicCards.Power power) { }
         public Domain.MagicCards.Power Power { get; }
     }
     public sealed class FightingCard : Domain.MagicCards.MagicCardBase, System.IEquatable<Domain.MagicCards.Cards.FightingCard>
     {
-        public FightingCard(Domain.MagicCards.Chance chance, Domain.MagicCards.Power power) { }
+        public FightingCard(Domain.MagicCards.Power power) { }
         public Domain.MagicCards.Power Power { get; }
     }
     public sealed class HealingCard : Domain.MagicCards.MagicCardBase, System.IEquatable<Domain.MagicCards.Cards.HealingCard>
     {
-        public HealingCard(Domain.MagicCards.Chance activationChance, Domain.MagicCards.Power power) { }
+        public HealingCard(Domain.MagicCards.Power power) { }
         public Domain.MagicCards.Power Power { get; }
-        public static Domain.MagicCards.Cards.HealingCard Create(Domain.MagicCards.Chance activationChance, Domain.MagicCards.Power power) { }
+        public static Domain.MagicCards.Cards.HealingCard Create(Domain.MagicCards.Power power) { }
     }
     public sealed class StealingCard : Domain.MagicCards.MagicCardBase, System.IEquatable<Domain.MagicCards.Cards.StealingCard>
     {
-        public StealingCard(Domain.MagicCards.Chance activationChance) { }
+        public StealingCard() { }
     }
     public sealed class ThornDamageCard : Domain.MagicCards.MagicCardBase, System.IEquatable<Domain.MagicCards.Cards.ThornDamageCard>
     {
-        public ThornDamageCard(Domain.MagicCards.Chance activationChance, Domain.MagicCards.Power power) { }
+        public ThornDamageCard(Domain.MagicCards.Power power) { }
         public Domain.MagicCards.Power Power { get; }
     }
 }
 namespace Domain.MagicCards
 {
-    public sealed class Chance : Domain.Shared.ValueObjectBase, System.IEquatable<Domain.MagicCards.Chance>
-    {
-        public static readonly Domain.MagicCards.Chance Always;
-        public static readonly Domain.MagicCards.Chance CoinFlip;
-        public static readonly Domain.MagicCards.Chance Never;
-        public float Value { get; }
-        public bool IsAlways() { }
-        public bool IsNever() { }
-        public static Domain.MagicCards.Chance FromValue(float value) { }
-    }
-    public sealed class DrawResult : System.IEquatable<Domain.MagicCards.DrawResult>
-    {
-        public Domain.MagicCards.MagicCardBase? Card { get; init; }
-        public static Domain.MagicCards.DrawResult None { get; }
-        public static Domain.MagicCards.DrawResult Create(Domain.MagicCards.MagicCardBase card) { }
-    }
     public interface IMagicCardStrategy
     {
         System.Type CardType { get; }
@@ -278,8 +342,7 @@ namespace Domain.MagicCards
     }
     public abstract class MagicCardBase : Domain.Shared.ValueObjectBase, System.IEquatable<Domain.MagicCards.MagicCardBase>
     {
-        protected MagicCardBase(string name, Domain.MagicCards.Chance activationChance) { }
-        public Domain.MagicCards.Chance ActivationChance { get; }
+        protected MagicCardBase(string name) { }
         public string Name { get; }
     }
     public abstract class MagicCardStrategyBase<TCard> : Domain.MagicCards.IMagicCardStrategy, Domain.MagicCards.IMagicCardStrategy<TCard>
@@ -303,17 +366,23 @@ namespace Domain.MagicCards
         public float Value { get; }
         public static Domain.MagicCards.Power FromValue(float value) { }
     }
+    public sealed class SlotResult : System.IEquatable<Domain.MagicCards.SlotResult>
+    {
+        public Domain.BattlePlans.Slot? Slot { get; init; }
+        public static Domain.MagicCards.SlotResult None { get; }
+        public static Domain.MagicCards.SlotResult Create(Domain.BattlePlans.Slot slot) { }
+    }
 }
 namespace Domain.MagicCards.Rules
 {
-    public sealed class CardIndexCannotBeNegativeRule : Domain.Shared.IBusinessRule
+    public sealed class MagicPowerCanBePositiveRule : Domain.Shared.IBusinessRule
     {
-        public CardIndexCannotBeNegativeRule(int cardIndex) { }
         public string Message { get; }
         public bool IsBroken() { }
     }
-    public sealed class MagicPowerCanBePositiveRule : Domain.Shared.IBusinessRule
+    public sealed class SlotIndexCannotBeNegativeRule : Domain.Shared.IBusinessRule
     {
+        public SlotIndexCannotBeNegativeRule(int cardIndex) { }
         public string Message { get; }
         public bool IsBroken() { }
     }
@@ -356,14 +425,14 @@ namespace Domain.RandomSources
     public interface IRandomSource
     {
         int NextIntInclusive(int maxInclusive);
-        bool Succeeds(Domain.MagicCards.Chance chance);
+        bool Succeeds(Domain.ActivationRules.Chance chance);
     }
     public sealed class RandomSource : Domain.RandomSources.IRandomSource
     {
         public RandomSource() { }
         public RandomSource(System.Func<double> nextDouble) { }
         public int NextIntInclusive(int maxInclusive) { }
-        public bool Succeeds(Domain.MagicCards.Chance chance) { }
+        public bool Succeeds(Domain.ActivationRules.Chance chance) { }
     }
 }
 namespace Domain.Shared
@@ -447,7 +516,7 @@ namespace Domain.Warriors
         public int MaxDamage { get; }
         public string Name { get; }
         public float Strength { get; }
-        public static Domain.Warriors.Warrior Create(Domain.Warriors.WarriorId id, string name, Domain.Battles.Spheres.SphereBase currentSphere, Domain.Warriors.Level level, System.Collections.Generic.IEnumerable<Domain.MagicCards.MagicCardBase> cards) { }
+        public static Domain.Warriors.Warrior Create(Domain.Warriors.WarriorId id, string name, Domain.Battles.Spheres.SphereBase currentSphere, Domain.Warriors.Level level, System.Collections.Generic.IEnumerable<Domain.BattlePlans.Slot> slots) { }
     }
     public sealed class WarriorId : System.IEquatable<Domain.Warriors.WarriorId>
     {

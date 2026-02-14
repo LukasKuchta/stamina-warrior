@@ -1,4 +1,5 @@
-﻿using Domain.Battles;
+﻿using Domain.ActivationRules;
+using Domain.Battles;
 using Domain.Battles.Strategies;
 using Domain.MagicCards;
 
@@ -11,6 +12,7 @@ internal sealed class BattleStrategyHelper
         return new BlueSkyBattleStrategy(
              new MagicCardStrategyFactory([]),
              new EchoDecisionSource(0),
+             new ActivationRuleEvaluatorSelector([new ChanceActivationRuleEvaluator(new FakeIRandomSource())]),
              new BattleEndEventBuilder());
     }
 }

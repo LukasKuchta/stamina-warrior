@@ -1,4 +1,5 @@
-﻿using Domain.Battles.Spheres;
+﻿using Domain.BattlePlans;
+using Domain.Battles.Spheres;
 using Domain.MagicCards;
 using Domain.Warriors;
 
@@ -6,14 +7,14 @@ namespace Domain.UnitTests;
 
 internal sealed class WarriorHelper
 {
-    public static Warrior CreateBlueSky(string name, int level = 1, IEnumerable<MagicCardBase>? cards = null)
+    public static Warrior CreateBlueSky(string name, int level = 1, IEnumerable<Slot>? cards = null)
     {
         return Create(name, level, SphereBase.BlueSky, cards);
     }
 
-    private static Warrior Create(string name, int level, SphereBase sphere, IEnumerable<MagicCardBase>? cards = null)
+    private static Warrior Create(string name, int level, SphereBase sphere, IEnumerable<Slot>? slots = null)
     {
-        IEnumerable<MagicCardBase> magicCards = cards is null ? Enumerable.Empty<MagicCardBase>() : cards;
+        IEnumerable<Slot> battlePlan = slots is null ? Enumerable.Empty<Slot>() : slots;
 
         WarriorId warriorId = WarriorId.New();
         return Warrior.Create(
@@ -21,15 +22,15 @@ internal sealed class WarriorHelper
             name,
             sphere,
             Level.FromNumber(level),
-            magicCards);
+            battlePlan);
     }
 
-    public static Warrior CreateBetweenworld(string name, int level = 1, IEnumerable<MagicCardBase>? cards = null)
+    public static Warrior CreateBetweenworld(string name, int level = 1, IEnumerable<Slot>? cards = null)
     {
         return Create(name, level, SphereBase.Betweenworld, cards);
     }
 
-    public static Warrior CreateDeepvault(string name, int level = 1, IEnumerable<MagicCardBase>? cards = null)
+    public static Warrior CreateDeepvault(string name, int level = 1, IEnumerable<Slot>? cards = null)
     {
         return Create(name, level, SphereBase.Deepvault, cards);
     }

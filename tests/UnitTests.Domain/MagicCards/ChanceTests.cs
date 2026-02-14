@@ -1,4 +1,4 @@
-﻿using Domain.MagicCards;
+﻿using Domain.ActivationRules;
 using Domain.MagicCards.Rules;
 using Domain.Shared;
 using Shouldly;

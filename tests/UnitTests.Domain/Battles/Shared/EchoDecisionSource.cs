@@ -1,5 +1,5 @@
-﻿using Domain.Battles;
-using Domain.MagicCards;
+﻿using Domain.ActivationRules;
+using Domain.Battles;
 
 namespace Domain.UnitTests.Battles.Shared;
 

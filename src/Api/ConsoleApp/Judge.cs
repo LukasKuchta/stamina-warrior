@@ -2,7 +2,7 @@
 using Domain.Battles;
 using Domain.Battles.Events;
 
-namespace StaminaWarrior;
+namespace ConsoleApp;
 
 internal sealed class Judge : IBattleEventVisitor
 {

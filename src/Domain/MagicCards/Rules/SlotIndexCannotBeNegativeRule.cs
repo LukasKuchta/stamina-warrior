@@ -3,7 +3,7 @@ using Domain.Shared;
 
 namespace Domain.MagicCards.Rules;
 
-public sealed class CardIndexCannotBeNegativeRule(int cardIndex) : IBusinessRule
+public sealed class SlotIndexCannotBeNegativeRule(int cardIndex) : IBusinessRule
 {
     public string Message => "Index of lucky card cannto be negative!";
 
