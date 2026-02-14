@@ -2,7 +2,7 @@
 
 namespace Domain.Battles.Events;
 
-public sealed record WarriorDied : IBattleEvent
+public sealed record WarriorDied : BattleEventBase
 {
     public WarrirorStat DeadMan { get; }
     public WarrirorStat Survivor { get; }
@@ -13,5 +13,5 @@ public sealed record WarriorDied : IBattleEvent
         Survivor = new WarrirorStat(survivor.Name, survivor.Health, survivor.MaxDamage);
     }
 
-    public void Accept(IBattleEventVisitor visitor) => visitor.Visit(this);
+    public override void Accept(IBattleEventVisitor visitor) => visitor.Visit(this);
 }

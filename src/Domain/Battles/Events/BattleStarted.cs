@@ -2,7 +2,7 @@
 
 namespace Domain.Battles.Events;
 
-public sealed record BattleStarted : IBattleEvent
+public sealed record BattleStarted : BattleEventBase
 {
     internal BattleStarted(Warrior attacker, Warrior Opponent)
     {
@@ -13,5 +13,5 @@ public sealed record BattleStarted : IBattleEvent
     public WarrirorStat Attacker { get; }
     public WarrirorStat Oponent { get; }
 
-    public void Accept(IBattleEventVisitor visitor) => visitor.Visit(this);
+    public override void Accept(IBattleEventVisitor visitor) => visitor.Visit(this);
 }

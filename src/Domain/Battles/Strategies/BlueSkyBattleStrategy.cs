@@ -40,6 +40,7 @@ IBattleEndEventBuilder battleEndEventBuilder) : BattleStrategyBase<BlueSkysphere
 
     private void RecordEvent(IBattleEvent @event)
     {
+        @event.SetOrder(_battleEvents.Count);
         _battleEvents.Add(@event);
     }
 
@@ -47,7 +48,7 @@ IBattleEndEventBuilder battleEndEventBuilder) : BattleStrategyBase<BlueSkysphere
     {
         var events = ImmutableArray.CreateRange(_battleEvents);
         _battleEvents.Clear();
-        return new BattleResult(events);
+        return BattleResult.Create(events);
     }
 
     private void Fight(Warrior attacker, Warrior oponent)
@@ -69,7 +70,7 @@ IBattleEndEventBuilder battleEndEventBuilder) : BattleStrategyBase<BlueSkysphere
         attacker.Hit(damage, oponent);
         attacker.CourseBites();
 
-        _battleEvents.Add(new AttackLanded(attacker, oponent, damage));
+        RecordEvent(new AttackLanded(attacker, oponent, damage));
     }
 }
 

@@ -13,9 +13,16 @@ namespace Domain.Battles
         public int RoundsCount { get; }
         public static Domain.Battles.BattleContext Create(Domain.Warriors.Warrior attacker, Domain.Warriors.Warrior opponent, int roundsCount) { }
     }
-    public sealed class BattleResult
+    public sealed class BattleResult : Domain.Shared.EntityBase, Domain.Shared.IAgregationRoot
     {
         public System.Collections.Immutable.ImmutableArray<Domain.Battles.Events.IBattleEvent> BattleEvents { get; }
+        public Domain.Battles.BattleResultId Id { get; }
+        public static Domain.Battles.BattleResult Create(System.Collections.Immutable.ImmutableArray<Domain.Battles.Events.IBattleEvent> battleEvents) { }
+    }
+    public sealed class BattleResultId : System.IEquatable<Domain.Battles.BattleResultId>
+    {
+        public BattleResultId(System.Guid Value) { }
+        public System.Guid Value { get; init; }
     }
     public sealed class BattleStrategyFactory : Domain.Battles.IBattleStrategyFactory
     {
@@ -66,63 +73,72 @@ namespace Domain.Battles
 }
 namespace Domain.Battles.Events
 {
-    public sealed class AttackLanded : Domain.Battles.Events.IBattleEvent, System.IEquatable<Domain.Battles.Events.AttackLanded>
+    public sealed class AttackLanded : Domain.Battles.Events.BattleEventBase, System.IEquatable<Domain.Battles.Events.AttackLanded>
     {
         public string AttackerName { get; }
         public int Damage { get; }
         public string OponentName { get; }
-        public void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
+        public override void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
     }
-    public sealed class BattleFinished : Domain.Battles.Events.IBattleEvent, System.IEquatable<Domain.Battles.Events.BattleFinished>
+    public abstract class BattleEventBase : Domain.Battles.Events.IBattleEvent, System.IEquatable<Domain.Battles.Events.BattleEventBase>
+    {
+        protected BattleEventBase() { }
+        public int Order { get; }
+        public abstract void Accept(Domain.Battles.IBattleEventVisitor visitor);
+        public void SetOrder(int order) { }
+    }
+    public sealed class BattleFinished : Domain.Battles.Events.BattleEventBase, System.IEquatable<Domain.Battles.Events.BattleFinished>
     {
         public Domain.Battles.Events.WarrirorStat Looser { get; }
         public Domain.Battles.Events.WarrirorStat Winner { get; }
-        public void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
+        public override void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
     }
-    public sealed class BattleFinishedTied : Domain.Battles.Events.IBattleEvent, System.IEquatable<Domain.Battles.Events.BattleFinishedTied>
+    public sealed class BattleFinishedTied : Domain.Battles.Events.BattleEventBase, System.IEquatable<Domain.Battles.Events.BattleFinishedTied>
     {
         public string Warrior1Name { get; }
         public string Warrior2Name { get; }
-        public void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
+        public override void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
     }
-    public sealed class BattleStarted : Domain.Battles.Events.IBattleEvent, System.IEquatable<Domain.Battles.Events.BattleStarted>
+    public sealed class BattleStarted : Domain.Battles.Events.BattleEventBase, System.IEquatable<Domain.Battles.Events.BattleStarted>
     {
         public Domain.Battles.Events.WarrirorStat Attacker { get; }
         public Domain.Battles.Events.WarrirorStat Oponent { get; }
-        public void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
+        public override void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
     }
-    public sealed class CardDrawn : Domain.Battles.Events.IBattleEvent, System.IEquatable<Domain.Battles.Events.CardDrawn>
+    public sealed class CardDrawn : Domain.Battles.Events.BattleEventBase, System.IEquatable<Domain.Battles.Events.CardDrawn>
     {
         public string CardHolder { get; }
         public string CardName { get; }
-        public void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
+        public override void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
     }
-    public sealed class DoubleKnockoutOccurred : Domain.Battles.Events.IBattleEvent, System.IEquatable<Domain.Battles.Events.DoubleKnockoutOccurred>
+    public sealed class DoubleKnockoutOccurred : Domain.Battles.Events.BattleEventBase, System.IEquatable<Domain.Battles.Events.DoubleKnockoutOccurred>
     {
         public Domain.Battles.Events.WarrirorStat Attacker { get; }
         public Domain.Battles.Events.WarrirorStat Oponent { get; }
-        public void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
+        public override void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
     }
     public interface IBattleEvent
     {
+        int Order { get; }
         void Accept(Domain.Battles.IBattleEventVisitor visitor);
+        void SetOrder(int order);
     }
-    public sealed class RoundStarted : Domain.Battles.Events.IBattleEvent, System.IEquatable<Domain.Battles.Events.RoundStarted>
+    public sealed class RoundStarted : Domain.Battles.Events.BattleEventBase, System.IEquatable<Domain.Battles.Events.RoundStarted>
     {
         public int Round { get; }
-        public void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
+        public override void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
     }
-    public sealed class RoundStatsCaptured : Domain.Battles.Events.IBattleEvent, System.IEquatable<Domain.Battles.Events.RoundStatsCaptured>
+    public sealed class RoundStatsCaptured : Domain.Battles.Events.BattleEventBase, System.IEquatable<Domain.Battles.Events.RoundStatsCaptured>
     {
         public Domain.Battles.Events.WarrirorStat Attacker { get; }
         public Domain.Battles.Events.WarrirorStat Opponent { get; }
-        public void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
+        public override void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
     }
-    public sealed class WarriorDied : Domain.Battles.Events.IBattleEvent, System.IEquatable<Domain.Battles.Events.WarriorDied>
+    public sealed class WarriorDied : Domain.Battles.Events.BattleEventBase, System.IEquatable<Domain.Battles.Events.WarriorDied>
     {
         public Domain.Battles.Events.WarrirorStat DeadMan { get; }
         public Domain.Battles.Events.WarrirorStat Survivor { get; }
-        public void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
+        public override void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
     }
     public sealed class WarrirorStat : System.IEquatable<Domain.Battles.Events.WarrirorStat>
     {
@@ -135,6 +151,11 @@ namespace Domain.Battles.Events
 namespace Domain.Battles.Rules
 {
     public sealed class AttackerAndOpponentSpehereCheckRule : Domain.Shared.IBusinessRule, System.IEquatable<Domain.Battles.Rules.AttackerAndOpponentSpehereCheckRule>
+    {
+        public string Message { get; }
+        public bool IsBroken() { }
+    }
+    public sealed class BattleEventsCannotBeEmptyRule : Domain.Shared.IBusinessRule
     {
         public string Message { get; }
         public bool IsBroken() { }

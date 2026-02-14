@@ -2,7 +2,7 @@
 
 namespace Domain.Battles.Events;
 
-public sealed record DoubleKnockoutOccurred : IBattleEvent
+public sealed record DoubleKnockoutOccurred : BattleEventBase
 {
     public WarrirorStat Attacker { get; }
     public WarrirorStat Oponent { get; }
@@ -13,5 +13,5 @@ public sealed record DoubleKnockoutOccurred : IBattleEvent
         Oponent = new WarrirorStat(oponent.Name, oponent.Health, oponent.MaxDamage);
     }
 
-    public void Accept(IBattleEventVisitor visitor) => visitor.Visit(this);
+    public override void Accept(IBattleEventVisitor visitor) => visitor.Visit(this);
 }

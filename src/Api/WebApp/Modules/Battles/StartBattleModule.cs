@@ -30,7 +30,7 @@ public sealed class StartBattleModule : ICarterModule
         // return Results.Conflict(new { error = "Player is already in battle." });
 
         var response = new StarttBattleResponse();
-        var id = Guid.NewGuid();        
+        var id = Guid.NewGuid();
 
         return TypedResults.Created($"/api/v1/battles/{id}", response);
     }

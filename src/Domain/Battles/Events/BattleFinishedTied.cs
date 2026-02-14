@@ -2,7 +2,7 @@
 
 namespace Domain.Battles.Events;
 
-public sealed record BattleFinishedTied : IBattleEvent
+public sealed record BattleFinishedTied : BattleEventBase
 {
     internal BattleFinishedTied(Warrior warrior1, Warrior warrior2)
     {
@@ -13,5 +13,5 @@ public sealed record BattleFinishedTied : IBattleEvent
     public string Warrior1Name { get; }
     public string Warrior2Name { get; }
 
-    public void Accept(IBattleEventVisitor visitor) => visitor.Visit(this);
+    public override void Accept(IBattleEventVisitor visitor) => visitor.Visit(this);
 }

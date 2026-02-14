@@ -1,6 +1,6 @@
 ﻿namespace Domain.Battles.Events;
 
-public sealed record RoundStarted : IBattleEvent
+public sealed record RoundStarted : BattleEventBase
 {
     internal RoundStarted(int roundNumber)
     {
@@ -9,5 +9,5 @@ public sealed record RoundStarted : IBattleEvent
 
     public int Round { get; }
 
-    public void Accept(IBattleEventVisitor visitor) => visitor.Visit(this);
+    public override void Accept(IBattleEventVisitor visitor) => visitor.Visit(this);
 }

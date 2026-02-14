@@ -13,7 +13,7 @@ public sealed class CreateWarriorModule : ICarterModule
 
         battles.MapPost("/", Handle)
                 .Produces<Guid>(StatusCodes.Status201Created)
-                .Produces(StatusCodes.Status400BadRequest);                
+                .Produces(StatusCodes.Status400BadRequest);
     }
 
     private static async Task<Results<Created<Guid>, BadRequest>> Handle(CreateWarriorRequest request)
@@ -21,7 +21,7 @@ public sealed class CreateWarriorModule : ICarterModule
         _ = request;
         // add validation here 
         // return Results.BadRequest(new { error = "...
-       
+
         var id = Guid.NewGuid();
 
         return TypedResults.Created($"/api/v1/warriors/{id}", id);

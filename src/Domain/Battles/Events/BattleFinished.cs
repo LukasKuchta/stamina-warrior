@@ -2,7 +2,7 @@
 
 namespace Domain.Battles.Events;
 
-public sealed record BattleFinished : IBattleEvent
+public sealed record BattleFinished : BattleEventBase
 {
     public WarrirorStat Winner { get; }
     public WarrirorStat Looser { get; }
@@ -13,5 +13,5 @@ public sealed record BattleFinished : IBattleEvent
         Looser = new WarrirorStat(looser.Name, looser.Health, looser.MaxDamage);
     }
 
-    public void Accept(IBattleEventVisitor visitor) => visitor.Visit(this);
+    public override void Accept(IBattleEventVisitor visitor) => visitor.Visit(this);
 }

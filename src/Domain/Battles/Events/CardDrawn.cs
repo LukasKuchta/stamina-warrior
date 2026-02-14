@@ -3,7 +3,7 @@
 namespace Domain.Battles.Events;
 
 
-public sealed record CardDrawn : IBattleEvent
+public sealed record CardDrawn : BattleEventBase
 {
     internal CardDrawn(Warrior cardHolder, string cardName)
     {
@@ -14,5 +14,5 @@ public sealed record CardDrawn : IBattleEvent
     public string CardHolder { get; }
     public string CardName { get; }
 
-    public void Accept(IBattleEventVisitor visitor) => visitor.Visit(this);
+    public override void Accept(IBattleEventVisitor visitor) => visitor.Visit(this);
 }

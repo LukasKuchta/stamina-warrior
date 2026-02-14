@@ -2,7 +2,7 @@
 
 namespace Domain.Battles.Events;
 
-public sealed record RoundStatsCaptured : IBattleEvent
+public sealed record RoundStatsCaptured : BattleEventBase
 {
     public WarrirorStat Attacker { get; }
     public WarrirorStat Opponent { get; }
@@ -13,5 +13,5 @@ public sealed record RoundStatsCaptured : IBattleEvent
         Opponent = new WarrirorStat(oponent.Name, oponent.Health, oponent.MaxDamage);
     }
 
-    public void Accept(IBattleEventVisitor visitor) => visitor.Visit(this);
+    public override void Accept(IBattleEventVisitor visitor) => visitor.Visit(this);
 }

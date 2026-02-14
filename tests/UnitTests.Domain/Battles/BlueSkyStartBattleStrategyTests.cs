@@ -57,6 +57,24 @@ public class BlueSkyStrategBattleResultsyTests
     }
 
     [Fact]
+    public void StartBattle_BattleResult_ShouldHaveIncreasingOrder()
+    {
+        var conan = WarriorHelper.CreateBlueSky("Connan", 3);
+        var brutus = WarriorHelper.CreateBlueSky("Brutus", 1);
+
+        var blueSkyStrategy = CreateBluSkyStrategy();
+
+        var battleResultBase = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 1));
+
+        var battleResult = battleResultBase.ShouldBeAssignableTo<BattleResult>();
+     
+        for(int i = 0; i < battleResult.BattleEvents.Length - 1; i++)
+        {
+            battleResult.BattleEvents[i].Order.ShouldBe(i);
+        }
+    }
+
+    [Fact]
     public void StartBattle_BattleShouldHas3Iterations()
     {
         var conan = WarriorHelper.CreateBlueSky("Connan", 2);
