@@ -10,7 +10,7 @@ public sealed class FightDecisionSource(IRandomSource chanceService) : IFightDec
         return chanceService.NextIntInclusive(maxDamage);
     }
 
-    public int PickCardIndex(int maxCardIndex)
+    public int PickSlotIndex(int maxCardIndex)
     {
         return chanceService.NextIntInclusive(maxCardIndex);
     }

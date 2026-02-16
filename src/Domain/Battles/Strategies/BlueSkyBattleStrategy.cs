@@ -1,5 +1,7 @@
 ﻿using System.Collections.Immutable;
+using System.ComponentModel;
 using Domain.ActivationRules;
+using Domain.BattlePlans;
 using Domain.Battles.Events;
 using Domain.Battles.Spheres;
 using Domain.MagicCards;
@@ -10,7 +12,7 @@ namespace Domain.Battles.Strategies;
 public sealed class BlueSkyBattleStrategy(
 IMagicCardStrategyFactory magicCardStrategy,
 IFightDecisionSource decisionSource,
-IActivationRuleEvaluatorSelector cardActivator,
+IActivationRuleEvaluatorSelector ruleEvaluator,
 IBattleEndEventBuilder battleEndEventBuilder) : BattleStrategyBase<BlueSkysphere>
 {
     private const int CardDrawAttemptRangeMax = 15;
@@ -53,26 +55,53 @@ IBattleEndEventBuilder battleEndEventBuilder) : BattleStrategyBase<BlueSkysphere
         return BattleResult.Create(events);
     }
 
-    private void Attack(Warrior attacker, Warrior oponent)
+    private void Attack(Warrior attacker, Warrior opponent)
     {
-        int cardIndex = decisionSource.PickCardIndex(CardDrawAttemptRangeMax);
-
-        SlotResult touchResult = attacker.TryToTouchSlot(cardIndex);
-
-        if (touchResult.Slot is { } slot && cardActivator.SelectBy(slot.Rule).Matches(slot.Rule, new AttackContext(attacker, oponent)))
-        {
-            RecordEvent(new CardDrawn(attacker, slot.Card.Name));
-
-            magicCardStrategy
-                .SelectBy(slot.Card)
-                .ApplyMagic(attacker, oponent, slot.Card);
-        }
+        TryToApplyMagic(new AttackContext(attacker, opponent));
 
         int damage = decisionSource.PickBaseDamage(attacker.MaxDamage);
-        attacker.Hit(damage, oponent);
+        attacker.Hit(damage, opponent);
         attacker.CourseBites();
 
-        RecordEvent(new AttackLanded(attacker, oponent, damage));
+        RecordEvent(new AttackLanded(attacker, opponent, damage));
+
+        void TryToApplyMagic(AttackContext attackContext)
+        {
+            var rulesValidated = attackContext.Attacker.TryEvaluateRules(attackContext, out var slot);
+
+            if (!rulesValidated)
+            {
+                int slotIndex = decisionSource.PickSlotIndex(CardDrawAttemptRangeMax);
+                attackContext.Attacker.TryToTouchSlot(slotIndex, out slot);
+            }
+
+            if (slot is null)
+            {
+                return;
+            }
+
+            if (rulesValidated)
+            {
+                ApplyMagic();
+                return;
+            }
+
+            if (!ruleEvaluator.SelectBy(slot.Rule).Matches(slot.Rule, attackContext))
+            {
+                return;
+            }
+
+            ApplyMagic();
+
+            void ApplyMagic()
+            {
+                RecordEvent(new CardDrawn(attackContext.Attacker, slot.Card.Name));
+
+                magicCardStrategy
+                    .SelectBy(slot.Card)
+                    .ApplyMagic(attackContext.Attacker, attackContext.Opponent, slot.Card);
+            }
+        }
     }
 }
 

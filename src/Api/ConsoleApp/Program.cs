@@ -1,5 +1,6 @@
 ﻿using ConsoleApp;
 using Domain.ActivationRules;
+using Domain.BattlePlans;
 using Domain.Battles;
 using Domain.Battles.Spheres;
 using Domain.MagicCards;
@@ -16,10 +17,13 @@ DependencyInjection.AddProgramServices(builder.Services);
 var app = builder.Build();
 
 
-//var brutusCards = new List<MagicCardBase>
-//{
-//    new Slot(new HealingCard(Power.FromValue(100), new ConditionActivationRule(),0))
-//};
+var brutusSlots = new List<Slot>
+{
+    new Slot(
+         HealingCard.Create(Power.FromValue(100)),
+        new ConditionActivationRule(ctx => ctx.Attacker.Health < 30),
+        0),
+};
 
 //var conanCards = new List<MagicCardBase>
 //{
@@ -47,7 +51,7 @@ var judge = new Judge();
 for (int i = 0; i < 1; i++)
 {
     var conan = Warrior.Create(WarriorId.New(), "Conan", SphereBase.BlueSky, Level.FromNumber(1), []);
-    var brutus = Warrior.Create(WarriorId.New(), "Brutus", SphereBase.BlueSky, Level.FromNumber(1), []);
+    var brutus = Warrior.Create(WarriorId.New(), "Brutus", SphereBase.BlueSky, Level.FromNumber(1), brutusSlots);
 
     var battleStrategy = battleStrategyFactory!.SelectBy(conan.CurrentSphere);
 

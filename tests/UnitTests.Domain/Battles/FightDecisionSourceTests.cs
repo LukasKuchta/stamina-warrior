@@ -25,6 +25,6 @@ public sealed class FightDecisionSourceTests
     public void PickCardIndex_WhenMaxIndexIs2_ShouldBe2()
     {
         var decissionSource = new FightDecisionSource(new FakeIRandomSource());
-        decissionSource.PickCardIndex(2).ShouldBe(2);
+        decissionSource.PickSlotIndex(2).ShouldBe(2);
     }
 }

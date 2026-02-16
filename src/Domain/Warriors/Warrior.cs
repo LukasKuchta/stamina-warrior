@@ -1,4 +1,6 @@
-﻿using Domain.BattlePlans;
+﻿using System.Diagnostics.CodeAnalysis;
+using Domain.ActivationRules;
+using Domain.BattlePlans;
 using Domain.Battles.Spheres;
 using Domain.MagicCards;
 using Domain.Shared;
@@ -41,9 +43,9 @@ public sealed class Warrior : EntityBase, IAgregationRoot
 
     private Power? BoostedDamage { get; set; }
 
-    public bool IsDeckOfCardsEmpty => BattlePlan.NotEmpty;
+    public bool IsBattlePlanEmpty => BattlePlan.NotEmpty;
 
-    internal int DeckMaxIndexInclusive => BattlePlan.MaxIndexOfSlot;
+    internal int BattlePlanMaxIndexOfSlotInclusive => BattlePlan.MaxIndexOfSlot;
 
     public static Warrior Create(
         WarriorId id,
@@ -57,11 +59,9 @@ public sealed class Warrior : EntityBase, IAgregationRoot
         return new Warrior(id, name, currentSphere, level, BattlePlan.FromList(slots));
     }
 
-    internal void StealCard(int cardIndex, Warrior oponent)
+    internal void StealCard(int slotIndex, Warrior oponent)
     {
-        SlotResult drawResult = oponent.TryToTouchSlot(cardIndex);
-
-        if (drawResult.Slot is { } slot)
+        if (oponent.TryToTouchSlot(slotIndex, out var slot))
         {
             BattlePlan.Add(slot);
 
@@ -69,9 +69,14 @@ public sealed class Warrior : EntityBase, IAgregationRoot
         }
     }
 
-    internal SlotResult TryToTouchSlot(int cardIndex)
+    internal bool TryEvaluateRules(AttackContext attackContext, [NotNullWhen(true)] out Slot? slot)
     {
-        return BattlePlan.TouchTheSlot(cardIndex);
+        return BattlePlan.TryEvaluateRules(attackContext, out slot);
+    }
+
+    internal bool TryToTouchSlot(int cardIndex, [NotNullWhen(true)] out Slot? slot)
+    {
+        return BattlePlan.TouchTheSlot(cardIndex, out slot);
     }
 
     internal void CourseTarget(Power power, Warrior target)

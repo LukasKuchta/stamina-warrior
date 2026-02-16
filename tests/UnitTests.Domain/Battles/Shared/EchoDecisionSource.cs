@@ -10,13 +10,8 @@ internal sealed class EchoDecisionSource(int cardIndex) : IFightDecisionSource
         return maxDamage;
     }
 
-    public int PickCardIndex(int maxCardIndex)
+    public int PickSlotIndex(int maxCardIndex)
     {
         return cardIndex;
-    }
-
-    public bool TryActivate(Chance activationChance)
-    {
-        return true;
-    }
+    }  
 }

@@ -20,9 +20,9 @@ namespace Domain.ActivationRules
     }
     public class AttackContext : System.IEquatable<Domain.ActivationRules.AttackContext>
     {
-        public AttackContext(Domain.Warriors.Warrior Attacker, Domain.Warriors.Warrior Oponent) { }
+        public AttackContext(Domain.Warriors.Warrior Attacker, Domain.Warriors.Warrior Opponent) { }
         public Domain.Warriors.Warrior Attacker { get; init; }
-        public Domain.Warriors.Warrior Oponent { get; init; }
+        public Domain.Warriors.Warrior Opponent { get; init; }
     }
     public sealed class Chance : Domain.Shared.ValueObjectBase, System.IEquatable<Domain.ActivationRules.Chance>
     {
@@ -71,6 +71,12 @@ namespace Domain.ActivationRules
 }
 namespace Domain.BattlePlans
 {
+    public sealed class ConditionMet : System.IEquatable<Domain.BattlePlans.ConditionMet>
+    {
+        public ConditionMet(Domain.BattlePlans.Slot? Slot, bool Met) { }
+        public bool Met { get; init; }
+        public Domain.BattlePlans.Slot? Slot { get; init; }
+    }
     public sealed class Slot : System.IEquatable<Domain.BattlePlans.Slot>
     {
         public Slot(Domain.MagicCards.MagicCardBase Card, Domain.ActivationRules.ActivationRuleBase Rule, int Priority) { }
@@ -113,7 +119,7 @@ namespace Domain.Battles
     {
         public FightDecisionSource(Domain.RandomSources.IRandomSource chanceService) { }
         public int PickBaseDamage(int maxDamage) { }
-        public int PickCardIndex(int maxCardIndex) { }
+        public int PickSlotIndex(int maxCardIndex) { }
         public bool TryActivate(Domain.ActivationRules.Chance activationChance) { }
     }
     public interface IBattleEventVisitor
@@ -142,8 +148,7 @@ namespace Domain.Battles
     public interface IFightDecisionSource
     {
         int PickBaseDamage(int maxDamage);
-        int PickCardIndex(int maxCardIndex);
-        bool TryActivate(Domain.ActivationRules.Chance activationChance);
+        int PickSlotIndex(int maxCardIndex);
     }
     public sealed class RoundCannotBeLowerOrEqualZeroRule : Domain.Shared.IBusinessRule
     {
@@ -281,7 +286,7 @@ namespace Domain.Battles.Strategies
     }
     public sealed class BlueSkyBattleStrategy : Domain.Battles.Strategies.BattleStrategyBase<Domain.Battles.Spheres.BlueSkysphere>
     {
-        public BlueSkyBattleStrategy(Domain.MagicCards.IMagicCardStrategyFactory magicCardStrategy, Domain.Battles.IFightDecisionSource decisionSource, Domain.ActivationRules.IActivationRuleEvaluatorSelector cardActivator, Domain.Battles.Strategies.IBattleEndEventBuilder battleEndEventBuilder) { }
+        public BlueSkyBattleStrategy(Domain.MagicCards.IMagicCardStrategyFactory magicCardStrategy, Domain.Battles.IFightDecisionSource decisionSource, Domain.ActivationRules.IActivationRuleEvaluatorSelector ruleEvaluator, Domain.Battles.Strategies.IBattleEndEventBuilder battleEndEventBuilder) { }
         public override Domain.Battles.BattleResult StartBattle(Domain.Battles.BattleContext battleContext, System.DateTimeOffset startedAt) { }
     }
     public interface IBattleEndEventBuilder
@@ -366,11 +371,11 @@ namespace Domain.MagicCards
         public float Value { get; }
         public static Domain.MagicCards.Power FromValue(float value) { }
     }
-    public sealed class SlotResult : System.IEquatable<Domain.MagicCards.SlotResult>
+    public sealed class SlotTouchResult : System.IEquatable<Domain.MagicCards.SlotTouchResult>
     {
         public Domain.BattlePlans.Slot? Slot { get; init; }
-        public static Domain.MagicCards.SlotResult None { get; }
-        public static Domain.MagicCards.SlotResult Create(Domain.BattlePlans.Slot slot) { }
+        public static Domain.MagicCards.SlotTouchResult None { get; }
+        public static Domain.MagicCards.SlotTouchResult Create(Domain.BattlePlans.Slot slot) { }
     }
 }
 namespace Domain.MagicCards.Rules
@@ -511,7 +516,7 @@ namespace Domain.Warriors
         public Domain.Battles.Spheres.SphereBase CurrentSphere { get; }
         public int Health { get; }
         public Domain.Warriors.WarriorId Id { get; }
-        public bool IsDeckOfCardsEmpty { get; }
+        public bool IsBattlePlanEmpty { get; }
         public Domain.Warriors.Level Level { get; }
         public int MaxDamage { get; }
         public string Name { get; }

@@ -16,6 +16,6 @@ public interface IActivationRuleEvaluator
     bool Matches(ActivationRuleBase rule, AttackContext ctx);
 }
 
-public record AttackContext(Warrior Attacker, Warrior Oponent);
+public record AttackContext(Warrior Attacker, Warrior Opponent);
 
 

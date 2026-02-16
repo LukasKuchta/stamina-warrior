@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
+using Domain.ActivationRules;
 using Domain.MagicCards;
 using Domain.MagicCards.Rules;
 using Domain.Shared;
@@ -24,19 +26,37 @@ internal sealed record BattlePlan : ValueObjectBase
 
     public bool Enchanted { get; private set; }
 
-    public SlotResult TouchTheSlot(int slotIndfex)
+    public bool TryEvaluateRules(AttackContext attackContext, [NotNullWhen(true)] out Slot? slot)
+    {        
+        var s =  _slots
+            .Where(slot => slot.Rule is ConditionActivationRule rule && rule.Condition(attackContext))
+            .OrderByDescending(slot => slot.Priority)
+            .FirstOrDefault();
+
+        if (s is null)
+        {
+            slot = null;
+            return false;
+        }
+
+        slot = s;
+        return true;
+    }
+
+    public bool TouchTheSlot(int slotIndfex, [NotNullWhen(true)] out Slot? slot)
     {
         CheckRule(new SlotIndexCannotBeNegativeRule(slotIndfex));
 
-        if (slotIndfex <= MaxIndexOfSlot)
+        if (slotIndfex <= MaxIndexOfSlot && _slots[slotIndfex].Rule is ChanceActivationRule)
         {
-            var slot = _slots[slotIndfex];
+            slot = _slots[slotIndfex];
             _slots.RemoveAt(slotIndfex);
 
-            return SlotResult.Create(slot);
+            return true;
         }
 
-        return SlotResult.None;
+        slot = null;
+        return false;
     }
 
     public void Add(Slot slot)
@@ -49,3 +69,5 @@ internal sealed record BattlePlan : ValueObjectBase
         return new BattlePlan(slots.ToList());
     }
 }
+
+public sealed record ConditionMet(Slot? Slot, bool Met);
