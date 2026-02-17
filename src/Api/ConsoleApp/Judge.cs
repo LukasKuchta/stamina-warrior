@@ -46,7 +46,7 @@ internal sealed class Judge : IBattleEventVisitor
 
     public void Visit(CardDrawn e)
     {
-        Console.WriteLine($"{e.CardHolder} drew card: {e.CardName}");
+        Console.WriteLine($"{e.CardHolder} drew card: {e.CardName} by rule type: {e.ActivationRule} <---");
     }
 
     public void Visit(BattleStarted e)
@@ -56,6 +56,6 @@ internal sealed class Judge : IBattleEventVisitor
 
     public void Visit(RoundStatsCaptured e)
     {
-        Console.WriteLine($"{e.Attacker.Name}:[{e.Attacker.Health}] vs {e.Opponent.Name}:[{e.Opponent.Health}]");
+        Console.WriteLine($"{e.Attacker.Name}(H:{e.Attacker.Health}) vs {e.Opponent.Name}(H:{e.Opponent.Health})");
     }
 }

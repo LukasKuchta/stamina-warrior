@@ -5,7 +5,7 @@ namespace Domain.Battles;
 
 public sealed class FightDecisionSource(IRandomSource chanceService) : IFightDecisionSource
 {
-    public int PickBaseDamage(int maxDamage)
+    public int PickDamage(int maxDamage)
     {
         return chanceService.NextIntInclusive(maxDamage);
     }

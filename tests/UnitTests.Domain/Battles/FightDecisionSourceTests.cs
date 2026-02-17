@@ -11,7 +11,7 @@ public sealed class FightDecisionSourceTests
     public void PickBaseDamage_WhenMaxDamageIs100_ShouldBe100()
     {
         var decissionSource = new FightDecisionSource(new FakeIRandomSource(100));
-        decissionSource.PickBaseDamage(100).ShouldBe(100);
+        decissionSource.PickDamage(100).ShouldBe(100);
     }
 
     [Fact]

@@ -35,10 +35,11 @@ internal sealed record BattlePlan : ValueObjectBase
 
         if (s is null)
         {
-            slot = null;
+            slot = null;            
             return false;
         }
 
+        _slots.Remove(s);
         slot = s;
         return true;
     }

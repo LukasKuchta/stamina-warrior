@@ -118,7 +118,7 @@ namespace Domain.Battles
     public sealed class FightDecisionSource : Domain.Battles.IFightDecisionSource
     {
         public FightDecisionSource(Domain.RandomSources.IRandomSource chanceService) { }
-        public int PickBaseDamage(int maxDamage) { }
+        public int PickDamage(int maxDamage) { }
         public int PickSlotIndex(int maxCardIndex) { }
     }
     public interface IBattleEventVisitor
@@ -146,7 +146,7 @@ namespace Domain.Battles
         where T : Domain.Battles.Spheres.SphereBase { }
     public interface IFightDecisionSource
     {
-        int PickBaseDamage(int maxDamage);
+        int PickDamage(int maxDamage);
         int PickSlotIndex(int maxCardIndex);
     }
     public sealed class RoundCannotBeLowerOrEqualZeroRule : Domain.Shared.IBusinessRule
@@ -192,7 +192,8 @@ namespace Domain.Battles.Events
     }
     public sealed class CardDrawn : Domain.Battles.Events.BattleEventBase, System.IEquatable<Domain.Battles.Events.CardDrawn>
     {
-        public string CardHolder { get; }
+        public string ActivationRule { get; }
+        public Domain.Battles.Events.WarrirorStat CardHolder { get; }
         public string CardName { get; }
         public override void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
     }

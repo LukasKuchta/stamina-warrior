@@ -59,7 +59,7 @@ IBattleEndEventBuilder battleEndEventBuilder) : BattleStrategyBase<BlueSkysphere
     {
         TryToApplyMagic(new AttackContext(attacker, opponent));
 
-        int damage = decisionSource.PickBaseDamage(attacker.MaxDamage);
+        int damage = decisionSource.PickDamage(attacker.MaxDamage);
         attacker.Hit(damage, opponent);
         attacker.CourseBites();
 
@@ -95,7 +95,7 @@ IBattleEndEventBuilder battleEndEventBuilder) : BattleStrategyBase<BlueSkysphere
 
             void ApplyMagic()
             {
-                RecordEvent(new CardDrawn(attackContext.Attacker, slot.Card.Name));
+                RecordEvent(new CardDrawn(attackContext.Attacker, slot.Card.Name, slot.Rule));
 
                 magicCardStrategy
                     .SelectBy(slot.Card)

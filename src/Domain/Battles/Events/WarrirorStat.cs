@@ -14,5 +14,5 @@ public sealed record WarrirorStat
     public int Health { get; }
     public int MaxDamage { get; }
 
-    override public string ToString() => $"{Name} (Health: {Health}, MaxDamage: {MaxDamage})";
+    override public string ToString() => $"{Name}(H:{Health}, DMG:{MaxDamage})";
 }

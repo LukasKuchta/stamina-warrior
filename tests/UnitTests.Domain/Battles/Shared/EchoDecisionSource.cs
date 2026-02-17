@@ -5,7 +5,7 @@ namespace Domain.UnitTests.Battles.Shared;
 
 internal sealed class EchoDecisionSource(int cardIndex) : IFightDecisionSource
 {
-    public int PickBaseDamage(int maxDamage)
+    public int PickDamage(int maxDamage)
     {
         return maxDamage;
     }
@@ -20,7 +20,7 @@ internal sealed class SequnceDecisionSource(int[] sequnce) : IFightDecisionSourc
 {
     private int currentIndex;
 
-    public int PickBaseDamage(int maxDamage)
+    public int PickDamage(int maxDamage)
     {
         return maxDamage;
     }

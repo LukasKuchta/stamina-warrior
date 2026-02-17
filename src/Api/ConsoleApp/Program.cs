@@ -23,39 +23,42 @@ var brutusSlots = new List<Slot>
          HealingCard.Create(Power.FromValue(100)),
         new ConditionActivationRule(ctx => ctx.Attacker.Health < 30),
         0),
+    new Slot(
+         new FightingCard(Power.FromValue(10)),
+        new ConditionActivationRule(ctx => ctx.Opponent.Health > 100),
+        0),
+    new Slot(
+         new FightingCard(Power.FromValue(5)),
+        new ChanceActivationRule(Chance.CoinFlip),
+        0),
 };
 
-//var conanCards = new List<MagicCardBase>
-//{
-//    new FightingCard(Chance.CoinFlip, Power.FromValue(2f)),
-
-//    new HealingCard(Chance.CoinFlip, Power.FromValue(1f)),
-//    new HealingCard(Chance.CoinFlip, Power.FromValue(2f)),
-//    new FightingCard(Chance.CoinFlip, Power.FromValue(2f)),
-//    new HealingCard(Chance.CoinFlip, Power.FromValue(2f)),
-//    new HealingCard(Chance.CoinFlip, Power.FromValue(3f)),
-//    new HealingCard(Chance.CoinFlip, Power.FromValue(4f)),
-//    new HealingCard(Chance.CoinFlip, Power.FromValue(5f)),
-//    new FightingCard(Chance.CoinFlip, Power.FromValue(2f)),
-//    new HealingCard(Chance.CoinFlip, Power.FromValue(6f)),
-//    new HealingCard(Chance.CoinFlip, Power.FromValue(7f)),
-//    new HealingCard(Chance.CoinFlip, Power.FromValue(8f)),
-//    new FightingCard(Chance.CoinFlip, Power.FromValue(2f)),
-//    new HealingCard(Chance.CoinFlip, Power.FromValue(9f)),
-//    new FightingCard(Chance.CoinFlip, Power.FromValue(2f)),
-//    new HealingCard(Chance.CoinFlip, Power.FromValue(10f)),
-//};
+var conanCards = new List<Slot>
+{
+    new Slot(
+         HealingCard.Create(Power.FromValue(100)),
+        new ConditionActivationRule(ctx => ctx.Attacker.Health < 30),
+        0),
+    new Slot(
+         HealingCard.Create(Power.FromValue(200)),
+        new ConditionActivationRule(ctx => ctx.Attacker.Health < 10),
+        1),
+    new Slot(
+         HealingCard.Create(Power.FromValue(10)),
+        new ConditionActivationRule(ctx => ctx.Attacker.Health < 50),
+        2),
+};
 
 var battleStrategyFactory = app.Services.GetService<IBattleStrategyFactory>();
 var judge = new Judge();
 for (int i = 0; i < 1; i++)
 {
-    var conan = Warrior.Create(WarriorId.New(), "Conan", SphereBase.BlueSky, Level.FromNumber(1), []);
+    var conan = Warrior.Create(WarriorId.New(), "Conan", SphereBase.BlueSky, Level.FromNumber(1), conanCards);
     var brutus = Warrior.Create(WarriorId.New(), "Brutus", SphereBase.BlueSky, Level.FromNumber(1), brutusSlots);
 
     var battleStrategy = battleStrategyFactory!.SelectBy(conan.CurrentSphere);
 
-    BattleResult battleResult = battleStrategy.StartBattle(BattleContext.Create(conan, brutus, 100), DateTimeOffset.Now);
+    BattleResult battleResult = battleStrategy.StartBattle(BattleContext.Create(conan, brutus, 10), DateTimeOffset.Now);
 
     judge.MakeReport(battleResult.BattleEvents);
 }
