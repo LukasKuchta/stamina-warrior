@@ -14,9 +14,4 @@ public sealed class FightDecisionSource(IRandomSource chanceService) : IFightDec
     {
         return chanceService.NextIntInclusive(maxCardIndex);
     }
-
-    public bool TryActivate(Chance activationChance)
-    {
-        return chanceService.Succeeds(activationChance);
-    }
 }

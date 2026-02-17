@@ -11,7 +11,7 @@ using Shouldly;
 
 namespace Domain.UnitTests.Battles;
 
-public sealed  class BattleResultTests
+public sealed class BattleResultTests
 {
     [Fact]
     public void BattleResult_All_ShouldNotBeEmpty()

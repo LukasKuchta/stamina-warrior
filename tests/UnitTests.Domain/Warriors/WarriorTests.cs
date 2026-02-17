@@ -15,7 +15,7 @@ public class WarriorTests
         WarriorId warriorId = WarriorId.New();
         string name = "Barbar Conan";
         SphereBase sphere = SphereBase.BlueSky;
-        Level level = Level.FromNumber(1);        
+        Level level = Level.FromNumber(1);
 
         Warrior barbarConan = Warrior.Create(warriorId, name, sphere, level, []);
 

@@ -7,7 +7,7 @@ public abstract record MagicCardBase : ValueObjectBase
 {
     public string Name { get; }
 
-    protected MagicCardBase(string name) => Name = name;    
+    protected MagicCardBase(string name) => Name = name;
 }
 
 

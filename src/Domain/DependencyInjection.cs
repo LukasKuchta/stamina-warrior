@@ -38,7 +38,7 @@ public static class DependencyInjection
         services.AddSingleton(sp => (IActivationRuleEvaluator)sp.GetRequiredService<IActivationRuleEvaluator<ChanceActivationRule>>());
         services.AddSingleton(sp => (IActivationRuleEvaluator)sp.GetRequiredService<IActivationRuleEvaluator<ConditionActivationRule>>());
 
-        services.AddSingleton<IActivationRuleEvaluatorSelector,ActivationRuleEvaluatorSelector>();
+        services.AddSingleton<IActivationRuleEvaluatorSelector, ActivationRuleEvaluatorSelector>();
 
         services.AddSingleton<IRandomSource, RandomSource>();
         services.AddSingleton<IFightDecisionSource, FightDecisionSource>();

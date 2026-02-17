@@ -14,7 +14,7 @@ public sealed class MagicCardBaseTests
     {
         var card = new HealingCard(Power.FromValue(5));
         card.Name.ShouldNotBeNullOrEmpty();
-        card.Name.ShouldBe("Card of healing");        
+        card.Name.ShouldBe("Card of healing");
         card.Power.Value.ShouldBe(5);
     }
 
@@ -33,7 +33,7 @@ public sealed class MagicCardBaseTests
     {
         var card = new FightingCard(Power.FromValue(2));
         card.Name.ShouldNotBeNullOrEmpty();
-        card.Name.ShouldBe("Fighting card");        
+        card.Name.ShouldBe("Fighting card");
         card.Power.Value.ShouldBe(2);
     }
 
@@ -42,7 +42,7 @@ public sealed class MagicCardBaseTests
     {
         var card = new StealingCard();
         card.Name.ShouldNotBeNullOrEmpty();
-        card.Name.ShouldBe("Stealing card");        
+        card.Name.ShouldBe("Stealing card");
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public sealed class MagicCardBaseTests
     {
         var card = new ThornDamageCard(Power.FromValue(20));
         card.Name.ShouldNotBeNullOrEmpty();
-        card.Name.ShouldBe("Card of thorn's damage");        
+        card.Name.ShouldBe("Card of thorn's damage");
         card.Power.Value.ShouldBe(20);
     }
 
@@ -59,7 +59,7 @@ public sealed class MagicCardBaseTests
     {
         var card = new CoursedCard(Power.FromValue(2000));
         card.Name.ShouldNotBeNullOrEmpty();
-        card.Name.ShouldBe("Coursed card");       
+        card.Name.ShouldBe("Coursed card");
         card.Power.Value.ShouldBe(2000);
     }
 }

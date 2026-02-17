@@ -94,7 +94,7 @@ IBattleEndEventBuilder battleEndEventBuilder) : BattleStrategyBase<BlueSkysphere
             ApplyMagic();
 
             void ApplyMagic()
-            {                
+            {
                 RecordEvent(new CardDrawn(attackContext.Attacker, slot.Card.Name));
 
                 magicCardStrategy

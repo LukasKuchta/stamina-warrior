@@ -62,7 +62,4 @@ for (int i = 0; i < 1; i++)
 
 Console.WriteLine("Game over");
 
-Func<int, Func<int, int>> f = x => y => x + y;
-Console.WriteLine(f(5)(10));
-
 

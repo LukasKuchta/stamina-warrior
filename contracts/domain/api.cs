@@ -120,7 +120,6 @@ namespace Domain.Battles
         public FightDecisionSource(Domain.RandomSources.IRandomSource chanceService) { }
         public int PickBaseDamage(int maxDamage) { }
         public int PickSlotIndex(int maxCardIndex) { }
-        public bool TryActivate(Domain.ActivationRules.Chance activationChance) { }
     }
     public interface IBattleEventVisitor
     {

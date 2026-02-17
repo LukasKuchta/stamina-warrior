@@ -10,7 +10,7 @@ public interface IActivationRuleEvaluator<in TRule> where TRule : ActivationRule
     bool Matches(TRule rule, AttackContext ctx);
 }
 
-public interface IActivationRuleEvaluator 
+public interface IActivationRuleEvaluator
 {
     Type RuleType { get; }
     bool Matches(ActivationRuleBase rule, AttackContext ctx);

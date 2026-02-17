@@ -27,8 +27,8 @@ internal sealed record BattlePlan : ValueObjectBase
     public bool Enchanted { get; private set; }
 
     public bool TryEvaluateRules(AttackContext attackContext, [NotNullWhen(true)] out Slot? slot)
-    {        
-        var s =  _slots
+    {
+        var s = _slots
             .Where(slot => slot.Rule is ConditionActivationRule rule && rule.Condition(attackContext))
             .OrderByDescending(slot => slot.Priority)
             .FirstOrDefault();
@@ -43,7 +43,7 @@ internal sealed record BattlePlan : ValueObjectBase
         return true;
     }
 
-    public bool TouchTheSlot(int slotIndfex, [NotNullWhen(true)] out Slot? slot)    
+    public bool TouchTheSlot(int slotIndfex, [NotNullWhen(true)] out Slot? slot)
     {
         CheckRule(new SlotIndexCannotBeNegativeRule(slotIndfex));
 

@@ -20,7 +20,7 @@ internal sealed class SlotHelper
         return new Slot(card, new ChanceActivationRule(chance), 0);
     }
 
-    public static Slot Create(MagicCardBase card, int priority, Func<AttackContext,bool> condition)
+    public static Slot Create(MagicCardBase card, int priority, Func<AttackContext, bool> condition)
     {
         return new Slot(card, new ConditionActivationRule(condition), priority);
     }

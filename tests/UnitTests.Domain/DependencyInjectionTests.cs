@@ -1,4 +1,5 @@
-﻿using Domain.Battles;
+﻿using Domain.ActivationRules;
+using Domain.Battles;
 using Domain.Battles.Spheres;
 using Domain.Battles.Strategies;
 using Domain.MagicCards;
@@ -40,7 +41,10 @@ public sealed class DependencyInjectionTests
     [typeof(IMagicCardStrategy<CoursedCard>), typeof(CoursedCardStrategy)],
     [typeof(IRandomSource), typeof(RandomSource)],
     [typeof(IFightDecisionSource), typeof(FightDecisionSource)],
-    [typeof(IMagicCardStrategyFactory), typeof(MagicCardStrategyFactory)]
+    [typeof(IMagicCardStrategyFactory), typeof(MagicCardStrategyFactory)],
+    [typeof(IActivationRuleEvaluator<ChanceActivationRule>), typeof(ChanceActivationRuleEvaluator)],
+    [typeof(IActivationRuleEvaluator<ConditionActivationRule>), typeof(ConditionActivationRuleEvaluator)],
+    [typeof(IActivationRuleEvaluatorSelector), typeof(ActivationRuleEvaluatorSelector)],
 ];
 
     [Theory]
@@ -86,5 +90,20 @@ public sealed class DependencyInjectionTests
             .ToHashSet();
 
         types.ShouldContain(typeof(BlueSkysphere));
+    }
+
+    [Fact]
+    public void AddDomainServices_registers_expected_rule_evaluators()
+    {
+        var services = new ServiceCollection();
+        services.AddDomainServices();
+        using var sp = services.BuildServiceProvider();
+
+        var types = sp.GetServices<IActivationRuleEvaluator>()
+            .Select(s => s.GetType())
+            .ToHashSet();
+
+        types.ShouldContain(typeof(ChanceActivationRuleEvaluator));
+        types.ShouldContain(typeof(ConditionActivationRuleEvaluator));
     }
 }
