@@ -43,7 +43,7 @@ public sealed class Warrior : EntityBase, IAgregationRoot
 
     private Power? BoostedDamage { get; set; }
 
-    public bool IsBattlePlanEmpty => BattlePlan.NotEmpty;
+    public bool BattlePlanNotEmpty => BattlePlan.NotEmpty;
 
     internal int BattlePlanMaxIndexOfSlotInclusive => BattlePlan.MaxIndexOfSlot;
 

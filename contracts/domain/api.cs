@@ -371,12 +371,6 @@ namespace Domain.MagicCards
         public float Value { get; }
         public static Domain.MagicCards.Power FromValue(float value) { }
     }
-    public sealed class SlotTouchResult : System.IEquatable<Domain.MagicCards.SlotTouchResult>
-    {
-        public Domain.BattlePlans.Slot? Slot { get; init; }
-        public static Domain.MagicCards.SlotTouchResult None { get; }
-        public static Domain.MagicCards.SlotTouchResult Create(Domain.BattlePlans.Slot slot) { }
-    }
 }
 namespace Domain.MagicCards.Rules
 {
@@ -512,11 +506,11 @@ namespace Domain.Warriors
     }
     public sealed class Warrior : Domain.Shared.EntityBase, Domain.Shared.IAgregationRoot
     {
+        public bool BattlePlanNotEmpty { get; }
         public Domain.MagicCards.Power Course { get; }
         public Domain.Battles.Spheres.SphereBase CurrentSphere { get; }
         public int Health { get; }
         public Domain.Warriors.WarriorId Id { get; }
-        public bool IsBattlePlanEmpty { get; }
         public Domain.Warriors.Level Level { get; }
         public int MaxDamage { get; }
         public string Name { get; }

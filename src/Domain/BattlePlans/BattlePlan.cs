@@ -43,7 +43,7 @@ internal sealed record BattlePlan : ValueObjectBase
         return true;
     }
 
-    public bool TouchTheSlot(int slotIndfex, [NotNullWhen(true)] out Slot? slot)
+    public bool TouchTheSlot(int slotIndfex, [NotNullWhen(true)] out Slot? slot)    
     {
         CheckRule(new SlotIndexCannotBeNegativeRule(slotIndfex));
 
