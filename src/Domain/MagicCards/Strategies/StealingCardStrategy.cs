@@ -8,7 +8,7 @@ public sealed class StealingCardStrategy(IRandomSource randomSource) : MagicCard
 {
     public override void ApplyMagic(Warrior cardHolder, Warrior oponent, StealingCard card)
     {
-        if (oponent.BattlePlanNotEmpty)
+        if (!oponent.IsBattlePlanEmpty)
         {
             int cardIndex = randomSource.NextIntInclusive(oponent.BattlePlanMaxIndexOfSlotInclusive);
             cardHolder.StealCard(cardIndex, oponent);

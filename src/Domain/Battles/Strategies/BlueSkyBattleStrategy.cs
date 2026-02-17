@@ -57,6 +57,12 @@ IBattleEndEventBuilder battleEndEventBuilder) : BattleStrategyBase<BlueSkysphere
 
     private void Attack(Warrior attacker, Warrior opponent)
     {
+        if (!decisionSource.HitCheck(attacker))
+        {
+            RecordEvent(new AttackMissed(attacker));
+            return;
+        }
+
         TryToApplyMagic(new AttackContext(attacker, opponent));
 
         int damage = decisionSource.PickDamage(attacker.MaxDamage);

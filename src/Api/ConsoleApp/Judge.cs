@@ -58,4 +58,9 @@ internal sealed class Judge : IBattleEventVisitor
     {
         Console.WriteLine($"{e.Attacker.Name}(H:{e.Attacker.Health}) vs {e.Opponent.Name}(H:{e.Opponent.Health})");
     }
+
+    public void Visit(AttackMissed e)
+    {
+        Console.WriteLine($"{e.AttackerName} missed an attack.");
+    }
 }

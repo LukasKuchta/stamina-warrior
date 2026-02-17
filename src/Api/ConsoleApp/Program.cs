@@ -20,7 +20,7 @@ var app = builder.Build();
 var brutusSlots = new List<Slot>
 {
     new Slot(
-         HealingCard.Create(Power.FromValue(100)),
+         HealingCard.Create(Power.FromValue(10 )),
         new ConditionActivationRule(ctx => ctx.Attacker.Health < 30),
         0),
     new Slot(
@@ -36,11 +36,11 @@ var brutusSlots = new List<Slot>
 var conanCards = new List<Slot>
 {
     new Slot(
-         HealingCard.Create(Power.FromValue(100)),
+         HealingCard.Create(Power.FromValue(10)),
         new ConditionActivationRule(ctx => ctx.Attacker.Health < 30),
         0),
     new Slot(
-         HealingCard.Create(Power.FromValue(200)),
+         HealingCard.Create(Power.FromValue(20)),
         new ConditionActivationRule(ctx => ctx.Attacker.Health < 10),
         1),
     new Slot(
@@ -58,7 +58,7 @@ for (int i = 0; i < 1; i++)
 
     var battleStrategy = battleStrategyFactory!.SelectBy(conan.CurrentSphere);
 
-    BattleResult battleResult = battleStrategy.StartBattle(BattleContext.Create(conan, brutus, 10), DateTimeOffset.Now);
+    BattleResult battleResult = battleStrategy.StartBattle(BattleContext.Create(conan, brutus, 100), DateTimeOffset.Now);
 
     judge.MakeReport(battleResult.BattleEvents);
 }

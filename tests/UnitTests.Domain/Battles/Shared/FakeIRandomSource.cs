@@ -3,7 +3,7 @@ using Domain.RandomSources;
 
 namespace Domain.UnitTests.Battles.Shared;
 
-internal sealed class FakeIRandomSource(int index = 0) : IRandomSource
+internal sealed class FakeIRandomSource(int index = 0, bool hitCHeck = true) : IRandomSource
 {
     public int NextIntInclusive(int maxInclusive)
     {
@@ -12,7 +12,7 @@ internal sealed class FakeIRandomSource(int index = 0) : IRandomSource
 
     public bool Succeeds(Chance chance)
     {
-        return true;
+        return hitCHeck;
     }
 }
 

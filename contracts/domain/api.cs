@@ -118,12 +118,14 @@ namespace Domain.Battles
     public sealed class FightDecisionSource : Domain.Battles.IFightDecisionSource
     {
         public FightDecisionSource(Domain.RandomSources.IRandomSource chanceService) { }
+        public bool HitCheck(Domain.Warriors.Warrior attacker) { }
         public int PickDamage(int maxDamage) { }
         public int PickSlotIndex(int maxCardIndex) { }
     }
     public interface IBattleEventVisitor
     {
         void Visit(Domain.Battles.Events.AttackLanded e);
+        void Visit(Domain.Battles.Events.AttackMissed e);
         void Visit(Domain.Battles.Events.BattleFinished e);
         void Visit(Domain.Battles.Events.BattleFinishedTied e);
         void Visit(Domain.Battles.Events.BattleStarted e);
@@ -146,6 +148,7 @@ namespace Domain.Battles
         where T : Domain.Battles.Spheres.SphereBase { }
     public interface IFightDecisionSource
     {
+        bool HitCheck(Domain.Warriors.Warrior attacker);
         int PickDamage(int maxDamage);
         int PickSlotIndex(int maxCardIndex);
     }
@@ -162,6 +165,11 @@ namespace Domain.Battles.Events
         public string AttackerName { get; }
         public int Damage { get; }
         public string OponentName { get; }
+        public override void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
+    }
+    public sealed class AttackMissed : Domain.Battles.Events.BattleEventBase, System.IEquatable<Domain.Battles.Events.AttackMissed>
+    {
+        public string AttackerName { get; }
         public override void Accept(Domain.Battles.IBattleEventVisitor visitor) { }
     }
     public abstract class BattleEventBase : Domain.Battles.Events.IBattleEvent, System.IEquatable<Domain.Battles.Events.BattleEventBase>
@@ -506,15 +514,19 @@ namespace Domain.Warriors
     }
     public sealed class Warrior : Domain.Shared.EntityBase, Domain.Shared.IAgregationRoot
     {
-        public bool BattlePlanNotEmpty { get; }
+        public int Accuracy { get; }
         public Domain.MagicCards.Power Course { get; }
         public Domain.Battles.Spheres.SphereBase CurrentSphere { get; }
+        public int Evasion { get; }
         public int Health { get; }
         public Domain.Warriors.WarriorId Id { get; }
+        public bool IsBattlePlanEmpty { get; }
         public Domain.Warriors.Level Level { get; }
         public int MaxDamage { get; }
         public string Name { get; }
         public float Strength { get; }
+        public void ChangeAccuracy(int newValue) { }
+        public void ChangeEvasion(int newValue) { }
         public static Domain.Warriors.Warrior Create(Domain.Warriors.WarriorId id, string name, Domain.Battles.Spheres.SphereBase currentSphere, Domain.Warriors.Level level, System.Collections.Generic.IEnumerable<Domain.BattlePlans.Slot> slots) { }
     }
     public sealed class WarriorId : System.IEquatable<Domain.Warriors.WarriorId>

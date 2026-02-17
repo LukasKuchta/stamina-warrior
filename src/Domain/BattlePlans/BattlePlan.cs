@@ -20,9 +20,7 @@ internal sealed record BattlePlan : ValueObjectBase
 
     public int NumberOfsLOTS => _slots.Count;
 
-    public bool Empty => _slots.Count == 0;
-
-    public bool NotEmpty => !Empty;
+    public bool IsEmpty => _slots.Count == 0;    
 
     public bool Enchanted { get; private set; }
 

@@ -11,7 +11,12 @@ namespace Domain.Warriors;
 
 public sealed class Warrior : EntityBase, IAgregationRoot
 {
-    private Warrior(WarriorId id, string name, SphereBase currentSphere, Level level, BattlePlan battlePlan)
+    private Warrior(
+        WarriorId id,
+        string name,
+        SphereBase currentSphere,
+        Level level,
+        BattlePlan battlePlan)
     {
         Id = id;
         Name = name;
@@ -21,6 +26,9 @@ public sealed class Warrior : EntityBase, IAgregationRoot
         BattlePlan = battlePlan;
         Course = Power.Zero;
         Strength = Health * CurrentSphere.HitRatio;
+
+        Accuracy = 50;
+        Evasion = 50;
     }
 
     public WarriorId Id { get; }
@@ -39,13 +47,27 @@ public sealed class Warrior : EntityBase, IAgregationRoot
 
     public Power Course { get; private set; }
 
+    public int Accuracy { get; private set; }
+
+    public int Evasion { get; private set; }
+
     public int MaxDamage => (int)(Strength * (BoostedDamage == null ? 1 : BoostedDamage.Value));
 
     private Power? BoostedDamage { get; set; }
 
-    public bool BattlePlanNotEmpty => BattlePlan.NotEmpty;
+    public bool IsBattlePlanEmpty => BattlePlan.IsEmpty;
 
     internal int BattlePlanMaxIndexOfSlotInclusive => BattlePlan.MaxIndexOfSlot;
+
+    public void ChangeAccuracy(int newValue)
+    {
+        Accuracy = newValue;
+    }
+
+    public void ChangeEvasion(int newValue)
+    {
+        Evasion = newValue;
+    }
 
     public static Warrior Create(
         WarriorId id,

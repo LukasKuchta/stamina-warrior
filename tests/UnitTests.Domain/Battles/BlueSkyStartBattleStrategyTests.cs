@@ -223,7 +223,7 @@ public class BlueSkyStrategBattleResultsyTests
         battleResult.BattleEvents.ShouldNotBeEmpty();
         var healingCardDrawn = battleResult.BattleEvents[2].ShouldBeOfType<CardDrawn>();
         healingCardDrawn.CardName.ShouldBe(slot.Card.Name);
-        healingCardDrawn.CardHolder.ShouldBe(conan.Name);
+        healingCardDrawn.CardHolder.Name.ShouldBe(conan.Name);
     }
 
     [Fact]
@@ -248,7 +248,7 @@ public class BlueSkyStrategBattleResultsyTests
 
         var @event = battleResult.BattleEvents[2].ShouldBeOfType<CardDrawn>();
         @event.CardName.ShouldBe(slot.Card.Name);
-        @event.CardHolder.ShouldBe(conan.Name);
+        @event.CardHolder.Name.ShouldBe(conan.Name);
     }
 
     [Fact]
@@ -297,7 +297,7 @@ public class BlueSkyStrategBattleResultsyTests
         battleResult.BattleEvents.ShouldNotBeEmpty();
         var drawn = battleResult.BattleEvents[2].ShouldBeOfType<CardDrawn>();
         drawn.CardName.ShouldBe(slot.Card.Name);
-        drawn.CardHolder.ShouldBe(conan.Name);
+        drawn.CardHolder.Name.ShouldBe(conan.Name);
 
         brutus.Course.HasPower.ShouldBeTrue();
     }
@@ -371,11 +371,11 @@ public class BlueSkyStrategBattleResultsyTests
         battleResult.BattleEvents.ShouldNotBeEmpty();
         var drawn1 = battleResult.BattleEvents[2].ShouldBeOfType<CardDrawn>();
         drawn1.CardName.ShouldBe(slot1.Card.Name);
-        drawn1.CardHolder.ShouldBe(conan.Name);
+        drawn1.CardHolder.Name.ShouldBe(conan.Name);
 
         var drawn2 = battleResult.BattleEvents[7].ShouldBeOfType<CardDrawn>();
         drawn2.CardName.ShouldBe(slot2.Card.Name);
-        drawn2.CardHolder.ShouldBe(conan.Name);
+        drawn2.CardHolder.Name.ShouldBe(conan.Name);
 
         ImmutableArray<DomainEventBase> events = conan.DequeueDomainEvents();
         events.Length.ShouldBe(2);
@@ -406,7 +406,33 @@ public class BlueSkyStrategBattleResultsyTests
         var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 2), Time.StartBattleAt);
 
         battleResult.BattleEvents.ShouldNotBeEmpty();
-        conan.BattlePlanNotEmpty.ShouldBeFalse();
+        conan.IsBattlePlanEmpty.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void StartBattle_ConanShouldMissAttack()
+    {
+        var slot1 = SlotHelper.Create(new StealingCard());
+        var slot2 = SlotHelper.Create(new FightingCard(Power.FromValue(2)));
+
+        var conan = WarriorHelper.CreateBlueSky("Connan", 1, [slot1]);
+        var brutus = WarriorHelper.CreateBlueSky("Brutus", 3, [slot2]);
+
+        var blueSkyStrategy = new BlueSkyBattleStrategy(
+            new MagicCardStrategyFactory(
+                [
+                    new StealingCardStrategy(new FakeIRandomSource(10)),
+                    new FightingCardStrategy()
+                ]),
+            new EchoDecisionSource(0, false),
+            new ActivationRuleEvaluatorSelector([new ChanceActivationRuleEvaluator(new FakeIRandomSource())]),
+            new BattleEndEventBuilder());
+
+        var battleResult = blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 2), Time.StartBattleAt);
+        battleResult.BattleEvents
+                .OfType<AttackMissed>()
+                .Any(e => e.AttackerName.Equals(conan.Name)).ShouldBeTrue();
+        battleResult.BattleEvents.Any(e => e is AttackLanded).ShouldBeFalse();
     }
 
     [Fact]
@@ -540,7 +566,7 @@ public class BlueSkyStrategBattleResultsyTests
         battleResult.BattleEvents.ShouldNotBeEmpty();
         var fightingCardDrawn = battleResult.BattleEvents[3].ShouldBeOfType<CardDrawn>();
         fightingCardDrawn.CardName.ShouldBe(slot.Card.Name);
-        fightingCardDrawn.CardHolder.ShouldBe(brutus.Name);
+        fightingCardDrawn.CardHolder.Name.ShouldBe(brutus.Name);
     }
 
     [Fact]
@@ -763,6 +789,28 @@ public class BlueSkyStrategBattleResultsyTests
         var roundStartedEvent = battleResult.BattleEvents[1].ShouldBeOfType<RoundStarted>();
 
         roundStartedEvent.Round.ShouldBe(1);
+    }
+
+    [Fact]
+    public void StartBattle_BattlePlanSholdBeEmpty()
+    {
+        var condition = new Func<AttackContext, bool>(ctx => ctx.Attacker.Health <= 50);
+        var cardSlot1 = SlotHelper.Create(new FightingCard(Power.FromValue(2)), 1, condition);
+
+        var conan = WarriorHelper.CreateBlueSky("Connan", 1, [cardSlot1]);
+        var brutus = WarriorHelper.CreateBlueSky("Brutus", 1);
+
+        var blueSkyStrategy = new BlueSkyBattleStrategy(
+            new MagicCardStrategyFactory(
+                [
+                    new FightingCardStrategy(),
+                ]),
+            new EchoDecisionSource(1),
+            new ActivationRuleEvaluatorSelector([new ChanceActivationRuleEvaluator(new FakeIRandomSource())]),
+            new BattleEndEventBuilder());
+
+        blueSkyStrategy.StartBattle(BattleContext.Create(conan, brutus, 10), Time.StartBattleAt);
+        conan.IsBattlePlanEmpty.ShouldBeTrue();
     }
 
     [Fact]
