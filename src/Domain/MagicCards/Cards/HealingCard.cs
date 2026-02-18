@@ -5,7 +5,7 @@ namespace Domain.MagicCards.Cards;
 
 public sealed record HealingCard : MagicCardBase
 {
-    public HealingCard(Power power) : base("Card of healing")
+    public HealingCard(Power power) : base("Healing")
     {
         Power = power;
     }

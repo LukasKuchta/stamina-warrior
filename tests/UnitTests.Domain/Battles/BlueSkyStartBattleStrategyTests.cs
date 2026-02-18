@@ -229,7 +229,7 @@ public class BlueSkyStrategBattleResultsyTests
     [Fact]
     public void StartBattle_ConanShouldDrawn_ThornCard()
     {
-        var slot = SlotHelper.Create(new ThornDamageCard(Power.FromValue(1)));
+        var slot = SlotHelper.Create(new ThornCard(Power.FromValue(1)));
 
         var conan = WarriorHelper.CreateBlueSky("Connan", 1, [slot]);
         var brutus = WarriorHelper.CreateBlueSky("Brutus", 3);
@@ -254,7 +254,7 @@ public class BlueSkyStrategBattleResultsyTests
     [Fact]
     public void StartBattle_ConanShouldBeSelfHitted()
     {
-        var thornCard = SlotHelper.Create(new ThornDamageCard(Power.FromValue(2)));
+        var thornCard = SlotHelper.Create(new ThornCard(Power.FromValue(2)));
         var fightingCard = SlotHelper.Create(new FightingCard(Power.Zero));
 
         var conan = WarriorHelper.CreateBlueSky("Connan", 1, [thornCard]);

@@ -31,13 +31,12 @@ public sealed class DependencyInjectionTests
 
     public static IEnumerable<object[]> KeySingletons =>
 [
-    [typeof(IBattleStrategy<BlueSkysphere>), typeof(BlueSkyBattleStrategy)],
-    [typeof(IBattleStrategyFactory), typeof(BattleStrategyFactory)],
+    [typeof(IBattleStrategy), typeof(BlueSkyBattleStrategy)],
     [typeof(IBattleEndEventBuilder), typeof(BattleEndEventBuilder)],
     [typeof(IMagicCardStrategy<HealingCard>), typeof(HealingCardStrategy)],
     [typeof(IMagicCardStrategy<FightingCard>), typeof(FightingCardStrategy)],
     [typeof(IMagicCardStrategy<StealingCard>), typeof(StealingCardStrategy)],
-    [typeof(IMagicCardStrategy<ThornDamageCard>), typeof(ThornDamageStrategy)],
+    [typeof(IMagicCardStrategy<ThornCard>), typeof(ThornDamageStrategy)],
     [typeof(IMagicCardStrategy<CoursedCard>), typeof(CoursedCardStrategy)],
     [typeof(IRandomSource), typeof(RandomSource)],
     [typeof(IFightDecisionSource), typeof(FightDecisionSource)],
@@ -75,21 +74,7 @@ public sealed class DependencyInjectionTests
         types.ShouldContain(typeof(FightingCard));
         types.ShouldContain(typeof(StealingCard));
         types.ShouldContain(typeof(CoursedCard));
-        types.ShouldContain(typeof(ThornDamageCard));
-    }
-
-    [Fact]
-    public void AddDomainServices_registers_expected_battle_strategies()
-    {
-        var services = new ServiceCollection();
-        services.AddDomainServices();
-        using var sp = services.BuildServiceProvider();
-
-        var types = sp.GetServices<IBattleStrategy>()
-            .Select(s => s.SphereType)
-            .ToHashSet();
-
-        types.ShouldContain(typeof(BlueSkysphere));
+        types.ShouldContain(typeof(ThornCard));
     }
 
     [Fact]

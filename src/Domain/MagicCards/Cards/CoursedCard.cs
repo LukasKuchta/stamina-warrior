@@ -3,8 +3,8 @@
 namespace Domain.MagicCards.Cards;
 
 public sealed record CoursedCard : MagicCardBase
-{
-    public CoursedCard(Power power) : base("Coursed card")
+{    
+    public CoursedCard(Power power) : base("Course")
     {
         Power = power;
     }

@@ -3,9 +3,9 @@ using Domain.Warriors;
 
 namespace Domain.MagicCards.Strategies;
 
-public sealed class ThornDamageStrategy : MagicCardStrategyBase<ThornDamageCard>
+public sealed class ThornDamageStrategy : MagicCardStrategyBase<ThornCard>
 {
-    public override void ApplyMagic(Warrior cardHolder, Warrior oponent, ThornDamageCard card)
+    public override void ApplyMagic(Warrior cardHolder, Warrior oponent, ThornCard card)
     {
         int damage = (int)(cardHolder.MaxDamage * card.Power.Value);
         cardHolder.SelfHit(damage);

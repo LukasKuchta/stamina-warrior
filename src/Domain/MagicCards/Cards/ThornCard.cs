@@ -2,9 +2,9 @@
 
 namespace Domain.MagicCards.Cards;
 
-public sealed record ThornDamageCard : MagicCardBase
+public sealed record ThornCard : MagicCardBase
 {
-    public ThornDamageCard(Power power) : base("Card of thorn's damage")
+    public ThornCard(Power power) : base("Thorn trap")
     {
         Power = power;
     }

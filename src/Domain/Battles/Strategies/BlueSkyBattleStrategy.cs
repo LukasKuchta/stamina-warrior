@@ -13,12 +13,12 @@ public sealed class BlueSkyBattleStrategy(
 IMagicCardStrategyFactory magicCardStrategy,
 IFightDecisionSource decisionSource,
 IActivationRuleEvaluatorSelector ruleEvaluator,
-IBattleEndEventBuilder battleEndEventBuilder) : BattleStrategyBase<BlueSkysphere>
+IBattleEndEventBuilder battleEndEventBuilder) : IBattleStrategy
 {
     private const int CardDrawAttemptRangeMax = 15;
     private readonly List<IBattleEvent> _battleEvents = [];
 
-    public override BattleResult StartBattle(BattleContext battleContext, DateTimeOffset startedAt)
+    public BattleResult StartBattle(BattleContext battleContext, DateTimeOffset startedAt)
     {
         RecordEvent(new BattleStarted(battleContext.Attacker, battleContext.Opponent, startedAt));
         for (int round = 0; round < battleContext.RoundsCount; round++)

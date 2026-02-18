@@ -110,11 +110,6 @@ namespace Domain.Battles
         public BattleResultId(System.Guid Value) { }
         public System.Guid Value { get; init; }
     }
-    public sealed class BattleStrategyFactory : Domain.Battles.IBattleStrategyFactory
-    {
-        public BattleStrategyFactory(System.Collections.Generic.IEnumerable<Domain.Battles.IBattleStrategy> strategies) { }
-        public Domain.Battles.IBattleStrategy SelectBy(Domain.Battles.Spheres.SphereBase sphere) { }
-    }
     public sealed class FightDecisionSource : Domain.Battles.IFightDecisionSource
     {
         public FightDecisionSource(Domain.RandomSources.IRandomSource chanceService) { }
@@ -137,15 +132,12 @@ namespace Domain.Battles
     }
     public interface IBattleStrategy
     {
-        System.Type SphereType { get; }
         Domain.Battles.BattleResult StartBattle(Domain.Battles.BattleContext battleContext, System.DateTimeOffset startedAt);
     }
     public interface IBattleStrategyFactory
     {
         Domain.Battles.IBattleStrategy SelectBy(Domain.Battles.Spheres.SphereBase sphere);
     }
-    public interface IBattleStrategy<T>
-        where T : Domain.Battles.Spheres.SphereBase { }
     public interface IFightDecisionSource
     {
         bool HitCheck(Domain.Warriors.Warrior attacker);
@@ -156,6 +148,25 @@ namespace Domain.Battles
     {
         public string Message { get; }
         public bool IsBroken() { }
+    }
+}
+namespace Domain.Battles.Duels
+{
+    public class Attack
+    {
+        public Attack() { }
+        public Domain.Battles.Duels.DuelId DuelId { get; set; }
+    }
+    public sealed class Duel : Domain.Shared.EntityBase
+    {
+        public Duel(Domain.Battles.Duels.DuelId id) { }
+        public Domain.Battles.Duels.DuelId Id { get; }
+    }
+    public sealed class DuelId : System.IEquatable<Domain.Battles.Duels.DuelId>
+    {
+        public DuelId(System.Guid Value) { }
+        public System.Guid Value { get; init; }
+        public static Domain.Battles.Duels.DuelId NewId() { }
     }
 }
 namespace Domain.Battles.Events
@@ -285,17 +296,10 @@ namespace Domain.Battles.Strategies
         public BattleEndEventBuilder() { }
         public Domain.Battles.Events.IBattleEvent? TryBuildEndEvent(Domain.Battles.BattleContext ctx, bool isLastRound) { }
     }
-    public abstract class BattleStrategyBase<TSphereType> : Domain.Battles.IBattleStrategy, Domain.Battles.IBattleStrategy<TSphereType>
-        where TSphereType : Domain.Battles.Spheres.SphereBase
-    {
-        protected BattleStrategyBase() { }
-        public System.Type SphereType { get; }
-        public abstract Domain.Battles.BattleResult StartBattle(Domain.Battles.BattleContext battleContext, System.DateTimeOffset startedAt);
-    }
-    public sealed class BlueSkyBattleStrategy : Domain.Battles.Strategies.BattleStrategyBase<Domain.Battles.Spheres.BlueSkysphere>
+    public sealed class BlueSkyBattleStrategy : Domain.Battles.IBattleStrategy
     {
         public BlueSkyBattleStrategy(Domain.MagicCards.IMagicCardStrategyFactory magicCardStrategy, Domain.Battles.IFightDecisionSource decisionSource, Domain.ActivationRules.IActivationRuleEvaluatorSelector ruleEvaluator, Domain.Battles.Strategies.IBattleEndEventBuilder battleEndEventBuilder) { }
-        public override Domain.Battles.BattleResult StartBattle(Domain.Battles.BattleContext battleContext, System.DateTimeOffset startedAt) { }
+        public Domain.Battles.BattleResult StartBattle(Domain.Battles.BattleContext battleContext, System.DateTimeOffset startedAt) { }
     }
     public interface IBattleEndEventBuilder
     {
@@ -316,6 +320,11 @@ namespace Domain.MagicCards.Cards
         public CoursedCard(Domain.MagicCards.Power power) { }
         public Domain.MagicCards.Power Power { get; }
     }
+    public sealed class CriticalHitCard : Domain.MagicCards.MagicCardBase, System.IEquatable<Domain.MagicCards.Cards.CriticalHitCard>
+    {
+        public CriticalHitCard(Domain.MagicCards.Power power) { }
+        public Domain.MagicCards.Power Power { get; }
+    }
     public sealed class FightingCard : Domain.MagicCards.MagicCardBase, System.IEquatable<Domain.MagicCards.Cards.FightingCard>
     {
         public FightingCard(Domain.MagicCards.Power power) { }
@@ -331,9 +340,9 @@ namespace Domain.MagicCards.Cards
     {
         public StealingCard() { }
     }
-    public sealed class ThornDamageCard : Domain.MagicCards.MagicCardBase, System.IEquatable<Domain.MagicCards.Cards.ThornDamageCard>
+    public sealed class ThornCard : Domain.MagicCards.MagicCardBase, System.IEquatable<Domain.MagicCards.Cards.ThornCard>
     {
-        public ThornDamageCard(Domain.MagicCards.Power power) { }
+        public ThornCard(Domain.MagicCards.Power power) { }
         public Domain.MagicCards.Power Power { get; }
     }
 }
@@ -421,10 +430,10 @@ namespace Domain.MagicCards.Strategies
         public StealingCardStrategy(Domain.RandomSources.IRandomSource randomSource) { }
         public override void ApplyMagic(Domain.Warriors.Warrior cardHolder, Domain.Warriors.Warrior oponent, Domain.MagicCards.Cards.StealingCard card) { }
     }
-    public sealed class ThornDamageStrategy : Domain.MagicCards.MagicCardStrategyBase<Domain.MagicCards.Cards.ThornDamageCard>
+    public sealed class ThornDamageStrategy : Domain.MagicCards.MagicCardStrategyBase<Domain.MagicCards.Cards.ThornCard>
     {
         public ThornDamageStrategy() { }
-        public override void ApplyMagic(Domain.Warriors.Warrior cardHolder, Domain.Warriors.Warrior oponent, Domain.MagicCards.Cards.ThornDamageCard card) { }
+        public override void ApplyMagic(Domain.Warriors.Warrior cardHolder, Domain.Warriors.Warrior oponent, Domain.MagicCards.Cards.ThornCard card) { }
     }
 }
 namespace Domain.RandomSources

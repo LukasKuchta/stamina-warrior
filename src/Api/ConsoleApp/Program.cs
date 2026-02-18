@@ -3,6 +3,7 @@ using Domain.ActivationRules;
 using Domain.BattlePlans;
 using Domain.Battles;
 using Domain.Battles.Spheres;
+using Domain.Battles.Strategies;
 using Domain.MagicCards;
 using Domain.MagicCards.Cards;
 using Domain.Warriors;
@@ -49,16 +50,14 @@ var conanCards = new List<Slot>
         2),
 };
 
-var battleStrategyFactory = app.Services.GetService<IBattleStrategyFactory>();
+IBattleStrategy blueSky = app.Services.GetRequiredService<IBattleStrategy>();
 var judge = new Judge();
 for (int i = 0; i < 1; i++)
 {
     var conan = Warrior.Create(WarriorId.New(), "Conan", SphereBase.BlueSky, Level.FromNumber(1), conanCards);
     var brutus = Warrior.Create(WarriorId.New(), "Brutus", SphereBase.BlueSky, Level.FromNumber(1), brutusSlots);
 
-    var battleStrategy = battleStrategyFactory!.SelectBy(conan.CurrentSphere);
-
-    BattleResult battleResult = battleStrategy.StartBattle(BattleContext.Create(conan, brutus, 100), DateTimeOffset.Now);
+    BattleResult battleResult = blueSky.StartBattle(BattleContext.Create(conan, brutus, 100), DateTimeOffset.Now);
 
     judge.MakeReport(battleResult.BattleEvents);
 }

@@ -4,6 +4,10 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Battles\Simulation\" />
+  </ItemGroup>
+
   <PropertyGroup>
     <GeneratePublicApiOnBuild>true</GeneratePublicApiOnBuild>
 

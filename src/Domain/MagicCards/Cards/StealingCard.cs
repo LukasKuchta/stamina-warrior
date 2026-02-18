@@ -4,7 +4,7 @@ namespace Domain.MagicCards.Cards;
 
 public sealed record StealingCard : MagicCardBase
 {
-    public StealingCard() : base("Stealing card")
+    public StealingCard() : base("Theft")
     {
     }
 }
