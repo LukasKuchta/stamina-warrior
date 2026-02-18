@@ -152,21 +152,158 @@ namespace Domain.Battles
 }
 namespace Domain.Battles.Duels
 {
-    public class Attack
+    public sealed class AllowOnlyModificationWhenRoundIsOpenRule : Domain.Shared.IBusinessRule
     {
-        public Attack() { }
-        public Domain.Battles.Duels.DuelId DuelId { get; set; }
+        public AllowOnlyModificationWhenRoundIsOpenRule(Domain.Battles.Duels.DuelRoundState state) { }
+        public string Message { get; }
+        public bool IsBroken() { }
     }
-    public sealed class Duel : Domain.Shared.EntityBase
+    public sealed class AllowOnlyTransitFromOpenToCLoseRule : Domain.Shared.IBusinessRule
     {
-        public Duel(Domain.Battles.Duels.DuelId id) { }
+        public AllowOnlyTransitFromOpenToCLoseRule(Domain.Battles.Duels.DuelRoundState state) { }
+        public string Message { get; }
+        public bool IsBroken() { }
+    }
+    public sealed class AttackExchange : Domain.Shared.EntityBase, Domain.Shared.IAgregationRoot
+    {
+        public AttackExchange(Domain.Battles.Duels.AttackExchangeId attackId, Domain.Battles.Duels.DuelId duelId, Domain.Battles.Duels.DuelRoundId duelRoundId, Domain.Warriors.WarriorId attackerId, Domain.Warriors.WarriorId opponentId) { }
+        public Domain.Warriors.WarriorId AttackerId { get; }
+        public System.Collections.Generic.IReadOnlyCollection<Domain.Battles.Duels.Attributes.GameAttributeBase> Attributes { get; }
+        public Domain.Battles.Duels.DuelId DuelId { get; }
+        public Domain.Battles.Duels.DuelRoundId DuelRoundId { get; }
+        public Domain.Battles.Duels.AttackExchangeId Id { get; }
+        public Domain.Warriors.WarriorId OpponentId { get; }
+        public System.Collections.Generic.IReadOnlyCollection<Domain.BattlePlans.Slot> Slots { get; }
+        public Domain.Battles.Duels.AttackExchangeState State { get; }
+        public void AddAttribute(Domain.Battles.Duels.Attributes.GameAttributeBase attribute) { }
+        public void AddMagicCard(Domain.BattlePlans.Slot slot) { }
+        public void ChangeOpponent(Domain.Warriors.WarriorId newOpponentId) { }
+        public void Ready() { }
+        public void RemoveAttribute(Domain.Battles.Duels.Attributes.GameAttributeBase attribute) { }
+        public void RemoveMagicCard(Domain.BattlePlans.Slot slot) { }
+        public void Resolved() { }
+        public void Timeouted() { }
+        public static Domain.Battles.Duels.AttackExchange Create(Domain.Battles.Duels.DuelId duelId, Domain.Battles.Duels.DuelRoundId duelRoundId, Domain.Warriors.WarriorId attackerId, Domain.Warriors.WarriorId opponentId) { }
+    }
+    public class AttackExchangeId : System.IEquatable<Domain.Battles.Duels.AttackExchangeId>
+    {
+        public System.Guid Value { get; }
+        public static Domain.Battles.Duels.AttackExchangeId NewId() { }
+    }
+    public enum AttackExchangeState
+    {
+        Draft = 0,
+        Ready = 1,
+        Resolved = 2,
+        Timeout = 3,
+    }
+    public sealed class Duel : Domain.Shared.EntityBase, Domain.Shared.IAgregationRoot
+    {
+        public Duel(Domain.Battles.Duels.DuelId id, int maxRounds) { }
         public Domain.Battles.Duels.DuelId Id { get; }
+        public int MaxRounds { get; }
+        public static Domain.Battles.Duels.Duel Create(int maxRounds) { }
     }
     public sealed class DuelId : System.IEquatable<Domain.Battles.Duels.DuelId>
     {
         public DuelId(System.Guid Value) { }
         public System.Guid Value { get; init; }
         public static Domain.Battles.Duels.DuelId NewId() { }
+    }
+    public sealed class DuelRound : Domain.Shared.EntityBase, Domain.Shared.IAgregationRoot
+    {
+        public bool AllReady { get; }
+        public Domain.Battles.Duels.DuelId DuelId { get; }
+        public Domain.Battles.Duels.DuelRoundId Id { get; }
+        public bool IsClosed { get; }
+        public System.Collections.Generic.IReadOnlySet<Domain.Warriors.WarriorId> Participants { get; }
+        public System.Collections.Generic.IReadOnlySet<Domain.Warriors.WarriorId> ReadyWarriors { get; }
+        public Domain.Battles.Duels.DuelRoundState State { get; }
+        public void Close() { }
+        public bool IsParticipant(Domain.Warriors.WarriorId id) { }
+        public bool IsReady(Domain.Warriors.WarriorId id) { }
+        public void MarkAsReady(Domain.Warriors.WarriorId warriorId) { }
+        public bool TryOpenNewRound(Domain.Warriors.WarriorId[] participants, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Domain.Battles.Duels.DuelRound? nextDuelRound) { }
+        public static Domain.Battles.Duels.DuelRound Create(Domain.Battles.Duels.DuelId duelId, Domain.Battles.Duels.RoundNumber roundNumber, Domain.Warriors.WarriorId[] participants) { }
+    }
+    public sealed class DuelRoundId : System.IEquatable<Domain.Battles.Duels.DuelRoundId>
+    {
+        public System.Guid Value { get; }
+        public static Domain.Battles.Duels.DuelRoundId NewId() { }
+    }
+    public enum DuelRoundState
+    {
+        Open = 0,
+        Closed = 1,
+    }
+    public sealed class MustBelongToParticipantsRule : Domain.Shared.IBusinessRule
+    {
+        public MustBelongToParticipantsRule(System.Collections.Generic.IReadOnlySet<Domain.Warriors.WarriorId> participants, Domain.Warriors.WarriorId markedAsReady) { }
+        public string Message { get; }
+        public bool IsBroken() { }
+    }
+    public sealed class MustHaveAtLeastTwoParticipantsRule : Domain.Shared.IBusinessRule
+    {
+        public MustHaveAtLeastTwoParticipantsRule(int warriors) { }
+        public string Message { get; }
+        public bool IsBroken() { }
+    }
+    public sealed class OnlyCreatedStateCanBeCHangedRule : Domain.Shared.IBusinessRule
+    {
+        public OnlyCreatedStateCanBeCHangedRule(Domain.Battles.Duels.AttackExchangeState state) { }
+        public string Message { get; }
+        public bool IsBroken() { }
+    }
+    public sealed class OnlyOpenRoundCanAddAttackRule : Domain.Shared.IBusinessRule
+    {
+        public OnlyOpenRoundCanAddAttackRule(Domain.Battles.Duels.DuelRoundState state) { }
+        public string Message { get; }
+        public bool IsBroken() { }
+    }
+    public class RoundNumber : System.IEquatable<Domain.Battles.Duels.RoundNumber>
+    {
+        public static readonly Domain.Battles.Duels.RoundNumber First;
+        public int Value { get; }
+        public Domain.Battles.Duels.RoundNumber Next() { }
+        public static Domain.Battles.Duels.RoundNumber FromValue(int value) { }
+    }
+}
+namespace Domain.Battles.Duels.Attributes
+{
+    public sealed class AccuracyAttribute : Domain.Battles.Duels.Attributes.GameAttributeBase, System.IEquatable<Domain.Battles.Duels.Attributes.AccuracyAttribute> { }
+    public abstract class GameAttributeBase : Domain.Shared.ValueObjectBase, System.IEquatable<Domain.Battles.Duels.Attributes.GameAttributeBase>
+    {
+        protected GameAttributeBase(string name) { }
+        public string Name { get; set; }
+    }
+    public sealed class HealthAttribute : Domain.Battles.Duels.Attributes.GameAttributeBase, System.IEquatable<Domain.Battles.Duels.Attributes.HealthAttribute> { }
+    public sealed class StrentghAttribute : Domain.Battles.Duels.Attributes.GameAttributeBase, System.IEquatable<Domain.Battles.Duels.Attributes.StrentghAttribute> { }
+}
+namespace Domain.Battles.Duels.Rules
+{
+    public sealed class AllowOnlyDraftModifiationRule : Domain.Shared.IBusinessRule
+    {
+        public AllowOnlyDraftModifiationRule(Domain.Battles.Duels.AttackExchangeState state) { }
+        public string Message { get; }
+        public bool IsBroken() { }
+    }
+    public sealed class AllowOnlyTransitionDraftToReadyRule : Domain.Shared.IBusinessRule
+    {
+        public AllowOnlyTransitionDraftToReadyRule(Domain.Battles.Duels.AttackExchangeState state) { }
+        public string Message { get; }
+        public bool IsBroken() { }
+    }
+    public sealed class AllowOnlyTransitionDraftToTimeoutRule : Domain.Shared.IBusinessRule
+    {
+        public AllowOnlyTransitionDraftToTimeoutRule(Domain.Battles.Duels.AttackExchangeState state) { }
+        public string Message { get; }
+        public bool IsBroken() { }
+    }
+    public sealed class AllowOnlyTransitionReadyToResolvedRule : Domain.Shared.IBusinessRule
+    {
+        public AllowOnlyTransitionReadyToResolvedRule(Domain.Battles.Duels.AttackExchangeState state) { }
+        public string Message { get; }
+        public bool IsBroken() { }
     }
 }
 namespace Domain.Battles.Events

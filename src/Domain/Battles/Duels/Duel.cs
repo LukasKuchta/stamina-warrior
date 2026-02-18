@@ -2,28 +2,23 @@
 using System.Collections.Generic;
 using System.Text;
 using Domain.Shared;
-using Domain.Warriors;
 
 namespace Domain.Battles.Duels;
 
-
-public sealed record DuelId(Guid Value)
+public sealed class Duel : EntityBase, IAgregationRoot
 {
-    public static DuelId NewId() => new(Guid.NewGuid());
-}   
+    public DuelId Id { get; } 
 
-public sealed class Duel : EntityBase
-{
-    public DuelId Id { get; }
+    public int MaxRounds { get; }
 
-    public Duel(DuelId id)
+    public Duel(DuelId id, int maxRounds)
     {
         Id = id;
+        MaxRounds = maxRounds;        
     }
-}
 
-
-public class Attack 
-{
-    public DuelId DuelId { get; set; }
+    public static Duel Create(int maxRounds)
+    {
+        return new Duel(DuelId.NewId(), maxRounds);
+    }
 }

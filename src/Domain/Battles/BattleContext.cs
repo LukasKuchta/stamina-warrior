@@ -51,7 +51,7 @@ public sealed record BattleContext : ValueObjectBase
     public static BattleContext Create(Warrior attacker, Warrior opponent, int roundsCount)
     {
         CheckRule(new RoundCannotBeLowerOrEqualZeroRule(roundsCount));
-        CheckRule(new AttackerAndOpponentCannotBeTheSameRule(attacker, opponent));
+        CheckRule(new AttackerAndOpponentCannotBeTheSameRule(attacker.Id, opponent.Id));
         CheckRule(new AttackerAndOpponentSpehereCheckRule(attacker, opponent));
 
         return new BattleContext(attacker, opponent, roundsCount);
@@ -61,20 +61,20 @@ public sealed record BattleContext : ValueObjectBase
 
 public sealed class AttackerAndOpponentCannotBeTheSameRule : IBusinessRule
 {
-    private readonly Warrior _attacker;
-    private readonly Warrior _opponent;
+    private readonly WarriorId _attackerId;
+    private readonly WarriorId _opponentId;
 
-    internal AttackerAndOpponentCannotBeTheSameRule(Warrior attacker, Warrior opponent)
+    internal AttackerAndOpponentCannotBeTheSameRule(WarriorId attackerId, WarriorId opponentId)
     {
-        _attacker = attacker;
-        _opponent = opponent;
+        _attackerId = attackerId;
+        _opponentId = opponentId;
     }
 
     public string Message => "Attacker and oponnet cannot be the same!";
 
     public bool IsBroken()
     {
-        return _attacker.Equals(_opponent);
+        return _attackerId.Equals(_opponentId);
     }
 }
 
