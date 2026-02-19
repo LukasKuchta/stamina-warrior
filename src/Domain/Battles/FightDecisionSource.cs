@@ -1,5 +1,6 @@
 ﻿using System.Threading.Channels;
 using Domain.ActivationRules;
+using Domain.Battles.Duels;
 using Domain.RandomSources;
 using Domain.Warriors;
 
@@ -18,6 +19,24 @@ public sealed class FightDecisionSource(IRandomSource chanceService) : IFightDec
     }
 
     public bool HitCheck(Warrior attacker)
+    {
+        float @base = 0.75f;
+        float scale = 0.01f;
+        float chance = @base + (attacker.Accuracy - attacker.Evasion) * scale;
+
+        return chanceService.Succeeds(Chance.FromValue(chance));
+    }
+}
+
+
+public interface IDuelHitCheck 
+{
+    bool Attempt(DuelWarriorState attacker);
+}
+public sealed class DuelHitCheck(IRandomSource chanceService) : IDuelHitCheck
+{
+
+    public bool Attempt(DuelWarriorState attacker)
     {
         float @base = 0.75f;
         float scale = 0.01f;

@@ -2,7 +2,7 @@
 
 public record RoundNumber
 {
-    public readonly static RoundNumber First = new RoundNumber(1);
+    public readonly static RoundNumber Zero = new RoundNumber(0);
 
     public int Value { get; private set; }
     private RoundNumber(int value)
@@ -10,10 +10,10 @@ public record RoundNumber
         Value = value;
     }
 
-    public RoundNumber Next()
+    internal RoundNumber Next()
     {
         return FromValue(Value + 1);
     }
 
-    public static RoundNumber FromValue(int value) => new RoundNumber(value);
+    internal static RoundNumber FromValue(int value) => new RoundNumber(value);
 }

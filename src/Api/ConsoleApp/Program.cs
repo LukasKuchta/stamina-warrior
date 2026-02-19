@@ -54,8 +54,8 @@ IBattleStrategy blueSky = app.Services.GetRequiredService<IBattleStrategy>();
 var judge = new Judge();
 for (int i = 0; i < 1; i++)
 {
-    var conan = Warrior.Create(WarriorId.New(), "Conan", SphereBase.BlueSky, Level.FromNumber(1), conanCards);
-    var brutus = Warrior.Create(WarriorId.New(), "Brutus", SphereBase.BlueSky, Level.FromNumber(1), brutusSlots);
+    var conan = Warrior.Create(WarriorId.New(), "Conan", SphereBase.BlueSky, Level.FromValue(1), conanCards);
+    var brutus = Warrior.Create(WarriorId.New(), "Brutus", SphereBase.BlueSky, Level.FromValue(1), brutusSlots);
 
     BattleResult battleResult = blueSky.StartBattle(BattleContext.Create(conan, brutus, 100), DateTimeOffset.Now);
 

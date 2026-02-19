@@ -110,6 +110,11 @@ namespace Domain.Battles
         public BattleResultId(System.Guid Value) { }
         public System.Guid Value { get; init; }
     }
+    public sealed class DuelHitCheck : Domain.Battles.IDuelHitCheck
+    {
+        public DuelHitCheck(Domain.RandomSources.IRandomSource chanceService) { }
+        public bool Attempt(Domain.Battles.Duels.DuelWarriorState attacker) { }
+    }
     public sealed class FightDecisionSource : Domain.Battles.IFightDecisionSource
     {
         public FightDecisionSource(Domain.RandomSources.IRandomSource chanceService) { }
@@ -138,6 +143,10 @@ namespace Domain.Battles
     {
         Domain.Battles.IBattleStrategy SelectBy(Domain.Battles.Spheres.SphereBase sphere);
     }
+    public interface IDuelHitCheck
+    {
+        bool Attempt(Domain.Battles.Duels.DuelWarriorState attacker);
+    }
     public interface IFightDecisionSource
     {
         bool HitCheck(Domain.Warriors.Warrior attacker);
@@ -158,9 +167,9 @@ namespace Domain.Battles.Duels
         public string Message { get; }
         public bool IsBroken() { }
     }
-    public sealed class AllowOnlyTransitFromOpenToCLoseRule : Domain.Shared.IBusinessRule
+    public sealed class AllowOnlyTransitFromOpenToCloseRule : Domain.Shared.IBusinessRule
     {
-        public AllowOnlyTransitFromOpenToCLoseRule(Domain.Battles.Duels.DuelRoundState state) { }
+        public AllowOnlyTransitFromOpenToCloseRule(Domain.Battles.Duels.DuelRoundState state) { }
         public string Message { get; }
         public bool IsBroken() { }
     }
@@ -197,12 +206,68 @@ namespace Domain.Battles.Duels
         Resolved = 2,
         Timeout = 3,
     }
+    public sealed class CheckAllReadyRule : Domain.Shared.IBusinessRule
+    {
+        public CheckAllReadyRule(Domain.Battles.Duels.RoundParticipantsSnapshot participants, System.Collections.Generic.IEnumerable<Domain.Warriors.WarriorId> readyWarriors) { }
+        public string Message { get; }
+        public bool IsBroken() { }
+    }
+    public sealed class CheckDurationPositiveRule : Domain.Shared.IBusinessRule
+    {
+        public CheckDurationPositiveRule(System.TimeSpan duration) { }
+        public string Message { get; }
+        public bool IsBroken() { }
+    }
+    public sealed class CheckIfNotEmptyRule : Domain.Shared.IBusinessRule
+    {
+        public CheckIfNotEmptyRule(System.Collections.Generic.IReadOnlyCollection<Domain.Warriors.WarriorId> participants) { }
+        public string Message { get; }
+        public bool IsBroken() { }
+    }
+    public sealed class CheckMaxRoundValidRangeRule : Domain.Shared.IBusinessRule
+    {
+        public CheckMaxRoundValidRangeRule(int value) { }
+        public string Message { get; }
+        public bool IsBroken() { }
+    }
+    public sealed class CheckRoundNumberOutOfRangeRule : Domain.Shared.IBusinessRule
+    {
+        public CheckRoundNumberOutOfRangeRule(Domain.Battles.Duels.RoundNumber next, Domain.Battles.Duels.MaxRound maxRound) { }
+        public string Message { get; }
+        public bool IsBroken() { }
+    }
+    public sealed class ClosedStateMustCorelateWithCloseReasonRule : Domain.Shared.IBusinessRule
+    {
+        public ClosedStateMustCorelateWithCloseReasonRule(Domain.Battles.Duels.DuelRoundState roundState, Domain.Battles.Duels.DuelRoundCloseReason closeReason) { }
+        public string Message { get; }
+        public bool IsBroken() { }
+    }
+    public sealed class DamageEffect : Domain.Battles.Duels.EffectBase, System.IEquatable<Domain.Battles.Duels.DamageEffect>
+    {
+        public DamageEffect() { }
+    }
+    public sealed class DamageEffectHandler : Domain.Battles.Duels.ModEffectHandlerBase<Domain.Battles.Duels.DamageEffect>
+    {
+        public DamageEffectHandler() { }
+        public override void Apply(System.Collections.Generic.IDictionary<System.Type, Domain.Battles.Duels.ModBase> mods, Domain.Battles.Duels.DuelWarriorState self, Domain.Battles.Duels.DuelWarriorState opponent, Domain.Battles.Duels.DamageEffect effect) { }
+    }
+    public sealed class DamageMod : Domain.Battles.Duels.ModBase, System.IEquatable<Domain.Battles.Duels.DamageMod>
+    {
+        public DamageMod() { }
+    }
+    public sealed class Deadline : Domain.Shared.ValueObjectBase, System.IEquatable<Domain.Battles.Duels.Deadline>
+    {
+        public System.DateTimeOffset ExpiresAt { get; }
+        public bool IsExpired(System.DateTimeOffset now) { }
+        public System.TimeSpan Remaining(System.DateTimeOffset now) { }
+        public static Domain.Battles.Duels.Deadline FromStart(System.DateTimeOffset start, System.TimeSpan duration) { }
+    }
     public sealed class Duel : Domain.Shared.EntityBase, Domain.Shared.IAgregationRoot
     {
-        public Duel(Domain.Battles.Duels.DuelId id, int maxRounds) { }
+        public Duel(Domain.Battles.Duels.DuelId id, Domain.Battles.Duels.MaxRound maxRound) { }
         public Domain.Battles.Duels.DuelId Id { get; }
-        public int MaxRounds { get; }
-        public static Domain.Battles.Duels.Duel Create(int maxRounds) { }
+        public Domain.Battles.Duels.MaxRound MaxRound { get; }
+        public static Domain.Battles.Duels.Duel Create(Domain.Battles.Duels.MaxRound maxRound) { }
     }
     public sealed class DuelId : System.IEquatable<Domain.Battles.Duels.DuelId>
     {
@@ -212,19 +277,26 @@ namespace Domain.Battles.Duels
     }
     public sealed class DuelRound : Domain.Shared.EntityBase, Domain.Shared.IAgregationRoot
     {
-        public bool AllReady { get; }
+        public Domain.Battles.Duels.DuelRoundCloseReason CloseReason { get; }
+        public Domain.Battles.Duels.Deadline Deadline { get; }
         public Domain.Battles.Duels.DuelId DuelId { get; }
         public Domain.Battles.Duels.DuelRoundId Id { get; }
         public bool IsClosed { get; }
-        public System.Collections.Generic.IReadOnlySet<Domain.Warriors.WarriorId> Participants { get; }
+        public Domain.Battles.Duels.RoundParticipantsSnapshot Participants { get; }
         public System.Collections.Generic.IReadOnlySet<Domain.Warriors.WarriorId> ReadyWarriors { get; }
-        public Domain.Battles.Duels.DuelRoundState State { get; }
-        public void Close() { }
-        public bool IsParticipant(Domain.Warriors.WarriorId id) { }
-        public bool IsReady(Domain.Warriors.WarriorId id) { }
+        public Domain.Battles.Duels.RoundNumber RoundNumber { get; }
+        public Domain.Battles.Duels.DuelRoundState RoundState { get; }
+        public void CloseByReadiness() { }
         public void MarkAsReady(Domain.Warriors.WarriorId warriorId) { }
-        public bool TryOpenNewRound(Domain.Warriors.WarriorId[] participants, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Domain.Battles.Duels.DuelRound? nextDuelRound) { }
-        public static Domain.Battles.Duels.DuelRound Create(Domain.Battles.Duels.DuelId duelId, Domain.Battles.Duels.RoundNumber roundNumber, Domain.Warriors.WarriorId[] participants) { }
+        public Domain.Battles.Duels.DuelRound OpenNextRound(Domain.Battles.Duels.RoundParticipantsSnapshot participants, Domain.Battles.Duels.Deadline deadline) { }
+        public bool TryCloseDueToTimeout(System.DateTimeOffset now) { }
+        public static Domain.Battles.Duels.DuelRound CreateFirst(Domain.Battles.Duels.DuelId duelId, Domain.Battles.Duels.RoundParticipantsSnapshot participants, Domain.Battles.Duels.MaxRound maxRound, Domain.Battles.Duels.Deadline deadline) { }
+    }
+    public enum DuelRoundCloseReason
+    {
+        NotClosedYet = 0,
+        AllReady = 1,
+        Timeout = 2,
     }
     public sealed class DuelRoundId : System.IEquatable<Domain.Battles.Duels.DuelRoundId>
     {
@@ -236,9 +308,96 @@ namespace Domain.Battles.Duels
         Open = 0,
         Closed = 1,
     }
+    public sealed class DuelWarriorState : Domain.Shared.EntityBase, Domain.Shared.IAgregationRoot
+    {
+        public int Accuracy { get; }
+        public int Armor { get; }
+        public int BaseDamage { get; }
+        public Domain.Battles.Duels.DuelId DuelId { get; }
+        public System.Collections.Generic.IReadOnlyCollection<Domain.Battles.Duels.EffectBase> Effects { get; }
+        public int Evasion { get; }
+        public int Health { get; }
+        public Domain.Warriors.WarriorId WarriorId { get; }
+        public int Damage() { }
+        public void Heal(int heal) { }
+        public void Hit(int damage) { }
+        public static Domain.Battles.Duels.DuelWarriorState Create(Domain.Battles.Duels.DuelId duelId, Domain.Warriors.WarriorId warriorId, int baseDamage) { }
+    }
+    public class EffectBase : System.IEquatable<Domain.Battles.Duels.EffectBase>
+    {
+        public EffectBase() { }
+    }
+    public sealed class HealthEffect : Domain.Battles.Duels.EffectBase, System.IEquatable<Domain.Battles.Duels.HealthEffect>
+    {
+        public HealthEffect(int Value, bool IsConsumed) { }
+        public bool IsConsumed { get; init; }
+        public int Value { get; init; }
+    }
+    public sealed class HealthEffectHandler : Domain.Battles.Duels.StateEffectHandlerBase<Domain.Battles.Duels.HealthEffect>
+    {
+        public HealthEffectHandler() { }
+        public override void Apply(Domain.Battles.Duels.DuelWarriorState self, Domain.Battles.Duels.DuelWarriorState opponent, Domain.Battles.Duels.HealthEffect effect) { }
+    }
+    public interface IEffectHandler<in TEffect>
+        where in TEffect : Domain.Battles.Duels.EffectBase
+    {
+        void Apply(Domain.Battles.Duels.DuelWarriorState self, Domain.Battles.Duels.DuelWarriorState opponent, TEffect effect);
+    }
+    public interface IModEffect { }
+    public interface IModEffectHandler
+    {
+        System.Type EffectType { get; }
+        void Apply(System.Collections.Generic.IDictionary<System.Type, Domain.Battles.Duels.ModBase> mods, Domain.Battles.Duels.DuelWarriorState self, Domain.Battles.Duels.DuelWarriorState opponent, Domain.Battles.Duels.EffectBase effect);
+    }
+    public interface IModEffectHandlerFactory
+    {
+        bool TrySelectBy(Domain.Battles.Duels.EffectBase effect, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Domain.Battles.Duels.IModEffectHandler? handler);
+    }
+    public interface IModEffectHandler<in TModEffect>
+        where in TModEffect : Domain.Battles.Duels.EffectBase
+    {
+        void Apply(System.Collections.Generic.IDictionary<System.Type, Domain.Battles.Duels.ModBase> mods, Domain.Battles.Duels.DuelWarriorState self, Domain.Battles.Duels.DuelWarriorState opponent, Domain.Battles.Duels.EffectBase effect);
+    }
+    public interface IStateEffectHandler
+    {
+        System.Type EffectType { get; }
+        void Apply(Domain.Battles.Duels.DuelWarriorState self, Domain.Battles.Duels.DuelWarriorState opponent, Domain.Battles.Duels.EffectBase effect);
+    }
+    public interface IStateEffectHandlerFactory
+    {
+        bool TrySelectBy(Domain.Battles.Duels.EffectBase effect, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Domain.Battles.Duels.IStateEffectHandler? handler);
+    }
+    public class MaxRound : Domain.Shared.ValueObjectBase, System.IEquatable<Domain.Battles.Duels.MaxRound>
+    {
+        public int Value { get; }
+        public static Domain.Battles.Duels.MaxRound FromValue(int value) { }
+    }
+    public abstract class ModBase : System.IEquatable<Domain.Battles.Duels.ModBase>
+    {
+        protected ModBase() { }
+    }
+    public abstract class ModEffectHandlerBase<TModEffect> : Domain.Battles.Duels.IModEffectHandler, Domain.Battles.Duels.IModEffectHandler<TModEffect>
+        where TModEffect : Domain.Battles.Duels.EffectBase
+    {
+        protected ModEffectHandlerBase() { }
+        public System.Type EffectType { get; }
+        public void Apply(System.Collections.Generic.IDictionary<System.Type, Domain.Battles.Duels.ModBase> mods, Domain.Battles.Duels.DuelWarriorState self, Domain.Battles.Duels.DuelWarriorState opponent, Domain.Battles.Duels.EffectBase effect) { }
+        public abstract void Apply(System.Collections.Generic.IDictionary<System.Type, Domain.Battles.Duels.ModBase> mods, Domain.Battles.Duels.DuelWarriorState self, Domain.Battles.Duels.DuelWarriorState opponent, TModEffect effect);
+    }
+    public sealed class ModEffectHandlerFactory : Domain.Battles.Duels.IModEffectHandlerFactory
+    {
+        public ModEffectHandlerFactory(System.Collections.Generic.IEnumerable<Domain.Battles.Duels.IModEffectHandler> strategies) { }
+        public bool TrySelectBy(Domain.Battles.Duels.EffectBase effect, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Domain.Battles.Duels.IModEffectHandler? handler) { }
+    }
+    public sealed class MustBeClosedRule : Domain.Shared.IBusinessRule
+    {
+        public MustBeClosedRule(Domain.Battles.Duels.DuelRoundState state) { }
+        public string Message { get; }
+        public bool IsBroken() { }
+    }
     public sealed class MustBelongToParticipantsRule : Domain.Shared.IBusinessRule
     {
-        public MustBelongToParticipantsRule(System.Collections.Generic.IReadOnlySet<Domain.Warriors.WarriorId> participants, Domain.Warriors.WarriorId markedAsReady) { }
+        public MustBelongToParticipantsRule(Domain.Battles.Duels.RoundParticipantsSnapshot participants, Domain.Warriors.WarriorId markedAsReady) { }
         public string Message { get; }
         public bool IsBroken() { }
     }
@@ -260,12 +419,42 @@ namespace Domain.Battles.Duels
         public string Message { get; }
         public bool IsBroken() { }
     }
+    public sealed class OpenStateMustCorelateWithNotClosedYetRule : Domain.Shared.IBusinessRule
+    {
+        public OpenStateMustCorelateWithNotClosedYetRule(Domain.Battles.Duels.DuelRoundState roundState, Domain.Battles.Duels.DuelRoundCloseReason closeReason) { }
+        public string Message { get; }
+        public bool IsBroken() { }
+    }
     public class RoundNumber : System.IEquatable<Domain.Battles.Duels.RoundNumber>
     {
-        public static readonly Domain.Battles.Duels.RoundNumber First;
+        public static readonly Domain.Battles.Duels.RoundNumber Zero;
         public int Value { get; }
-        public Domain.Battles.Duels.RoundNumber Next() { }
-        public static Domain.Battles.Duels.RoundNumber FromValue(int value) { }
+    }
+    public sealed class RoundParticipantsSnapshot : Domain.Shared.ValueObjectBase, System.IEquatable<Domain.Battles.Duels.RoundParticipantsSnapshot>
+    {
+        public System.Collections.Immutable.ImmutableHashSet<Domain.Warriors.WarriorId> Snapshot { get; }
+        public bool CompareMembers(System.Collections.Generic.IEnumerable<Domain.Warriors.WarriorId> members) { }
+        public static Domain.Battles.Duels.RoundParticipantsSnapshot Create(System.Collections.Generic.IReadOnlyCollection<Domain.Warriors.WarriorId> participants) { }
+    }
+    public sealed class RoundStatus : Domain.Shared.ValueObjectBase, System.IEquatable<Domain.Battles.Duels.RoundStatus>
+    {
+        public Domain.Battles.Duels.DuelRoundCloseReason Reason { get; }
+        public Domain.Battles.Duels.DuelRoundState State { get; }
+        public static Domain.Battles.Duels.RoundStatus Close(Domain.Battles.Duels.DuelRoundCloseReason closeReason) { }
+        public static Domain.Battles.Duels.RoundStatus Open() { }
+    }
+    public abstract class StateEffectHandlerBase<TEffect> : Domain.Battles.Duels.IEffectHandler<TEffect>, Domain.Battles.Duels.IStateEffectHandler
+        where TEffect : Domain.Battles.Duels.EffectBase
+    {
+        protected StateEffectHandlerBase() { }
+        public System.Type EffectType { get; }
+        public void Apply(Domain.Battles.Duels.DuelWarriorState self, Domain.Battles.Duels.DuelWarriorState opponent, Domain.Battles.Duels.EffectBase effect) { }
+        public abstract void Apply(Domain.Battles.Duels.DuelWarriorState self, Domain.Battles.Duels.DuelWarriorState opponent, TEffect effect);
+    }
+    public sealed class StateEffectHandlerFactory : Domain.Battles.Duels.IStateEffectHandlerFactory
+    {
+        public StateEffectHandlerFactory(System.Collections.Generic.IEnumerable<Domain.Battles.Duels.IStateEffectHandler> strategies) { }
+        public bool TrySelectBy(Domain.Battles.Duels.EffectBase effect, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Domain.Battles.Duels.IStateEffectHandler? handler) { }
     }
 }
 namespace Domain.Battles.Duels.Attributes
@@ -656,7 +845,7 @@ namespace Domain.Warriors
     public sealed class Level : Domain.Shared.ValueObjectBase, System.IEquatable<Domain.Warriors.Level>
     {
         public int Value { get; }
-        public static Domain.Warriors.Level FromNumber(int value) { }
+        public static Domain.Warriors.Level FromValue(int value) { }
     }
     public sealed class Warrior : Domain.Shared.EntityBase, Domain.Shared.IAgregationRoot
     {

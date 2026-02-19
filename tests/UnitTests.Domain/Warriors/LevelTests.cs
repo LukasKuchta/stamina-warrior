@@ -10,7 +10,7 @@ public class LevelTests
     [Fact]
     public void FromNumbe_WhenNegativeLevel_ShouldViolateLevelCannotBeNegativeRule()
     {
-        Action act = () => Level.FromNumber(-100);
+        Action act = () => Level.FromValue(-100);
 
         var ex = act.ShouldThrow<BusinessRuleValidationException>();
         ex.Message.ShouldNotBeNullOrEmpty();
@@ -20,7 +20,7 @@ public class LevelTests
     [Fact]
     public void FromNumbe_WhenZeroLevel_ShouldViolateLevelCannotBeNegativeRule()
     {
-        Action act = () => Level.FromNumber(0);
+        Action act = () => Level.FromValue(0);
 
         var ex = act.ShouldThrow<BusinessRuleValidationException>();
         ex.Message.ShouldNotBeNullOrEmpty();

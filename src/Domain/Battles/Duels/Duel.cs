@@ -7,18 +7,20 @@ namespace Domain.Battles.Duels;
 
 public sealed class Duel : EntityBase, IAgregationRoot
 {
-    public DuelId Id { get; } 
+    public DuelId Id { get; }
 
-    public int MaxRounds { get; }
+    public MaxRound MaxRound { get; }    
 
-    public Duel(DuelId id, int maxRounds)
+    public Duel(DuelId id, MaxRound maxRound)
     {
         Id = id;
-        MaxRounds = maxRounds;        
+        MaxRound = maxRound;
     }
 
-    public static Duel Create(int maxRounds)
+    public static Duel Create(MaxRound maxRound)
     {
-        return new Duel(DuelId.NewId(), maxRounds);
+        return new Duel(DuelId.NewId(), maxRound);
     }
+
+
 }

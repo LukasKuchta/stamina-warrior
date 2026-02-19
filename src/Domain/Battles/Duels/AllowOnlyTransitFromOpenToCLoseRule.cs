@@ -2,7 +2,7 @@
 
 namespace Domain.Battles.Duels;
 
-public sealed class AllowOnlyTransitFromOpenToCLoseRule(DuelRoundState state) : IBusinessRule
+public sealed class AllowOnlyTransitFromOpenToCloseRule(DuelRoundState state) : IBusinessRule
 {
     public string Message => "Only transit from Open to Close state is allowed.";
 

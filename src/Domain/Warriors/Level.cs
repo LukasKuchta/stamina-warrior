@@ -12,7 +12,7 @@ public sealed record Level : ValueObjectBase
         Value = value;
     }
 
-    public static Level FromNumber(int value)
+    public static Level FromValue(int value)
     {
         CheckRule(new LevelCannotBeNegativeRule(value));
 

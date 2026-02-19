@@ -21,7 +21,7 @@ internal sealed class WarriorHelper
             warriorId,
             name,
             sphere,
-            Level.FromNumber(level),
+            Level.FromValue(level),
             battlePlan);
     }
 
