@@ -2,7 +2,9 @@
 
 namespace Domain.Battles.Duels;
 
-public interface IModEffectHandlerFactory
+internal interface IModEffectHandlerFactory
 {
     bool TrySelectBy(EffectBase effect, [NotNullWhen(true)] out IModEffectHandler? handler);
 }
+
+

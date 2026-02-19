@@ -246,15 +246,6 @@ namespace Domain.Battles.Duels
     {
         public DamageEffect() { }
     }
-    public sealed class DamageEffectHandler : Domain.Battles.Duels.ModEffectHandlerBase<Domain.Battles.Duels.DamageEffect>
-    {
-        public DamageEffectHandler() { }
-        public override void Apply(System.Collections.Generic.IDictionary<System.Type, Domain.Battles.Duels.ModBase> mods, Domain.Battles.Duels.DuelWarriorState self, Domain.Battles.Duels.DuelWarriorState opponent, Domain.Battles.Duels.DamageEffect effect) { }
-    }
-    public sealed class DamageMod : Domain.Battles.Duels.ModBase, System.IEquatable<Domain.Battles.Duels.DamageMod>
-    {
-        public DamageMod() { }
-    }
     public sealed class Deadline : Domain.Shared.ValueObjectBase, System.IEquatable<Domain.Battles.Duels.Deadline>
     {
         public System.DateTimeOffset ExpiresAt { get; }
@@ -344,24 +335,10 @@ namespace Domain.Battles.Duels
         void Apply(Domain.Battles.Duels.DuelWarriorState self, Domain.Battles.Duels.DuelWarriorState opponent, TEffect effect);
     }
     public interface IModEffect { }
-    public interface IModEffectHandler
-    {
-        System.Type EffectType { get; }
-        void Apply(System.Collections.Generic.IDictionary<System.Type, Domain.Battles.Duels.ModBase> mods, Domain.Battles.Duels.DuelWarriorState self, Domain.Battles.Duels.DuelWarriorState opponent, Domain.Battles.Duels.EffectBase effect);
-    }
-    public interface IModEffectHandlerFactory
-    {
-        bool TrySelectBy(Domain.Battles.Duels.EffectBase effect, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Domain.Battles.Duels.IModEffectHandler? handler);
-    }
-    public interface IModEffectHandler<in TModEffect>
-        where in TModEffect : Domain.Battles.Duels.EffectBase
-    {
-        void Apply(System.Collections.Generic.IDictionary<System.Type, Domain.Battles.Duels.ModBase> mods, Domain.Battles.Duels.DuelWarriorState self, Domain.Battles.Duels.DuelWarriorState opponent, Domain.Battles.Duels.EffectBase effect);
-    }
     public interface IStateEffectHandler
     {
         System.Type EffectType { get; }
-        void Apply(Domain.Battles.Duels.DuelWarriorState self, Domain.Battles.Duels.DuelWarriorState opponent, Domain.Battles.Duels.EffectBase effect);
+        void Handle(Domain.Battles.Duels.DuelWarriorState self, Domain.Battles.Duels.DuelWarriorState opponent, Domain.Battles.Duels.EffectBase effect);
     }
     public interface IStateEffectHandlerFactory
     {
@@ -375,19 +352,6 @@ namespace Domain.Battles.Duels
     public abstract class ModBase : System.IEquatable<Domain.Battles.Duels.ModBase>
     {
         protected ModBase() { }
-    }
-    public abstract class ModEffectHandlerBase<TModEffect> : Domain.Battles.Duels.IModEffectHandler, Domain.Battles.Duels.IModEffectHandler<TModEffect>
-        where TModEffect : Domain.Battles.Duels.EffectBase
-    {
-        protected ModEffectHandlerBase() { }
-        public System.Type EffectType { get; }
-        public void Apply(System.Collections.Generic.IDictionary<System.Type, Domain.Battles.Duels.ModBase> mods, Domain.Battles.Duels.DuelWarriorState self, Domain.Battles.Duels.DuelWarriorState opponent, Domain.Battles.Duels.EffectBase effect) { }
-        public abstract void Apply(System.Collections.Generic.IDictionary<System.Type, Domain.Battles.Duels.ModBase> mods, Domain.Battles.Duels.DuelWarriorState self, Domain.Battles.Duels.DuelWarriorState opponent, TModEffect effect);
-    }
-    public sealed class ModEffectHandlerFactory : Domain.Battles.Duels.IModEffectHandlerFactory
-    {
-        public ModEffectHandlerFactory(System.Collections.Generic.IEnumerable<Domain.Battles.Duels.IModEffectHandler> strategies) { }
-        public bool TrySelectBy(Domain.Battles.Duels.EffectBase effect, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Domain.Battles.Duels.IModEffectHandler? handler) { }
     }
     public sealed class MustBeClosedRule : Domain.Shared.IBusinessRule
     {
@@ -448,8 +412,8 @@ namespace Domain.Battles.Duels
     {
         protected StateEffectHandlerBase() { }
         public System.Type EffectType { get; }
-        public void Apply(Domain.Battles.Duels.DuelWarriorState self, Domain.Battles.Duels.DuelWarriorState opponent, Domain.Battles.Duels.EffectBase effect) { }
         public abstract void Apply(Domain.Battles.Duels.DuelWarriorState self, Domain.Battles.Duels.DuelWarriorState opponent, TEffect effect);
+        public void Handle(Domain.Battles.Duels.DuelWarriorState self, Domain.Battles.Duels.DuelWarriorState opponent, Domain.Battles.Duels.EffectBase effect) { }
     }
     public sealed class StateEffectHandlerFactory : Domain.Battles.Duels.IStateEffectHandlerFactory
     {

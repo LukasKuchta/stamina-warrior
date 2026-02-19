@@ -2,7 +2,7 @@
 
 namespace Domain.Battles.Duels;
 
-public sealed class ModEffectHandlerFactory : IModEffectHandlerFactory
+internal sealed class ModEffectHandlerFactory : IModEffectHandlerFactory
 {
     private readonly Dictionary<Type, IModEffectHandler> _map;
 

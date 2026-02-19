@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
-using Domain.Battles.Spheres;
-using Domain.MagicCards;
+﻿using Domain.Battles.Spheres;
 using Domain.Warriors;
 
 namespace Domain.Battles.Duels;
 
 internal sealed class Test(IDuelHitCheck duelHitCheck,
-    IStateEffectHandlerFactory stateHffectHandlerFactory,
+    IStateEffectHandlerFactory stateEffectHandlerFactory,
     IModEffectHandlerFactory modEffectHandlerFactory)
 {
     public void Orchestrate()
@@ -42,20 +37,25 @@ internal sealed class Test(IDuelHitCheck duelHitCheck,
             var attacker = participants[attack.AttackerId];
             var opponent = participants[attack.OpponentId];
 
-            IDictionary<Type, ModBase> mods = new Dictionary<Type, ModBase>();
+            Modifiers mods = new Modifiers();
 
+            // apply magic cards
+            // <----
             foreach (var effect in attacker.Effects)
             {
-                if (stateHffectHandlerFactory.TrySelectBy(effect, out var stateHandler))
+                if (stateEffectHandlerFactory.TrySelectBy(effect, out var stateHandler))
                 {
-                    stateHandler.Apply(attacker, opponent, effect);
+                    stateHandler.Handle(attacker, opponent, effect);
                 }
 
                 if (modEffectHandlerFactory.TrySelectBy(effect, out var modHandler))
                 {
-                    modHandler.Apply(mods, attacker, opponent, effect);
+                    modHandler.Handle(mods, attacker, opponent, effect);
                 }
             }
+
+            _ = mods.Get(DamageMod.Default);
+
 
             if (duelHitCheck.Attempt(attacker))
             {
@@ -65,33 +65,12 @@ internal sealed class Test(IDuelHitCheck duelHitCheck,
     }
 }
 
-public interface IModEffectHandler
+internal sealed class DamageEffectHandler : ModEffectHandlerBase<DamageEffect>
 {
-    Type EffectType { get; }
-
-    void Apply(IDictionary<Type, ModBase> mods, DuelWarriorState self, DuelWarriorState opponent, EffectBase effect);
-}
-
-public interface IModEffectHandler<in TModEffect> where TModEffect : EffectBase
-{   
-    void Apply(IDictionary<Type, ModBase> mods, DuelWarriorState self, DuelWarriorState opponent, EffectBase effect);
-}
-
-public abstract class ModEffectHandlerBase<TModEffect> : IModEffectHandler<TModEffect>, IModEffectHandler
-    where TModEffect : EffectBase
-{
-    public Type EffectType => typeof(TModEffect);
-
-    public void Apply(IDictionary<Type, ModBase> mods, DuelWarriorState self, DuelWarriorState opponent, EffectBase effect) => Apply(mods, self, opponent, (TModEffect)effect);
-
-    public abstract void Apply(IDictionary<Type, ModBase> mods, DuelWarriorState self, DuelWarriorState opponent, TModEffect effect);
-}
-
-public sealed class DamageEffectHandler : ModEffectHandlerBase<DamageEffect>
-{
-    public override void Apply(IDictionary<Type, ModBase> mods, DuelWarriorState self, DuelWarriorState opponent, DamageEffect effect)
+    public override void Apply(Modifiers mods, DuelWarriorState self, DuelWarriorState opponent, DamageEffect effect)
     {
-        mods.Add(typeof(DamageMod), new DamageMod());
+        // compute damage mod based on the effect and add it to mods
+        mods.Add(new DamageMod());
     }
 }
 
@@ -109,7 +88,7 @@ public abstract class StateEffectHandlerBase<TEffect> : IEffectHandler<TEffect>,
 {
     public Type EffectType => typeof(TEffect);
 
-    public void Apply(DuelWarriorState self, DuelWarriorState opponent, EffectBase effect)
+    public void Handle(DuelWarriorState self, DuelWarriorState opponent, EffectBase effect)
     {
         Apply(self, opponent, (TEffect)effect);
     }
@@ -120,4 +99,4 @@ public abstract class StateEffectHandlerBase<TEffect> : IEffectHandler<TEffect>,
 
 
 public record EffectBase;
- 
+
