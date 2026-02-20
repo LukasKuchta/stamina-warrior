@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Threading.Channels;
 using Domain.ActivationRules;
-using Domain.Battles.Duels;
+using Domain.Battles.Duels.DuelWarriorStates;
 using Domain.RandomSources;
 using Domain.Warriors;
 

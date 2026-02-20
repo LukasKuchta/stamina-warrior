@@ -1,4 +1,5 @@
-﻿using Domain.Shared;
+﻿using Domain.Battles.Duels.AttackExchanges;
+using Domain.Shared;
 
 namespace Domain.Battles.Duels.Rules;
 

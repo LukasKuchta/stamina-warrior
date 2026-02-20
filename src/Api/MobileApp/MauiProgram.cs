@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
+using MobileApp.Resources.Fonts;
 using Syncfusion.Maui.Toolkit.Hosting;
 
 namespace MobileApp;

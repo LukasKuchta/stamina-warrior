@@ -1,4 +1,13 @@
-﻿using Domain.Battles.Spheres;
+﻿using Domain.Battles.Duels.AttackExchanges;
+using Domain.Battles.Duels.DuelWarriorStates;
+using Domain.Battles.Duels.MaggicCardHandlers;
+using Domain.Battles.Duels.ModEffectHandlers;
+using Domain.Battles.Duels.Mods.AccuracyMods;
+using Domain.Battles.Duels.Mods.DamageMods;
+using Domain.Battles.Duels.Mods.EvasionMods;
+using Domain.Battles.Duels.Rounds;
+using Domain.Battles.Duels.StateEffectHandlers;
+using Domain.Battles.Spheres;
 using Domain.Warriors;
 
 namespace Domain.Battles.Duels;
