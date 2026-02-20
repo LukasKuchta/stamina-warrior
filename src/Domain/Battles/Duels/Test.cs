@@ -3,7 +3,8 @@ using Domain.Warriors;
 
 namespace Domain.Battles.Duels;
 
-internal sealed class Test(IDuelHitCheck duelHitCheck,
+internal sealed class Test(IHitCheck duelHitCheck,
+    IMagicCardHandlerFactoryV2 magicCardHandlerFactoryV2,
     IStateEffectHandlerFactory stateEffectHandlerFactory,
     IModEffectHandlerFactory modEffectHandlerFactory)
 {
@@ -34,69 +35,43 @@ internal sealed class Test(IDuelHitCheck duelHitCheck,
     {
         foreach (var attack in attacks)
         {
-            var attacker = participants[attack.AttackerId];
+            var self = participants[attack.AttackerId];
             var opponent = participants[attack.OpponentId];
 
             Modifiers mods = new Modifiers();
 
             // apply magic cards
-            // <----
-            foreach (var effect in attacker.Effects)
+            foreach (var slot in attack.Slots)
+            {
+                if (magicCardHandlerFactoryV2.TrySelectBy(slot.Card, out var cardHandler))
+                {
+                    cardHandler.Apply(self, opponent, slot.Card);
+                }
+            }
+
+            // apply effects 
+            foreach (var effect in self.Effects)
             {
                 if (stateEffectHandlerFactory.TrySelectBy(effect, out var stateHandler))
                 {
-                    stateHandler.Handle(attacker, opponent, effect);
+                    stateHandler.ApplyEffect(self, opponent, effect);
                 }
 
                 if (modEffectHandlerFactory.TrySelectBy(effect, out var modHandler))
                 {
-                    modHandler.Handle(mods, attacker, opponent, effect);
+                    modHandler.Amplify(mods, self, opponent, effect);
                 }
             }
 
-            _ = mods.Get(DamageMod.Default);
+            Accuracy accuracy = mods.Get(AccuracyMod.None).Apply(self.BaseAccuracy);
+            _ = mods.Get(EvasionMod.None).Apply(self.BaseEvasion);
 
-
-            if (duelHitCheck.Attempt(attacker))
+            if (duelHitCheck.Attempt(accuracy, opponent))
             {
-                opponent.Hit(attacker.Damage());
+                Damage damage = mods.Get(DamageMod.None).Apply(self.BaseDamage);
+
+                opponent.Hit(damage);
             }
         }
     }
 }
-
-internal sealed class DamageEffectHandler : ModEffectHandlerBase<DamageEffect>
-{
-    public override void Apply(Modifiers mods, DuelWarriorState self, DuelWarriorState opponent, DamageEffect effect)
-    {
-        // compute damage mod based on the effect and add it to mods
-        mods.Add(new DamageMod());
-    }
-}
-
-public sealed class HealthEffectHandler : StateEffectHandlerBase<HealthEffect>
-{
-    public override void Apply(DuelWarriorState self, DuelWarriorState opponent, HealthEffect effect)
-    {
-        self.Heal(effect.Value);
-        //effect.IsConsumed = true;
-    }
-}
-
-public abstract class StateEffectHandlerBase<TEffect> : IEffectHandler<TEffect>, IStateEffectHandler
-    where TEffect : EffectBase
-{
-    public Type EffectType => typeof(TEffect);
-
-    public void Handle(DuelWarriorState self, DuelWarriorState opponent, EffectBase effect)
-    {
-        Apply(self, opponent, (TEffect)effect);
-    }
-
-    public abstract void Apply(DuelWarriorState self, DuelWarriorState opponent, TEffect effect);
-}
-
-
-
-public record EffectBase;
-

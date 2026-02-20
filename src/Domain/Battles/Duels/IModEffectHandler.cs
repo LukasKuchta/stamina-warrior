@@ -7,12 +7,12 @@ namespace Domain.Battles.Duels;
 
 internal interface IModEffectHandler<in TModEffect> where TModEffect : EffectBase
 {
-    void Apply(Modifiers mods, DuelWarriorState self, DuelWarriorState opponent, TModEffect effect);
+    void Amplify(Modifiers mods, DuelWarriorState self, DuelWarriorState opponent, TModEffect effect);
 }
 
 internal interface IModEffectHandler
 {
     Type EffectType { get; }
-    void Handle(Modifiers mods, DuelWarriorState self, DuelWarriorState opponent, EffectBase effect);
+    void Amplify(Modifiers mods, DuelWarriorState self, DuelWarriorState opponent, EffectBase effect);
 }
 

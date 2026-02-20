@@ -5,8 +5,8 @@ internal abstract class ModEffectHandlerBase<TModEffect> : IModEffectHandler<TMo
 {
     public Type EffectType => typeof(TModEffect);
 
-    public void Handle(Modifiers mods, DuelWarriorState self, DuelWarriorState opponent, EffectBase effect) => Apply(mods, self, opponent, (TModEffect)effect);
+    public void Amplify(Modifiers mods, DuelWarriorState self, DuelWarriorState opponent, EffectBase effect) => Amplify(mods, self, opponent, (TModEffect)effect);
 
-    public abstract void Apply(Modifiers mods, DuelWarriorState self, DuelWarriorState opponent, TModEffect effect);
+    public abstract void Amplify(Modifiers mods, DuelWarriorState self, DuelWarriorState opponent, TModEffect effect);
 }
 

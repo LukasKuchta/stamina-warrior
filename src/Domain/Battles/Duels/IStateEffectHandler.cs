@@ -4,5 +4,5 @@ public interface IStateEffectHandler
 {
     Type EffectType { get; }
 
-    void Handle(DuelWarriorState self, DuelWarriorState opponent, EffectBase effect);
+    void ApplyEffect(DuelWarriorState self, DuelWarriorState opponent, EffectBase effect);
 }

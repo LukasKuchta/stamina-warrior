@@ -1,5 +1,4 @@
 ﻿namespace Domain.Battles.Duels;
 
-public interface IModEffect
-{
-}
+public abstract record EffectBase;
+
